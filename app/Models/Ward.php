@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class City extends Model
+class Ward extends Model
 {
     use HasFactory;
     protected $guarded = [];
-
-    // Quan hệ: Một thành phố có nhiều quận/huyện
-    public function districts()
+    
+    // Quan hệ: Một phường/xã thuộc một quận/huyện
+    public function district()
     {
-        return $this->hasMany(District::class);
+        return $this->belongsTo(District::class);
     }
 }

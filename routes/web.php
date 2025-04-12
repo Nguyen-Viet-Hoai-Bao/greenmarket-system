@@ -6,6 +6,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\Admin\DistrictController;
+use App\Http\Controllers\Admin\WardController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -63,20 +66,51 @@ Route::middleware('admin')->group(function () {
 
     Route::controller(CategoryController::class)->group(function(){
         Route::get('/all/category', 'AllCategory')->name('all.category');
+        
         Route::get('/add/category', 'AddCategory')->name('add.category');
         Route::post('/store/category', 'StoreCategory')->name('category.store');
+        
         Route::get('/edit/category/{id}', 'EditCategory')->name('edit.category');
         Route::post('/update/category', 'UpdateCategory')->name('category.update');
+        
         Route::get('/delete/category{id}', 'DeleteCategory')->name('delete.category');
     });
 
-    Route::controller(CategoryController::class)->group(function(){
+    Route::controller(CityController::class)->group(function(){
         Route::get('/all/city', 'AllCity')->name('all.city');
+        
         Route::get('/add/city', 'AddCity')->name('add.city');
         Route::post('/store/city', 'StoreCity')->name('city.store');
+        
         Route::get('/edit/city/{id}', 'EditCity');
         Route::post('/update/city', 'UpdateCity')->name('city.update');
+        
         Route::get('/delete/city{id}', 'DeleteCity')->name('delete.city');
     });
+
+    Route::controller(DistrictController::class)->group(function() {
+        Route::get('/city/districts/{cityId}', 'AllDistricts')->name('all.districts');
+        
+        Route::get('/city/district/create/{cityId}', 'CreateDistrict')->name('add.district');
+        Route::post('/city/district/store/{cityId}', 'StoreDistrict')->name('district.store');
+        
+        Route::get('/edit/district/{id}', 'EditDistrict');
+        Route::post('/district/update', 'UpdateDistrict')->name('district.update');
+        
+        Route::get('/district/delete/{id}', 'DeleteDistrict')->name('delete.district');
+    });
+
+    Route::controller(WardController::class)->group(function() {
+        Route::get('/district/wards/{districtId}', 'AllWards')->name('all.wards');
+        
+        Route::get('/district/ward/create/{districtId}', 'CreateWard')->name('add.ward');
+        Route::post('/district/ward/store/{districtId}', 'StoreWard')->name('store.ward');
+        
+        Route::get('/edit/ward/{id}', 'EditWard');
+        Route::post('/ward/update', 'UpdateWard')->name('ward.update');
+        
+        Route::get('/ward/delete/{id}', 'DeleteWard')->name('delete.ward');
+    });
+    
 
 }); // End Admin Middleware
