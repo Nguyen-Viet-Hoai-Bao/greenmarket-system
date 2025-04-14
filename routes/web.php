@@ -127,7 +127,7 @@ Route::middleware('client')->group(function () {
         Route::get('/edit/menu/{id}', 'EditMenu')->name('edit.menu');
         Route::post('/update/menu', 'UpdateMenu')->name('menu.update');
         
-        Route::get('/delete/menu{id}', 'DeleteMenu')->name('delete.menu');
+        Route::get('/delete/menu/{id}', 'DeleteMenu')->name('delete.menu');
     });
 
     Route::controller(MarketController::class)->group(function(){
@@ -139,6 +139,7 @@ Route::middleware('client')->group(function () {
         Route::get('/edit/product/{id}', 'EditProduct')->name('edit.product');
         Route::post('/update/product', 'UpdateProduct')->name('product.update');
         
-        Route::get('/delete/product{id}', 'DeleteProduct')->name('delete.product');
+        Route::get('/delete/product/{id}', 'DeleteProduct')->name('delete.product');
+        Route::get('/changeStatus', 'ChangeStatus');
     });
 }); // End Client Middleware
