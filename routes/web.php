@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\DistrictController;
 use App\Http\Controllers\Admin\WardController;
 use App\Http\Controllers\Client\MarketController;
+use App\Http\Controllers\Client\GalleryController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -141,5 +142,19 @@ Route::middleware('client')->group(function () {
         
         Route::get('/delete/product/{id}', 'DeleteProduct')->name('delete.product');
         Route::get('/changeStatus', 'ChangeStatus');
+    });
+
+    
+    Route::controller(GalleryController::class)->group(function(){
+        Route::get('/all/gallery', 'AllGallery')->name('all.gallery');
+        
+        Route::get('/add/gallery', 'AddGallery')->name('add.gallery');
+        Route::post('/store/gallery', 'StoreGallery')->name('gallery.store');
+        
+        Route::get('/edit/gallery/{id}', 'EditGallery')->name('edit.gallery');
+        Route::post('/update/gallery', 'UpdateGallery')->name('gallery.update');
+        
+        Route::get('/delete/gallery/{id}', 'DeleteGallery')->name('delete.gallery');
+        // Route::get('/changeStatus', 'ChangeStatus');
     });
 }); // End Client Middleware

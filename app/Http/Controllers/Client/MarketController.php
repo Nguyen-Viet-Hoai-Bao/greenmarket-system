@@ -290,4 +290,5 @@ class MarketController extends Controller
         $product->save();
         return response()->json(['success' => 'Status Change Successfully']);
     }
+    // End Method
 }
