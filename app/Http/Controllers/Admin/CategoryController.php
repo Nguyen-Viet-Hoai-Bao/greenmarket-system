@@ -33,9 +33,9 @@ class CategoryController extends Controller
             $name_gen = hexdec(uniqid()).'.'
                         .$image->getClientOriginalExtension();
             $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/category/'
+            $img->resize(300, 300)->save(public_path('upload/category_images/'
                 .$name_gen));
-            $save_url = 'upload/category/'.$name_gen;
+            $save_url = 'upload/category_images/'.$name_gen;
 
             Category::create([
                 'category_name' => $request->category_name,
@@ -69,9 +69,9 @@ class CategoryController extends Controller
             $name_gen = hexdec(uniqid()).'.'
                         .$image->getClientOriginalExtension();
             $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/category/'
+            $img->resize(300, 300)->save(public_path('upload/category_images/'
                 .$name_gen));
-            $save_url = 'upload/category/'.$name_gen;
+            $save_url = 'upload/category_images/'.$name_gen;
 
             Category::find($cat_id)->update([
                 'category_name' => $request->category_name,
