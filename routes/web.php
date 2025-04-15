@@ -13,6 +13,7 @@ use App\Http\Controllers\Client\MarketController;
 use App\Http\Controllers\Client\GalleryController;
 use App\Http\Controllers\Client\CouponController;
 use App\Http\Controllers\Admin\ManageController;
+use App\Http\Controllers\Frontend\HomeController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -207,3 +208,16 @@ Route::middleware(['client', 'status'])->group(function () {
 
 /// For All User
 Route::get('/changeStatus', [MarketController::class, 'ChangeStatus']);
+
+Route::controller(HomeController::class)->group(function(){
+    Route::get('/market/details/{id}', 'MarketDetails')->name('market.details');
+    
+    // Route::get('/add/coupon', 'AddCoupon')->name('add.coupon');
+    // Route::post('/store/coupon', 'StoreCoupon')->name('coupon.store');
+    
+    // Route::get('/edit/coupon/{id}', 'EditCoupon')->name('edit.coupon');
+    // Route::post('/update/coupon', 'UpdateCoupon')->name('coupon.update');
+    
+    // Route::get('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon');
+    // Route::get('/changeStatus', 'ChangeStatus');
+});

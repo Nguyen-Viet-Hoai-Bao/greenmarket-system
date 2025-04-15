@@ -36,7 +36,7 @@
         </div>
         <div class="col-md-1 col-sm-6 mobile-none">
         </div>
-        <div class="col-md-2 col-4 col-sm-4">
+        <div class="col-md-2 col-6 col-sm-4">
            <h6 class="mb-3">About OE</h6>
            <ul>
               <li><a href="#">About Us</a></li>
@@ -46,7 +46,7 @@
               <li><a href="#">Contact</a></li>
            </ul>
         </div>
-        <div class="col-md-2 col-4 col-sm-4">
+        <div class="col-md-2 col-6 col-sm-4">
            <h6 class="mb-3">For Foodies</h6>
            <ul>
               <li><a href="#">Community</a></li>
@@ -56,7 +56,7 @@
               <li><a href="#">Code of Conduct</a></li>
            </ul>
         </div>
-        <div class="col-md-2 col-4 col-sm-4">
+        <div class="col-md-2 m-none col-4 col-sm-4">
            <h6 class="mb-3">For Restaurants</h6>
            <ul>
               <li><a href="#">Advertise</a></li>
@@ -93,18 +93,3 @@
      </small>
   </div>
 </footer>
-<!-- jQuery -->
-<script src="{{ asset('frontend/vendor/jquery/jquery-3.3.1.slim.min.js') }}"></script>
-<!-- Bootstrap core JavaScript-->
-<script src="{{ asset('frontend/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<!-- Select2 JavaScript-->
-<script src="{{ asset('frontend/vendor/select2/js/select2.min.js') }}"></script>
-
-<!-- Owl Carousel -->
-<script src="{{ asset('frontend/vendor/owl-carousel/owl.carousel.js') }}"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="{{ asset('frontend/js/custom.js') }}"></script>
-
-</body>
-</html>
