@@ -30,7 +30,7 @@
               <div class="card">
                   <div class="card-body">
 
-<table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
+<table id="datatable" class="table table-bordered dt-responsive w-100">
     <thead>
     <tr>
         <th>Sl</th>
@@ -76,7 +76,7 @@
                     <span class="text-danger"><b>InActive</b></span>
                 @endif
             </td>
-            <td>
+            <td class="d-flex align-items-center gap-1">
 <a href="{{ route('edit.product', $item->id) }}"
     class="btn btn-info waves-effect waves-light">
     <i class="fas fa-edit"></i>
