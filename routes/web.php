@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\WardController;
 use App\Http\Controllers\Client\MarketController;
 use App\Http\Controllers\Client\GalleryController;
 use App\Http\Controllers\Client\CouponController;
+use App\Http\Controllers\Admin\ManageController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -64,9 +65,10 @@ Route::post('/client/register/submit', [ClientController::class, 'ClientRegister
 Route::post('/client/login_submit', [ClientController::class, 'ClientLoginSubmit'])->name('client.login_submit');
 Route::get('/client/logout', [ClientController::class, 'ClientLogout'])->name('client.logout');
 
-/// ALL ADMIN CATEGORY
+/// End Admin Middleware 
 Route::middleware('admin')->group(function () {
 
+    // ALL ADMIN CATEGORY
     Route::controller(CategoryController::class)->group(function(){
         Route::get('/all/category', 'AllCategory')->name('all.category');
         
@@ -79,6 +81,7 @@ Route::middleware('admin')->group(function () {
         Route::get('/delete/category{id}', 'DeleteCategory')->name('delete.category');
     });
 
+    // ALL ADMIN City
     Route::controller(CityController::class)->group(function(){
         Route::get('/all/city', 'AllCity')->name('all.city');
         
@@ -91,6 +94,7 @@ Route::middleware('admin')->group(function () {
         Route::get('/delete/city{id}', 'DeleteCity')->name('delete.city');
     });
 
+    // ALL ADMIN District
     Route::controller(DistrictController::class)->group(function() {
         Route::get('/city/districts/{cityId}', 'AllDistricts')->name('all.districts');
         
@@ -103,6 +107,7 @@ Route::middleware('admin')->group(function () {
         Route::get('/district/delete/{id}', 'DeleteDistrict')->name('delete.district');
     });
 
+    // ALL ADMIN Ward
     Route::controller(WardController::class)->group(function() {
         Route::get('/district/wards/{districtId}', 'AllWards')->name('all.wards');
         
@@ -115,11 +120,32 @@ Route::middleware('admin')->group(function () {
         Route::get('/ward/delete/{id}', 'DeleteWard')->name('delete.ward');
     });
     
+    // ALL ADMIN Product
+    Route::controller(ManageController::class)->group(function(){
+        Route::get('/admin/all/product', 'AdminAllProduct')->name('admin.all.product');
+        
+        Route::get('/admin/add/product', 'AdminAddProduct')->name('admin.add.product');
+        Route::post('/admin/store/product', 'AdminStoreProduct')->name('admin.product.store');
+        
+        Route::get('/admin/edit/product/{id}', 'AdminEditProduct')->name('admin.edit.product');
+        Route::post('/admin/update/product', 'AdminUpdateProduct')->name('admin.product.update');
+        
+        Route::get('/admin/delete/product/{id}', 'AdminDeleteProduct')->name('admin.delete.product');
+    });
+    
+    // ALL ADMIN Product
+    Route::controller(ManageController::class)->group(function(){
+        Route::get('/pending/market', 'PendingMarket')->name('pending.market');
+        Route::get('/clientChangeStatus', 'ClientChangeStatus');
+        Route::get('/approve/market', 'ApproveMarket')->name('approve.market');
+        
+        
+    });
 
 }); // End Admin Middleware
 
 
-Route::middleware('client')->group(function () {
+Route::middleware(['client', 'status'])->group(function () {
     Route::controller(MarketController::class)->group(function(){
         Route::get('/all/menu', 'AllMenu')->name('all.menu');
         
@@ -142,7 +168,6 @@ Route::middleware('client')->group(function () {
         Route::post('/update/product', 'UpdateProduct')->name('product.update');
         
         Route::get('/delete/product/{id}', 'DeleteProduct')->name('delete.product');
-        Route::get('/changeStatus', 'ChangeStatus');
     });
 
     
@@ -172,3 +197,6 @@ Route::middleware('client')->group(function () {
         // Route::get('/changeStatus', 'ChangeStatus');
     });
 }); // End Client Middleware
+
+/// For All User
+Route::get('/changeStatus', [MarketController::class, 'ChangeStatus']);
