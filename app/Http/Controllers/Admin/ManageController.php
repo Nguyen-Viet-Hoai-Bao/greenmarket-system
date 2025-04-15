@@ -16,6 +16,7 @@ use App\Models\Menu;
 use App\Models\City;
 use App\Models\Product;
 use App\Models\Client;
+use App\Models\Banner;
 
 class ManageController extends Controller
 {
@@ -198,6 +199,105 @@ class ManageController extends Controller
     public function ApproveMarket() {
         $client = Client::where('status', 1)->get();
         return view('admin.backend.market.approve_market', compact('client'));    
+    }
+    // End Method
+
+
+
+    ///// BANNER METHOD
+    public function AllBanner() {
+        $banner = Banner::latest()->get();
+        return view('admin.backend.banner.all_banner', compact('banner'));    
+    }
+    // End Method
+    
+    public function BannerStore(Request $request) {
+        if($request->file('image')){
+            $image = $request->file('image');
+            $manage = new ImageManager(new Driver());
+            $name_gen = hexdec(uniqid()).'.'
+                        .$image->getClientOriginalExtension();
+            $img = $manage->read($image);
+            $img->resize(400, 400)->save(public_path('upload/banner_images/'
+                .$name_gen));
+            $save_url = 'upload/banner_images/'.$name_gen;
+
+            Banner::create([
+                'url' => $request->url,
+                'image' => $save_url,
+            ]);
+
+        }
+        
+        $notification = array(
+            'message' => 'Banner Insert Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
+    // End Method
+
+    public function EditBanner($id) {
+        $banner = Banner::find($id);
+        if ($banner) {
+            $banner->image = asset($banner->image);
+        }
+        return response()->json($banner);
+
+    }
+    // End Method
+
+    public function BannerUpdate(Request $request) {
+        $banner_id = $request->banner_id;
+
+        if($request->file('image')){
+            $image = $request->file('image');
+            $manage = new ImageManager(new Driver());
+            $name_gen = hexdec(uniqid()).'.'
+                        .$image->getClientOriginalExtension();
+            $img = $manage->read($image);
+            $img->resize(400, 400)->save(public_path('upload/banner_images/'
+                .$name_gen));
+            $save_url = 'upload/banner_images/'.$name_gen;
+
+            Banner::find($banner_id)->update([
+                'url' => $request->url,
+                'image' => $save_url,
+            ]);
+
+            $notification = array(
+                'message' => 'Banner Insert Successfully',
+                'alert-type' => 'success'
+            );
+    
+            return redirect()->route('all.banner')->with($notification);
+        } else {
+            Banner::find($banner_id)->update([
+                'url' => $request->url,
+            ]);
+            $notification = array(
+                'message' => 'Banner Insert Successfully',
+                'alert-type' => 'success'
+            );
+            return redirect()->route('all.banner')->with($notification);
+        }
+        
+    }
+    // End Method
+    
+    public function DeleteBanner($id) {
+        $item = Banner::find($id);
+        $img = $item->image;
+        unlink($img);
+
+        Banner::find($id)->delete();
+        
+        $notification = array(
+            'message' => 'Delete Banner Successfully',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
     }
     // End Method
 }

@@ -138,8 +138,15 @@ Route::middleware('admin')->group(function () {
         Route::get('/pending/market', 'PendingMarket')->name('pending.market');
         Route::get('/clientChangeStatus', 'ClientChangeStatus');
         Route::get('/approve/market', 'ApproveMarket')->name('approve.market');
-        
-        
+    });
+    
+    // ALL ADMIN Banner
+    Route::controller(ManageController::class)->group(function(){
+        Route::get('/all/banner', 'AllBanner')->name('all.banner');
+        Route::post('/banner/store', 'BannerStore')->name('banner.store');
+        Route::get('/edit/banner/{id}', 'EditBanner')->name('edit.banner');
+        Route::post('/banner/update', 'BannerUpdate')->name('banner.update');
+        Route::get('/banner/delete/{id}', 'DeleteBanner')->name('delete.banner');
     });
 
 }); // End Admin Middleware
