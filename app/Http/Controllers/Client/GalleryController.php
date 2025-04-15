@@ -16,7 +16,8 @@ use App\Models\Gallery;
 class GalleryController extends Controller
 {
     public function AllGallery(){
-        $gallery = Gallery::latest()->get();
+        $client_id = Auth::guard('client')->id();
+        $gallery = Gallery::where('client_id', $client_id)->latest()->get();
         return view('client.backend.gallery.all_gallery', compact('gallery'));
     } 
     //End Method

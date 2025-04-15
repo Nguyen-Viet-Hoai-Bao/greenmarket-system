@@ -25,7 +25,8 @@ class MarketController extends Controller
 
 
     public function AllMenu(){
-        $menu = Menu::latest()->get();
+        $id = Auth::guard('client')->id();
+        $menu = Menu::where('client_id', $id)->orderBy('id', 'desc')->get();
         return view('client.backend.menu.all_menu', compact('menu'));
     } 
     //End Method
@@ -49,6 +50,7 @@ class MarketController extends Controller
 
             Menu::create([
                 'menu_name' => $request->menu_name,
+                'client_id' => Auth::guard('client')->id(),
                 'image' => $save_url,
             ]);
 
@@ -129,7 +131,8 @@ class MarketController extends Controller
     //// ALL PRODUCT METHOD STARTED
     
     public function AllProduct(){
-        $product = Product::latest()->get();
+        $id = Auth::guard('client')->id();
+        $product = Product::where('client_id', $id)->orderBy('id', 'desc')->get();
         return view('client.backend.product.all_product', compact('product'));
     } 
     //End Method
@@ -177,6 +180,7 @@ class MarketController extends Controller
                 'best_seller' => $request->best_seller,
                 'status' => 1,
                 'created_at' => Carbon::now(),
+                'client_id' => Auth::guard('client')->id(),
                 'image' => $save_url,
             ]);
 
@@ -192,9 +196,10 @@ class MarketController extends Controller
     // End Method
 
     public function EditProduct($id) {
+        $client_id = Auth::guard('client')->id();
         $category = Category::latest()->get();
         $city = City::latest()->get();
-        $menu = Menu::latest()->get();
+        $menu = Menu::where('client_id', $client_id)->latest()->get();
         $product = Product::find($id);
         return view('client.backend.product.edit_product', compact('category', 'city', 'menu', 'product'));
 

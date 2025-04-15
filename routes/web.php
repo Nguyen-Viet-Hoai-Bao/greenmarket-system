@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DistrictController;
 use App\Http\Controllers\Admin\WardController;
 use App\Http\Controllers\Client\MarketController;
 use App\Http\Controllers\Client\GalleryController;
+use App\Http\Controllers\Client\CouponController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -155,6 +156,19 @@ Route::middleware('client')->group(function () {
         Route::post('/update/gallery', 'UpdateGallery')->name('gallery.update');
         
         Route::get('/delete/gallery/{id}', 'DeleteGallery')->name('delete.gallery');
+        // Route::get('/changeStatus', 'ChangeStatus');
+    });
+
+    Route::controller(CouponController::class)->group(function(){
+        Route::get('/all/coupon', 'AllCoupon')->name('all.coupon');
+        
+        Route::get('/add/coupon', 'AddCoupon')->name('add.coupon');
+        Route::post('/store/coupon', 'StoreCoupon')->name('coupon.store');
+        
+        Route::get('/edit/coupon/{id}', 'EditCoupon')->name('edit.coupon');
+        Route::post('/update/coupon', 'UpdateCoupon')->name('coupon.update');
+        
+        Route::get('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon');
         // Route::get('/changeStatus', 'ChangeStatus');
     });
 }); // End Client Middleware
