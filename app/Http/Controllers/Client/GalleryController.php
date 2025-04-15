@@ -35,7 +35,7 @@ class GalleryController extends Controller
             $name_gen = hexdec(uniqid()).'.'
                         .$gimg->getClientOriginalExtension();
             $img = $manage->read($gimg);
-            $img->resize(500, 500)->save(public_path('upload/gallery_images/'
+            $img->resize(800, 800)->save(public_path('upload/gallery_images/'
                 .$name_gen));
             $save_url = 'upload/gallery_images/'.$name_gen;
 
@@ -70,7 +70,7 @@ class GalleryController extends Controller
             $name_gen = hexdec(uniqid()).'.'
                         .$image->getClientOriginalExtension();
             $img = $manage->read($image);
-            $img->resize(500, 500)->save(public_path('upload/gallery_images/'
+            $img->resize(800, 800)->save(public_path('upload/gallery_images/'
                 .$name_gen));
             $save_url = 'upload/gallery_images/'.$name_gen;
 
