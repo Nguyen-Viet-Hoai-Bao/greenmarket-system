@@ -211,6 +211,7 @@ Route::get('/changeStatus', [MarketController::class, 'ChangeStatus']);
 
 Route::controller(HomeController::class)->group(function(){
     Route::get('/market/details/{id}', 'MarketDetails')->name('market.details');
+    Route::post('/add-wish-list/{id}', 'AddWishlist');
     
     // Route::get('/add/coupon', 'AddCoupon')->name('add.coupon');
     // Route::post('/store/coupon', 'StoreCoupon')->name('coupon.store');

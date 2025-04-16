@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Client;
 use App\Models\Menu;
 use App\Models\Gallery;
+use App\Models\Wishlist;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -22,6 +24,27 @@ class HomeController extends Controller
                         });
         $gallerys = Gallery::where('client_id', $id)->get();
         return view('frontend.details_page', compact('client', 'menus', 'gallerys'));
+    }
+    // end method
+
+    public function AddWishlist(Request $request, $id) {
+        if(Auth::check()){
+            $exists = Wishlist::where('user_id', Auth::id())
+                            ->where('client_id', $id)
+                            ->first();
+            if (!$exists) {
+                Wishlist::insert([
+                    'user_id' => Auth::id(),
+                    'client_id' => $id,
+                    'created_at' => Carbon::now(),
+                ]);
+                return response()->json(['success' => 'Add Wishlist Successfully']);
+            } else {
+                return response()->json(['error' => 'This Market has already on your Wishlist']);
+            }
+        } else {
+            return response()->json(['error' => 'Fisrt Login Your Account']);
+        }
     }
     // end method
 
