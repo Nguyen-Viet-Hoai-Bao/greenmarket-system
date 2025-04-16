@@ -30,6 +30,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/logout', [UserController::class, 'UserLogout'])->name('user.logout');
     Route::get('/change/password', [UserController::class, 'ChangePassword'])->name('change.password');
     Route::post('/user/password/update', [UserController::class, 'UserPasswordUpdate'])->name('user.password.update');
+
+    // Wishlist Data For User
+    Route::get('/all/wishlist', [HomeController::class, 'AllWishlist'])->name('all.wishlist');
+    Route::get('/remove/wishlist/{id}', [HomeController::class, 'RemoveWishlist'])->name('remove.wishlist');
 });
 
 require __DIR__.'/auth.php';
@@ -212,8 +216,7 @@ Route::get('/changeStatus', [MarketController::class, 'ChangeStatus']);
 Route::controller(HomeController::class)->group(function(){
     Route::get('/market/details/{id}', 'MarketDetails')->name('market.details');
     Route::post('/add-wish-list/{id}', 'AddWishlist');
-    
-    // Route::get('/add/coupon', 'AddCoupon')->name('add.coupon');
+
     // Route::post('/store/coupon', 'StoreCoupon')->name('coupon.store');
     
     // Route::get('/edit/coupon/{id}', 'EditCoupon')->name('edit.coupon');

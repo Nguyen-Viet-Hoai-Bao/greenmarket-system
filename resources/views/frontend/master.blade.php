@@ -86,7 +86,10 @@
                         type: 'success',
                         icon: 'success', 
                         title: data.success, 
-                        })
+                        });
+
+                        const icon = $('#heart-icon-' + id);
+                        icon.removeClass('text-dark').addClass('text-danger');
 
                   }else{
                      
