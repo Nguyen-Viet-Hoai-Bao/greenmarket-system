@@ -22,7 +22,7 @@ use App\Http\Controllers\Frontend\HomeController;
 Route::get('/', [UserController::class, 'Index'])->name('index');
 
 Route::get('/dashboard', function () {
-    return view('frontend.dashboard.dashboard');
+    return view('frontend.dashboard.profile');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
