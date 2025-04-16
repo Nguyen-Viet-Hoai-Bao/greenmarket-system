@@ -24,6 +24,10 @@
        $menuNamesString = implode('. ', $menuNames);
        $coupons = App\Models\Coupon::where('client_id', $client->id)
                            ->where('status', '1')->first();
+      
+      $isWishlisted = App\Models\Wishlist::where('user_id', Auth::id())
+                        ->where('client_id', $client->id)
+                        ->first();
    @endphp
 
 <div class="col-md-3">
@@ -31,7 +35,19 @@
       <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
          <div class="list-card-image">
             <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
-            <div class="favourite-heart text-danger position-absolute"><a aria-label="Add to Wishlist" onclick="addWishlist({{ $client->id }})"><i class="icofont-heart"></i></a></div>
+
+            {{-- <div class="favourite-heart text-danger position-absolute">
+               <a aria-label="Add to Wishlist" onclick="addWishlist({{ $client->id }})">
+                  <i class="icofont-heart">
+                  </i>
+               </a>
+            </div> --}}
+            <div class="favourite-heart position-absolute">
+               <a aria-label="Add to Wishlist" onclick="addWishlist({{ $client->id }})">
+                   <i class="icofont-heart {{ $isWishlisted ? 'text-danger' : 'text-dark' }}" id="heart-icon-{{ $client->id }}">
+                   </i>
+               </a>
+           </div>
             @if ($coupons)
                <div class="member-plan position-absolute"><span class="badge badge-dark">Promoted</span></div>
             @else
