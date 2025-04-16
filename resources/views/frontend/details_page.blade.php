@@ -1,6 +1,8 @@
 @extends('frontend.dashboard.dashboard')
 @section('dashboard')
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 @php
 $products = App\Models\Product::where('client_id', $client->id)->limit(3)->get();
 $menuNames = $products->map(function($product){
@@ -96,13 +98,16 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                   <img class="img-fluid" src="{{ asset($populer->image) }}">
                   <h6>{{ $populer->name }}</h6>
                   @if ($populer->discount_price == NULL)
-                    ${{ $populer->price }}
+                    {{ number_format($populer->price, 0, ',', '.') }}
                   @else
-                    $<del>{{ $populer->price }}</del>$ 
-                    ${{ $populer->discount_price }}
+                    <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
+                    {{ number_format($populer->discount_price, 0, ',', '.') }}
                   @endif
                   <span class="float-right">
-                    <a class="btn btn-outline-secondary btn-sm" href="#">ADD</a>
+                    <a class="btn btn-outline-secondary btn-sm" 
+                        href="{{ route('add_to_cart', $populer->id) }}">
+                        ADD
+                     </a>
                   </span>
               </a>
             </div>
@@ -139,18 +144,23 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                   <h6 class="mb-1"><a href="#" class="text-black">{{ $bestseller->name }}</a></h6>
                   <p class="text-gray mb-2">{{ $bestseller['city']['city_name'] }}</p>
                   <p class="text-gray time mb-0">
-                    @if ($populer->discount_price == NULL)
+                    @if ($bestseller->discount_price == NULL)
                       <a class="btn btn-link btn-sm text-black" href="#">
-                        ${{ $populer->price }}
+                        {{ number_format($bestseller->price, 0, ',', '.') }}
                       </a>  
                     @else
-                      $<del>{{ $populer->price }}</del>$ 
+                      <del>
+                        {{ number_format($bestseller->price, 0, ',', '.') }}
+                      </del>
                       <a class="btn btn-link btn-sm text-black" href="#">
-                        ${{ $populer->discount_price }}
+                        {{ number_format($bestseller->discount_price, 0, ',', '.') }}
                       </a>  
                     @endif
                     <span class="float-right"> 
-                      <a class="btn btn-outline-secondary btn-sm" href="#">ADD</a>
+                      <a class="btn btn-outline-secondary btn-sm" 
+                           href="{{ route('add_to_cart', $bestseller->id) }}">
+                           ADD
+                      </a>
                     </span>
                   </p>
               </div>
@@ -168,16 +178,23 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
           <div class="bg-white rounded border shadow-sm mb-4">
             @foreach ($menu->products as $product)
               <div class="menu-list p-3 border-bottom">
-                <a class="btn btn-outline-secondary btn-sm  float-right" href="#">ADD</a>
+                <a class="btn btn-outline-secondary btn-sm  float-right" 
+                     href="{{ route('add_to_cart', $product->id) }}">
+                     ADD
+                </a>
                 <div class="media">
                     <img class="mr-3 rounded-pill" src="{{ asset($product->image) }}" alt="Generic placeholder image">
                     <div class="media-body">
                       <h6 class="mb-1">{{ $product->name }}</h6>
-                      @if ($product->size == NULL)
-                        <p class="text-gray mb-0"></p>
-                      @else
-                        <p class="text-gray mb-0">{{ $product->size }} {{ $product->unit }}</p>
-                      @endif
+                     <p class="text-gray mb-0">
+                        @if ($product->discount_price == NULL)
+                        {{ number_format($bestseller->discount_price, 0, ',', '.') }} VNĐ ({{ $product->size ?? ''}}  {{ $product->unit }})
+                        @else
+                        <del>{{ number_format($bestseller->price, 0, ',', '.') }}</del>
+                        {{ number_format($bestseller->discount_price, 0, ',', '.') }} VNĐ ({{ $product->size ?? ''}}  {{ $product->unit }})
+                        @endif
+                        {{-- ${{ $product->price }} ({{ $product->size ?? ''}}  {{ $product->unit }}) --}}
+                     </p>
                     </div>
                 </div>
               </div>
@@ -426,99 +443,74 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
    </div>
            <div class="generator-bg rounded shadow-sm mb-4 p-4 osahan-cart-item">
               <h5 class="mb-1 text-white">Your Order</h5>
-              <p class="mb-4 text-white">6 ITEMS</p>
-              <div class="bg-white rounded shadow-sm mb-2">
-                 <div class="gold-members p-2 border-bottom">
-                    <p class="text-gray mb-0 float-right ml-2">$314</p>
-                    <span class="count-number float-right">
-                    <button class="btn btn-outline-secondary  btn-sm left dec"> <i class="icofont-minus"></i> </button>
-                    <input class="count-number-input" type="text" value="1" readonly="">
-                    <button class="btn btn-outline-secondary btn-sm right inc"> <i class="icofont-plus"></i> </button>
-                    </span>
-                    <div class="media">
-                       <div class="mr-2"><i class="icofont-ui-press text-danger food-item"></i></div>
-                       <div class="media-body">
-                          <p class="mt-1 mb-0 text-black">Chicken Tikka Sub</p>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="gold-members p-2 border-bottom">
-                    <p class="text-gray mb-0 float-right ml-2">$260</p>
-                    <span class="count-number float-right">
-                    <button class="btn btn-outline-secondary  btn-sm left dec"> <i class="icofont-minus"></i> </button>
-                    <input class="count-number-input" type="text" value="1" readonly="">
-                    <button class="btn btn-outline-secondary btn-sm right inc"> <i class="icofont-plus"></i> </button>
-                    </span>
-                    <div class="media">
-                       <div class="mr-2"><i class="icofont-ui-press text-success food-item"></i></div>
-                       <div class="media-body">
-                          <p class="mt-1 mb-0 text-black">Cheese corn Roll</p>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="gold-members p-2 border-bottom">
-                    <p class="text-gray mb-0 float-right ml-2">$260</p>
-                    <span class="count-number float-right">
-                    <button class="btn btn-outline-secondary  btn-sm left dec"> <i class="icofont-minus"></i> </button>
-                    <input class="count-number-input" type="text" value="1" readonly="">
-                    <button class="btn btn-outline-secondary btn-sm right inc"> <i class="icofont-plus"></i> </button>
-                    </span>
-                    <div class="media">
-                       <div class="mr-2"><i class="icofont-ui-press text-success food-item"></i></div>
-                       <div class="media-body">
-                          <p class="mt-1 mb-0 text-black">Cheese corn Roll</p>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="gold-members p-2 border-bottom">
-                    <p class="text-gray mb-0 float-right ml-2">$056</p>
-                    <span class="count-number float-right">
-                    <button class="btn btn-outline-secondary  btn-sm left dec"> <i class="icofont-minus"></i> </button>
-                    <input class="count-number-input" type="text" value="1" readonly="">
-                    <button class="btn btn-outline-secondary btn-sm right inc"> <i class="icofont-plus"></i> </button>
-                    </span>
-                    <div class="media">
-                       <div class="mr-2"><i class="icofont-ui-press text-success food-item"></i></div>
-                       <div class="media-body">
-                          <p class="mt-1 mb-0 text-black">Coke [330 ml]</p>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="gold-members p-2 border-bottom">
-                    <p class="text-gray mb-0 float-right ml-2">$652</p>
-                    <span class="count-number float-right">
-                    <button class="btn btn-outline-secondary  btn-sm left dec"> <i class="icofont-minus"></i> </button>
-                    <input class="count-number-input" type="text" value="1" readonly="">
-                    <button class="btn btn-outline-secondary btn-sm right inc"> <i class="icofont-plus"></i> </button>
-                    </span>
-                    <div class="media">
-                       <div class="mr-2"><i class="icofont-ui-press text-danger food-item"></i></div>
-                       <div class="media-body">
-                          <p class="mt-1 mb-0 text-black">Black Dal Makhani</p>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="gold-members p-2">
-                    <p class="text-gray mb-0 float-right ml-2">$122</p>
-                    <span class="count-number float-right">
-                    <button class="btn btn-outline-secondary  btn-sm left dec"> <i class="icofont-minus"></i> </button>
-                    <input class="count-number-input" type="text" value="1" readonly="">
-                    <button class="btn btn-outline-secondary btn-sm right inc"> <i class="icofont-plus"></i> </button>
-                    </span>
-                    <div class="media">
-                       <div class="mr-2"><i class="icofont-ui-press text-danger food-item"></i></div>
-                       <div class="media-body">
-                          <p class="mt-1 mb-0 text-black">Mixed Veg</p>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-              <div class="mb-2 bg-white rounded p-2 clearfix">
-                 <img class="img-fluid float-left" src="img/wallet-icon.png">
-                 <h6 class="font-weight-bold text-right mb-2">Subtotal : <span class="text-danger">$456.4</span></h6>
-                 <p class="seven-color mb-1 text-right">Extra charges may apply</p>
-                 <p class="text-black mb-0 text-right">You have saved $955 on the bill</p>
-              </div>
+              <p class="mb-4 text-white">{{ count((array) session('cart')) }} Items</p>
+
+<div class="bg-white rounded shadow-sm mb-2">
+
+@php
+    $total = 0;
+@endphp
+
+ @if (session('cart'))
+    @foreach (session('cart') as $id=>$details)
+
+    @php
+      //   $total += $details['price'] * $details['quantity']
+      $total += (float) $details['price'] * (int) $details['quantity'];
+        
+    @endphp
+        
+      <div class="gold-members p-2 border-bottom">
+         <p class="text-gray mb-0 float-right ml-2 item-total" id="item-total-{{ $id }}">
+            {{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}
+         </p>
+         <span class="count-number float-right">
+
+         <button class="btn btn-outline-secondary  btn-sm left dec" 
+                  data-id="{{ $id }}">
+            <i class="icofont-minus"></i> 
+         </button>
+
+         <input class="count-number-input" type="text" 
+                  value="{{ $details['quantity'] }}" 
+                  id="qty-{{ $id }}"
+                  readonly="">
+
+         <button class="btn btn-outline-secondary btn-sm right inc" 
+                  data-id="{{ $id }}"> 
+            <i class="icofont-plus"></i> 
+         </button>
+
+         <button class="btn btn-outline-danger btn-sm right remove"
+                  data-id="{{ $id }}"> 
+            <i class="icofont-trash"></i> 
+         </button>
+
+         </span>
+         <div class="media">
+            <div class="mr-2">
+               <img src="{{ asset($details['image']) }}" alt="" width="25px"></img>
+            </div>
+            <div class="media-body">
+               <p class="mt-1 mb-0 text-black">{{ $details['name'] }}</p>
+            </div>
+         </div>
+      </div>
+
+      @endforeach
+  @else
+      
+  @endif
+
+</div>
+
+
+<div class="mb-2 bg-white rounded p-2 clearfix">
+   <img class="img-fluid float-left" src="{{ asset('frontend/img/wallet-icon.png') }}">
+   <h6 class="font-weight-bold text-right mb-2">Subtotal : <span class="text-danger">{{ number_format($total, 0, ',', '.') }} VNĐ</span></h6>
+   <p class="seven-color mb-1 text-right">Extra charges may apply</p>
+   <p class="text-black mb-0 text-right">You have saved $955 on the bill</p>
+</div>
               <a href="checkout.html" class="btn btn-success btn-block btn-lg">Checkout <i class="icofont-long-arrow-right"></i></a>
            </div>
    
@@ -531,8 +523,84 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
   </div>
 </section>
 
+<script>
+   $(document).ready(function(){
+      const Toast = Swal.mixin({
+         toast: true,
+         position: 'top-end',
+         showConfirmButton: false,
+         timer: 1500,
+         timerProgressBar: true,
+         didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+         }
+      });
 
+      $('.inc').on('click', function() {
+         var id = $(this).data('id');
+         var input = $(this).closest('span').find('input');
+         var newQuantity = parseInt(input.val()) + 1;
+         updateQuantity(id, newQuantity);
+      });
 
+      $('.dec').on('click', function() {
+         var id = $(this).data('id');
+         var input = $(this).closest('span').find('input');
+         var newQuantity = parseInt(input.val()) - 1;
+         if (newQuantity >= 1) {
+            updateQuantity(id, newQuantity);
+         }
+      });
+
+      $('.remove').on('click', function() {
+         var id = $(this).data('id');
+         removeFromCart(id);
+      });
+
+      
+      function updateQuantity(id, quantity) {
+         $.ajax({
+            url: '{{ route("cart.updateQuantity") }}',
+            method: 'POST',
+            data: {
+               _token: '{{ csrf_token() }}',
+               id: id,
+               quantity: quantity,
+            },
+            success: function (response) {
+               Toast.fire({
+                  icon: 'success',
+                  title: 'Quantity Updated'
+               }).then(() => {
+                  location.reload();
+               });
+            }
+         });
+      }
+      
+      function removeFromCart(id) {
+         $.ajax({
+            url: '{{ route("cart.remove") }}',
+            method: 'POST',
+            data: {
+               _token: '{{ csrf_token() }}',
+               id: id,
+            },
+            success: function (response) {
+               Toast.fire({
+                  icon: 'success',
+                  title: 'Cart Remove Successfully'
+               }).then(() => {
+                  location.reload();
+               });
+            }
+         });
+      }
+
+   });
+
+</script>
 
 
 @endsection

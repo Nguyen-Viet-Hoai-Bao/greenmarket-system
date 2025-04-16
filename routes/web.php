@@ -14,6 +14,7 @@ use App\Http\Controllers\Client\GalleryController;
 use App\Http\Controllers\Client\CouponController;
 use App\Http\Controllers\Admin\ManageController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\CartController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -217,11 +218,11 @@ Route::controller(HomeController::class)->group(function(){
     Route::get('/market/details/{id}', 'MarketDetails')->name('market.details');
     Route::post('/add-wish-list/{id}', 'AddWishlist');
 
-    // Route::post('/store/coupon', 'StoreCoupon')->name('coupon.store');
-    
-    // Route::get('/edit/coupon/{id}', 'EditCoupon')->name('edit.coupon');
-    // Route::post('/update/coupon', 'UpdateCoupon')->name('coupon.update');
-    
-    // Route::get('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon');
-    // Route::get('/changeStatus', 'ChangeStatus');
+});
+
+Route::controller(CartController::class)->group(function(){
+    Route::get('/add_to_cart/{id}', 'AddToCart')->name('add_to_cart');
+    Route::post('/cart/updateQuantity', 'UpdateCartQuantity')->name('cart.updateQuantity');
+    Route::post('/cart/remove', 'CartRemove')->name('cart.remove');
+
 });
