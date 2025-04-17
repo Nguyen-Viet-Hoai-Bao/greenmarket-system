@@ -64,6 +64,20 @@
                     <li>
                         <a href="javascript: void(0);" class="has-arrow">
                             <i data-feather="grid"></i>
+                            <span data-key="t-apps">Manage orders</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li>
+                                <a href="{{ route('all.clients.orders') }}">
+                                    <span data-key="t-calendar">All orders</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow">
+                            <i data-feather="grid"></i>
                             <span data-key="t-apps">Gallery</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
