@@ -37,6 +37,12 @@ Route::middleware('auth')->group(function () {
     // Wishlist Data For User
     Route::get('/all/wishlist', [HomeController::class, 'AllWishlist'])->name('all.wishlist');
     Route::get('/remove/wishlist/{id}', [HomeController::class, 'RemoveWishlist'])->name('remove.wishlist');
+
+    // Order Data For User
+    Route::controller(ManageOrderController::class)->group(function(){
+        Route::get('/user/order/list', 'UserOrderList')->name('user.order.list');
+        Route::get('/user/order/details/{id}', 'UserOrderDetails')->name('user.order.details'); 
+    });
 });
 
 require __DIR__.'/auth.php';
@@ -219,8 +225,13 @@ Route::middleware(['client', 'status'])->group(function () {
         Route::post('/update/coupon', 'UpdateCoupon')->name('coupon.update');
         
         Route::get('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon');
-        // Route::get('/changeStatus', 'ChangeStatus');
     });
+    
+    Route::controller(ManageOrderController::class)->group(function(){
+        Route::get('/all/clients/orders', 'AllClientsOrders')->name('all.clients.orders');
+        Route::get('/client/order/details/{id}', 'ClientOrderDetails')->name('client.order.details');
+    });
+
 }); // End Client Middleware
 
 /// For All User
@@ -253,5 +264,4 @@ Route::controller(ManageOrderController::class)->group(function(){
     Route::get('/pening_to_confirm/{id}', 'PeningToConfirm')->name('pening_to_confirm');
     Route::get('/confirm_to_processing/{id}', 'ConfirmToProcessing')->name('confirm_to_processing');
     Route::get('/processing_to_deliverd/{id}', 'ProcessingToDiliverd')->name('processing_to_deliverd');
-
 });
