@@ -89,9 +89,15 @@
     <h6 class="mb-3 mt-0">Cash</h6>
     <p>Please keep exact change handy to help us serve you better</p>
     <hr>
-    <form>
-      <a href="thanks.html" class="btn btn-success btn-block btn-lg">PAY $1329
-      <i class="icofont-long-arrow-right"></i></a>
+    <form action="{{ route('cash_order') }}" method="POST">
+      @csrf
+      <input type="hidden" name="name" id="" value="{{ Auth::user()->name }}">
+      <input type="hidden" name="email" id="" value="{{ Auth::user()->email }}">
+      <input type="hidden" name="phone" id="" value="{{ Auth::user()->phone }}">
+      <input type="hidden" name="address" id="" value="{{ Auth::user()->address }}">
+
+      <button type="submit" class="btn btn-success btn-block btn-lg">PAY
+      <i class="icofont-long-arrow-right"></i></butt>
     </form>
   </div>
                     
