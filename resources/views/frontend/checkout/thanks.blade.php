@@ -11,7 +11,8 @@
            <img class="img-fluid mb-5" src="{{ asset('frontend/img/thanks.png') }}" alt="404">
            <h1 class="mt-2 mb-2 text-success">Chúc mừng!</h1>
            <p class="mb-5">Bạn đã đặt hàng thành công</p>
-           <a class="btn btn-primary btn-lg" href="orders.html#orders">Xem đơn hàng :)</a>
+           <a class="btn btn-primary btn-lg" href="{{ url('/user/order/list') }}">Xem đơn hàng :)</a>
+           <a class="btn btn-primary btn-lg" href="{{ url('/') }}">Trở về trang chủ</a>
         </div>
      </div>
   </div>
