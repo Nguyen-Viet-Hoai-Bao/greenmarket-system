@@ -183,16 +183,22 @@
                      </td>
                      <td class="col-md-2">
                          <label>
-                             {{ $item->price }} <br> Total = $ {{ $item->price * $item->qty }}
+                            {{ number_format($item->price, 0, ',', '.') }}
+                         </label>
+                         <label class="text-danger">
+                            Tổng: {{ number_format($item->price * $item->qty, 0, ',', '.') }} VNĐ
                          </label>
                      </td> 
                  </tr> 
                  @endforeach 
                              </tbody>
                          </table>
-                 <div>
-                     <h4>Total Price: $ {{ $totalPrice }}</h4>
-                 </div>
+                <div>
+                    <h6>Tổng cộng: {{ number_format($totalPrice, 0, ',', '.') }} VNĐ</h6>
+                </div>
+                <div>
+                    <h4  class="text-success">Tổng thanh toán: {{ number_format($totalAmount, 0, ',', '.') }} VNĐ</h4>
+                </div>
              
                      </div>
              

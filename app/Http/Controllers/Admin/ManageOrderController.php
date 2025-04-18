@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\Product;
 use App\Models\Coupon;
@@ -117,11 +118,14 @@ class ManageOrderController extends Controller
     // End Method
     
     public function ClientOrderDetails($id) {
+        $clientId = Auth::guard('client')->id();
+
         $order = Order::with('user')
                         ->where('id', $id)
                         ->first();
         $orderItem = OrderItem::with('product')
                         ->where('order_id', $id)
+                        ->where('client_id', $clientId)
                         ->orderBy('id', 'desc')
                         ->get();
 
@@ -160,12 +164,51 @@ class ManageOrderController extends Controller
                        ->orderBy('id', 'desc')
                        ->get();
 
+        $totalAmount = $order->total_amount;
+
         $totalPrice = 0;
         foreach($orderItem as $item){
             $totalPrice += $item->price * $item->qty;
         }
 
-        return view('frontend.dashboard.order.order_details',compact('order','orderItem','totalPrice'));
+        return view('frontend.dashboard.order.order_details',compact('order','orderItem','totalPrice', 'totalAmount'));
+    }
+     //End Method 
+     
+    public function UserInvoiceDownload($id){
+        $order = Order::with('user')
+                        ->where('id', $id)
+                        ->where('user_id', Auth::id())
+                        ->first();
+
+        $orderItem = OrderItem::with('product')
+                       ->where('order_id', $id)
+                       ->orderBy('id', 'desc')
+                       ->get();
+
+        $totalAmount = $order->total_amount;
+
+        $totalPrice = 0;
+        foreach($orderItem as $item){
+            $totalPrice += $item->price * $item->qty;
+        }
+
+        $discountAmount = $totalPrice - $totalAmount; 
+        $discountPercent = 0;
+
+        if ($totalPrice > 0) {
+            $discountPercent = ($discountAmount / $totalPrice) * 100; 
+        }
+
+        $pdf = Pdf::loadView('frontend.dashboard.order.invoice_download', compact('order', 'orderItem', 'totalPrice', 'totalAmount', 'discountAmount', 'discountPercent'))
+                    ->setPaper('a4')
+                    ->setOption([
+                        'tempDir' => public_path(),
+                        'chroot' => public_path(),
+                    ]);
+        
+        return $pdf->download('invoice.pdf');
+
     }
      //End Method 
 }
