@@ -19,6 +19,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\ReviewController;
+use App\Http\Controllers\Frontend\FilterController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -300,5 +301,11 @@ Route::controller(ManageOrderController::class)->group(function(){
 
 Route::controller(ReviewController::class)->group(function(){
     Route::post('/store/review', 'StoreReview')->name('store.review');  
+    
+});
+
+Route::controller(FilterController::class)->group(function(){
+    Route::get('/list/market', 'ListMarket')->name('list.market');  
+    Route::get('/filter/products', 'FilterProducts')->name('filter.products');
     
 });
