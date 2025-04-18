@@ -114,6 +114,18 @@
                             </li>
                         </ul>
                     </li>
+                    
+                    <li class="menu-title mt-2" data-key="t-components">Elements</li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow">
+                            <i data-feather="briefcase"></i>
+                            <span data-key="t-components">Manage Reports</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="{{ route('client.all.reports') }}" data-key="t-alerts">All Reports</a></li>
+                        </ul>
+                    </li>
 
                 @else 
 

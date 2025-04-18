@@ -110,7 +110,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('deliverd.order') }}">
+                            <a href="{{ route('delivered.order') }}">
                                 <span data-key="t-chat">Đơn hàng đã giao</span>
                             </a>
                         </li>
@@ -131,27 +131,15 @@
                     </ul>
                 </li>
 
-              <li>
-                  <a href="javascript: void(0);" class="has-arrow">
-                      <i data-feather="users"></i>
-                      <span data-key="t-authentication">Authentication</span>
-                  </a>
-                  <ul class="sub-menu" aria-expanded="false">
-                      <li><a href="auth-login.html" data-key="t-login">Login</a></li>
-                      <li><a href="auth-register.html" data-key="t-register">Register</a></li>
-                  </ul>
-              </li>
-
               <li class="menu-title mt-2" data-key="t-components">Elements</li>
 
               <li>
                   <a href="javascript: void(0);" class="has-arrow">
                       <i data-feather="briefcase"></i>
-                      <span data-key="t-components">Components</span>
+                      <span data-key="t-components">Manage Reports</span>
                   </a>
                   <ul class="sub-menu" aria-expanded="false">
-                      <li><a href="ui-alerts.html" data-key="t-alerts">Alerts</a></li>
-                      <li><a href="ui-buttons.html" data-key="t-buttons">Buttons</a></li>
+                      <li><a href="{{ route('admin.all.reports') }}" data-key="t-alerts">All Reports</a></li>
                   </ul>
               </li>
 

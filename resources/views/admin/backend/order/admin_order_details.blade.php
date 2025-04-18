@@ -113,7 +113,7 @@
                                                 Đã xác nhận
                                             @elseif ($order->status == 'processing')
                                                 Đang xử lý
-                                            @elseif ($order->status == 'deliverd')
+                                            @elseif ($order->status == 'delivered')
                                                 Đã giao hàng
                                             @else
                                                 Không xác định
@@ -130,7 +130,7 @@
                                         @elseif ($order->status == 'confirm')
                                             <a href="{{ route('confirm_to_processing',$order->id) }}" class="btn btn-block btn-success" id="processingOrder">Đang xử lý đơn hàng</a>
                                         @elseif ($order->status == 'processing')
-                                            <a href="{{ route('processing_to_deliverd',$order->id) }}" class="btn btn-block btn-success" id="deliverdOrder">Giao đơn hàng</a>
+                                            <a href="{{ route('processing_to_delivered',$order->id) }}" class="btn btn-block btn-success" id="deliveredOrder">Giao đơn hàng</a>
                                         @endif
                                     </td>
                                 </tr>

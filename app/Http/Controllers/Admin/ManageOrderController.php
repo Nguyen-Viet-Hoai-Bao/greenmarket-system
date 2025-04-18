@@ -41,11 +41,11 @@ class ManageOrderController extends Controller
     }
     // End Method
     
-    public function DeliverdOrder() {
-        $allData = Order::where('status', 'deliverd')
+    public function DeliveredOrder() {
+        $allData = Order::where('status', 'delivered')
                         ->orderBy('id', 'desc')
                         ->get();
-        return view('admin.backend.order.deliverd_order', compact('allData'));
+        return view('admin.backend.order.delivered_order', compact('allData'));
     }
     // End Method
     
@@ -93,13 +93,13 @@ class ManageOrderController extends Controller
     // End Method
 
     public function ProcessingToDiliverd($id) {
-        Order::find($id)->update(['status' => 'deliverd']);
+        Order::find($id)->update(['status' => 'delivered']);
         
         $notification = array(
             'message' => 'Đơn hàng đã được giao thành công',
             'alert-type' => 'success'
         );
-        return redirect()->route('deliverd.order')->with($notification);
+        return redirect()->route('delivered.order')->with($notification);
     }
     // End Method
 
