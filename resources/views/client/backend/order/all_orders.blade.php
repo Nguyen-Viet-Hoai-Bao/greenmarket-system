@@ -60,8 +60,8 @@
                   <span class="badge bg-primary">Confirm</span>
                   @elseif ($order->status == 'processing')
                   <span class="badge bg-warning">Processing</span>
-                  @elseif ($order->status == 'deliverd')
-                  <span class="badge bg-success">Deliverd</span>
+                  @elseif ($order->status == 'delivered')
+                  <span class="badge bg-success">Delivered</span>
                   @endif
                  </td>                
              

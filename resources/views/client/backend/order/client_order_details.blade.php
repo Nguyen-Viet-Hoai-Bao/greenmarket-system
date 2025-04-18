@@ -113,7 +113,7 @@
                                                 Đã xác nhận
                                             @elseif ($order->status == 'processing')
                                                 Đang xử lý
-                                            @elseif ($order->status == 'deliverd')
+                                            @elseif ($order->status == 'delivered')
                                                 Đã giao hàng
                                             @else
                                                 Không xác định
