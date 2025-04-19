@@ -89,7 +89,7 @@ Route::middleware('admin')->group(function () {
 
     // ALL ADMIN CATEGORY
     Route::controller(CategoryController::class)->group(function(){
-        Route::get('/all/category', 'AllCategory')->name('all.category');
+        Route::get('/all/category', 'AllCategory')->name('all.category')->middleware('permission:category.all');
         
         Route::get('/add/category', 'AddCategory')->name('add.category');
         Route::post('/store/category', 'StoreCategory')->name('category.store');
@@ -193,7 +193,7 @@ Route::middleware('admin')->group(function () {
         Route::get('/reviewchangeStatus', 'ReviewChangeStatus'); 
     });
     
-    // ALL ADMIN REVIEW 
+    // ALL ADMIN PERMISSION 
     Route::controller(RoleController::class)->group(function(){
         Route::get('/all/permission', 'AllPermission')->name('all.permission');
         Route::get('/add/permission', 'AddPermission')->name('add.permission');
@@ -205,8 +205,40 @@ Route::middleware('admin')->group(function () {
         Route::get('/import/permission', 'ImportPermission')->name('import.permission');
         Route::get('/export', 'Export')->name('export');
         Route::post('/import', 'Import')->name('import');
-        
+    });
+    
+    // ALL ADMIN ROLES 
+    Route::controller(RoleController::class)->group(function(){
+        Route::get('/all/roles', 'AllRoles')->name('all.roles');
+        Route::get('/add/roles', 'AddRoles')->name('add.roles');
+        Route::post('/store/roles', 'StoreRoles')->name('roles.store');
+        Route::get('/edit/roles/{id}', 'EditRoles')->name('edit.roles');
+        Route::post('/update/roles', 'UpdateRoles')->name('roles.update');
+        Route::get('/delete/roles/{id}', 'DeleteRoles')->name('delete.roles');
+    });
 
+    // ALL ADMIN ROLES IN PERMISSION 
+    Route::controller(RoleController::class)->group(function(){
+        Route::get('/add/roles/permission', 'AddRolesPermission')->name('add.roles.permission');
+        Route::post('/role/permission/store', 'RolePermissionStore')->name('role.permission.store');
+        Route::get('/all/roles/permission', 'AllRolesPermission')->name('all.roles.permission');
+
+        Route::get('/admin/edit/roles/{id}', 'AdminEditRoles')->name('admin.edit.roles');
+        Route::post('/admin/roles/update/{id}', 'AdminRolesUpdate')->name('admin.roles.update');
+
+        Route::get('/admin/delete/roles/{id}', 'AdminDeleteRoles')->name('admin.delete.roles');
+    });
+
+    // MULTI ADMIN
+    Route::controller(RoleController::class)->group(function(){
+        Route::get('/all/admin', 'AllAdmin')->name('all.admin'); 
+        Route::get('/add/admin', 'AddAdmin')->name('add.admin');
+        Route::post('/admin/store', 'AdminStore')->name('admin.store');
+
+        Route::get('/edit/admin/{id}', 'Editadmin')->name('edit.admin');
+        Route::post('/admin/update/{id}', 'AdminUpdate')->name('admin.update');
+
+        Route::get('/delete/admin/{id}', 'DeleteAdmin')->name('delete.admin');
     });
 
 }); // End Admin Middleware

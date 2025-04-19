@@ -49,10 +49,15 @@
                     alt=""
                     style="width: 70px; heigh:40px;"></td>
             <td>
-              <a href="{{ route('edit.category', $item->id) }}"
-                  class="btn btn-info waves-effect waves-light">Edit</a>
-              <a href="{{ route('delete.category', $item->id) }}" 
-                  class="btn btn-danger waves-effect waves-light" id="delete">Delete</a>
+                @if (Auth::guard('admin')->user()->can('category.edit'))
+                    <a href="{{ route('edit.category', $item->id) }}"
+                        class="btn btn-info waves-effect waves-light">Edit</a>
+                @endif
+
+                @if (Auth::guard('admin')->user()->can('category.delete'))
+                    <a href="{{ route('delete.category', $item->id) }}" 
+                        class="btn btn-danger waves-effect waves-light" id="delete">Delete</a>
+                @endif
             </td>
         </tr>
       @endforeach
