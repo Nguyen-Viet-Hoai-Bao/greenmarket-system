@@ -7,14 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Notification;
 use Carbon\Carbon;
+
+use App\Notifications\OrderComplete;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Admin;
 
 class OrderController extends Controller
 {
     public function CashOrder(Request $request) {
+
+        $user = Admin::where('role', 'admin')
+                        ->get();
+
         $validateData = $request->validate([
             'name' => 'required',
             'email' => 'required',
@@ -80,6 +88,9 @@ class OrderController extends Controller
         if (Session::has('cart')) {
             Session::forget('cart');
         } 
+
+        // Send Notification to Admin
+        Notification::send($user, new OrderComplete($request->name));
         
         $notification = array(
             'message' => 'Đặt hàng thành công',
@@ -89,4 +100,22 @@ class OrderController extends Controller
         
     }
     // End Method
+
+
+
+
+
+
+
+
+    public function MarkAsRead(Request $request, $notificationId){
+        $user = Auth::guard('admin')->user();
+        $notification = $user->notifications()->where('id',$notificationId)->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['count' => $user->unreadNotifications()->count()]);
+    }
+    //End Method 
 }
