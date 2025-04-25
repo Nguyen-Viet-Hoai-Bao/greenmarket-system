@@ -74,10 +74,11 @@
                             <i class="icofont-money"></i> 
                               Pay on Delivery
                           </a>
-                          <a class="nav-link" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
-                            <i class="icofont-credit-card"></i> 
-                              Credit/Debit Cards
+                          <a class="nav-link" id="v-pills-vnpay-tab" data-toggle="pill" href="#v-pills-vnpay" role="tab" aria-controls="v-pills-vnpay" aria-selected="false">
+                            <i class="icofont-bank-transfer"></i>
+                            VNPay
                           </a>
+                        
 
 
                        </div>
@@ -147,6 +148,38 @@
       </div>
     </form>
   </div>
+
+  @php
+    $total_1 = 0; // Khởi tạo tổng số tiền
+    // Kiểm tra nếu giỏ hàng có tồn tại trong session
+    if (session('cart')) {
+        // Duyệt qua từng sản phẩm trong giỏ hàng
+        foreach (session('cart') as $id => $details) {
+            // Tính tổng giá trị của giỏ hàng
+            $total_1 += (float) $details['price'] * (int) $details['quantity'];
+        }
+    }
+  @endphp
+
+  <div class="tab-pane fade" id="v-pills-vnpay" role="tabpanel" aria-labelledby="v-pills-vnpay-tab">
+    <h6 class="mb-3 mt-0">Thanh toán VNPay</h6>
+    <p>Vui lòng nhập số tiền bạn muốn thanh toán bằng VNPay:</p>
+    <form method="POST" action="{{ url('/create-payment') }}">
+        @csrf
+        <input type="hidden" name="name" id="" value="{{ Auth::user()->name }}">
+        <input type="hidden" name="email" id="" value="{{ Auth::user()->email }}">
+        <input type="hidden" name="phone" id="" value="{{ Auth::user()->phone }}">
+        <input type="hidden" name="address" id="" value="{{ Auth::user()->address }}">  
+        <div class="form-group">
+            <label for="amount">Số tiền (VNĐ)</label>
+            <input type="number" name="amount" class="form-control" value="{{ $total_1 }}" placeholder="Nhập số tiền">
+        </div>
+        <button type="submit" class="btn btn-success btn-block btn-lg">Thanh toán qua VNPay
+            <i class="icofont-long-arrow-right"></i>
+        </button>
+    </form>
+</div>
+
 
 
 
