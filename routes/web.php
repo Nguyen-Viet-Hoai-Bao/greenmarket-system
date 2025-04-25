@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VnpayController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\DistrictController;
@@ -339,6 +340,9 @@ Route::controller(CartController::class)->group(function(){
 
 Route::controller(OrderController::class)->group(function(){
     Route::post('/cash_order', 'CashOrder')->name('cash_order');
+    Route::post('/vnpay_order', 'VnpayOrder')->name('vnpay_order');
+
+    Route::get('/checkout/thanks', 'CheckoutThanks')->name('checkout.thanks');
 
     Route::post('/mark-notification-as-read/{notification}', 'MarkAsRead');
 
@@ -360,3 +364,9 @@ Route::controller(FilterController::class)->group(function(){
     Route::get('/filter/products', 'FilterProducts')->name('filter.products');
     
 });
+
+
+
+///////////////// VNPAY ///////////////
+Route::post('/create-payment', [VnpayController::class, 'create']);
+Route::get('/return-vnpay', [VnpayController::class, 'return'])->name('return-vnpay');
