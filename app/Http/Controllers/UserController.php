@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Menu;
+use App\Models\City;
+use App\Models\Ward;
 use App\Models\ProductNew;
 use Illuminate\Support\Facades\DB;
 
@@ -24,8 +27,33 @@ class UserController extends Controller
                                     ->where('client_id', $topClientId)
                                     ->orderBy('id', 'desc')
                                     ->get();
+        $cities = City::all();
+        $menus = Menu::all();
 
-        return view('frontend.index', compact('products_list'));
+        $fullAddress = null;
+        if (session()->has('selected_market_ward_id')) {
+            $ward = Ward::with('district.city')->find(session('selected_market_ward_id'));
+        
+            if ($ward && $ward->district && $ward->district->city) {
+                $fullAddress = $ward->ward_name . ', ' 
+                             . $ward->district->district_name . ', ' 
+                             . $ward->district->city->city_name;
+            }
+        }
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+        return view('frontend.index', compact('products_list', 'cities', 'fullAddress', 'menus', 'menus_footer', 'products_list'));
     }
     // End Method
     
@@ -74,7 +102,20 @@ class UserController extends Controller
     //End Method
 
     public function ChangePassword() {
-        return view('frontend.dashboard.change_password');        
+        $cities = City::all();
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
+        return view('frontend.dashboard.change_password', compact('cities', 'menus_footer', 'products_list'));        
     }
     //End Method
     

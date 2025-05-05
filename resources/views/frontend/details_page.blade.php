@@ -4,11 +4,23 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 @php
-$products = App\Models\Product::where('client_id', $client->id)->limit(3)->get();
-$menuNames = $products->map(function($product){
-  return $product->menu->menu_name;
-})->unique()->toArray();
+// $products = App\Models\ProductNew::with('productTemplate.menu')
+//     ->where('client_id', $client->id)
+//     ->limit(3)
+//     ->get();
+$products = \App\Models\ProductNew::with('productTemplate.menu')
+   ->where('client_id', $client->id)
+   ->get()
+   ->groupBy(fn($product) => $product->productTemplate?->menu?->id)
+   ->map(fn($group) => $group->take(3))
+   ->flatten();
+
+$menuNames = $products->map(function($product) {
+    return $product->productTemplate?->menu?->menu_name;
+})->filter()->unique()->toArray();
+
 $menuNamesString = implode('. ', $menuNames);
+
 $coupons = App\Models\Coupon::where('client_id', $client->id)
                     ->where('status', '1')->first();
 @endphp
@@ -24,7 +36,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
               <div class="restaurant-detailed-header-left">
                  <img class="img-fluid mr-3 float-left" alt="osahan" src="{{ asset('upload/client_images/'. $client->photo) }}">
                  <h2 class="text-white">{{ $client->name }}</h2>
-                 <p class="text-white mb-1"><i class="icofont-location-pin"></i> {{ $client->address }} <span class="badge badge-success">OPEN</span>
+                 <p class="text-white mb-1"><i class="icofont-location-pin"></i> {{ $client->fullAddress }} <span class="badge badge-success">OPEN</span>
                  </p>
                  <p class="text-white mb-0"><i class="icofont-food-cart"></i> {{ $menuNamesString }}</p>
               </div>
@@ -33,7 +45,12 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
               <div class="restaurant-detailed-header-right text-right">
                  <button class="btn btn-success" type="button"><i class="icofont-clock-time"></i> 25–35 min
                  </button>
-                 <h6 class="text-white mb-0 restaurant-detailed-ratings"><span class="generator-bg rounded text-white"><i class="icofont-star"></i> 3.1</span> 23 Ratings  <i class="ml-3 icofont-speech-comments"></i> 91 reviews</h6>
+                 <h6 class="text-white mb-0 restaurant-detailed-ratings">
+                  <span class="generator-bg rounded text-white">
+                     <i class="icofont-star"></i> {{ $roundedAverageRating }}
+                  </span> 
+                  {{ $totalReviews }} Ratings 
+                  <i class="ml-3 icofont-speech-comments"></i> {{ $reviews->count() }} reviews                  
               </div>
            </div>
         </div>
@@ -46,7 +63,21 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
      <div class="row">
         <div class="col-md-12">
            <span class="restaurant-detailed-action-btn float-right">
-           <button class="btn btn-light btn-sm border-light-btn" type="button"><i class="icofont-heart text-danger"></i> Mark as Favourite</button>
+            @auth
+               @php
+               $isFavourite = auth()->user()
+                           ->favourites()
+                           ->where('client_id', $client->id)
+                           ->exists();
+               @endphp
+               <button class="btn btn-light btn-sm border-light-btn" type="button" onclick="addWishlist({{ $client->id }})">
+                  <i id="heart-icon-{{ $client->id }}" class="icofont-heart {{ $isFavourite ? 'text-danger' : 'text-muted' }}"></i>
+                  <span id="favourite-label-{{ $client->id }}">
+                     {{ $isFavourite ? 'Unmark Favourite' : 'Mark as Favourite' }}
+                  </span>
+               </button>
+            @endauth
+        
            <button class="btn btn-light btn-sm border-light-btn" type="button"><i class="icofont-cauli-flower text-success"></i>  Pure Veg</button>
            <button class="btn btn-outline-danger btn-sm" type="button"><i class="icofont-sale-discount"></i>  OFFERS</button>
            </span>
@@ -58,11 +89,11 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                  <a class="nav-link" id="pills-gallery-tab" data-toggle="pill" href="#pills-gallery" role="tab" aria-controls="pills-gallery" aria-selected="false">Gallery</a>
               </li>
               <li class="nav-item">
-                 <a class="nav-link" id="pills-restaurant-info-tab" data-toggle="pill" href="#pills-restaurant-info" role="tab" aria-controls="pills-restaurant-info" aria-selected="false">Restaurant Info</a>
+                 <a class="nav-link" id="pills-restaurant-info-tab" data-toggle="pill" href="#pills-restaurant-info" role="tab" aria-controls="pills-restaurant-info" aria-selected="false">Market Info</a>
               </li>
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                  <a class="nav-link" id="pills-book-tab" data-toggle="pill" href="#pills-book" role="tab" aria-controls="pills-book" aria-selected="false">Book A Table</a>
-              </li>
+              </li> --}}
               <li class="nav-item">
                  <a class="nav-link" id="pills-reviews-tab" data-toggle="pill" href="#pills-reviews" role="tab" aria-controls="pills-reviews" aria-selected="false">Ratings & Reviews</a>
               </li>
@@ -177,40 +208,50 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
    @endforeach
  </div>
  
+ @foreach ($menus as $menu)
+ <div class="row">
+   <h5 class="mb-4 mt-3 col-md-12">
+       {{ $menu->menu_name }}
+       <small class="h6 text-black-50">{{ $menu->products->sum(fn($p) => $p->productNews->count()) }} ITEMS</small>
+   </h5>
+   <div class="col-md-12">
+     <div class="bg-white rounded border shadow-sm mb-4">
+       @foreach ($menu->products as $productTemplate)
+         @foreach ($productTemplate->productNews as $product)
+           <div class="menu-list p-3 border-bottom">
+             <a class="btn btn-outline-secondary btn-sm float-right" 
+                href="{{ route('add_to_cart', $product->id) }}">
+                ADD
+             </a>
+             <div class="media">
+                 <img class="mr-3 rounded-pill" src="{{ asset($productTemplate->image ?? 'upload/no_image.jpg') }} " alt="{{ $product->name }}">
+                 <div class="media-body">
+                   <h6 class="mb-1">{{ $productTemplate->name }}</h6>
+                   <p class="text-gray mb-0">
+                     @if ($product->discount_price == NULL)
+                       {{ number_format($product->price, 0, ',', '.') }} VNĐ 
+                     @else
+                       <del>{{ number_format($product->price, 0, ',', '.') }}</del> 
+                       {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ 
+                     @endif
+                     ({{ $productTemplate->size ?? '' }} {{ $productTemplate->unit }})
+                   </p>
+                 </div>
+             </div>
+           </div>
+         @endforeach
+       @endforeach
 
-{{-- menus --}}
-  @foreach ($menus as $menu)
-    <div class="row">
-        <h5 class="mb-4 mt-3 col-md-12">{{ $menu->menu_name }} <small class="h6 text-black-50">{{ $menu->products->count() }} ITEMS</small></h5>
-        <div class="col-md-12">
-          <div class="bg-white rounded border shadow-sm mb-4">
-            @foreach ($menu->products as $product)
-              <div class="menu-list p-3 border-bottom">
-                <a class="btn btn-outline-secondary btn-sm  float-right" 
-                     href="{{ route('add_to_cart', $product->id) }}">
-                     ADD
-                </a>
-                <div class="media">
-                    <img class="mr-3 rounded-pill" src="{{ asset($product->image) }}" alt="Generic placeholder image">
-                    <div class="media-body">
-                      <h6 class="mb-1">{{ $product->name }}</h6>
-                     <p class="text-gray mb-0">
-                        @if ($product->discount_price == NULL)
-                        {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ ({{ $product->size ?? ''}}  {{ $product->unit }})
-                        @else
-                        <del>{{ number_format($product->price, 0, ',', '.') }}</del>
-                        {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ ({{ $product->size ?? ''}}  {{ $product->unit }})
-                        @endif
-                        {{-- ${{ $product->price }} ({{ $product->size ?? ''}}  {{ $product->unit }}) --}}
-                     </p>
-                    </div>
-                </div>
-              </div>
-            @endforeach
-          </div>
-        </div>
+       
+     </div>
+     
+     <div class="text-center my-3">
+      <a href="{{ route('list.market') }}" class="btn btn-success px-4 py-2">Xem thêm <i class="icofont-long-arrow-right"></i></a>
     </div>
-  @endforeach
+   </div>
+ </div>
+@endforeach
+
                     
 </div>
 
@@ -231,38 +272,45 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
   </div>
 </div>
 
-{{-- pills-restaurant-info --}}
+{{-- pills-market-info --}}
 <div class="tab-pane fade" id="pills-restaurant-info" role="tabpanel" aria-labelledby="pills-restaurant-info-tab">
-  <div id="restaurant-info" class="bg-white rounded shadow-sm p-4 mb-4">
-      <div class="address-map float-right ml-5">
-        <div class="mapouter">
-            <div class="gmap_canvas"><iframe width="300" height="170" id="gmap_canvas" src="https://maps.google.com/maps?q=university%20of%20san%20francisco&t=&z=9&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe></div>
-        </div>
-      </div>
-      <h5 class="mb-4">Restaurant Info</h5>
-      <p class="mb-3">{{ $client->address }} </p>
-      <p class="mb-2 text-black"><i class="icofont-phone-circle text-primary mr-2"></i> {{ $client->phone }} </p>
-      <p class="mb-2 text-black"><i class="icofont-email text-primary mr-2"></i> {{ $client->email }} </p>
-      <p class="mb-2 text-black"><i class="icofont-clock-time text-primary mr-2"></i> Today  11am – 5pm, 6pm – 11pm
-        <span class="badge badge-success"> OPEN NOW </span>
-      </p>
-      <hr class="clearfix">
-      <p class="text-black mb-0">You can also check the 3D view by using our menue map clicking here &nbsp;&nbsp;&nbsp; <a class="text-info font-weight-bold" href="#">Venue Map</a></p>
-      <hr class="clearfix">
-      <h5 class="mt-4 mb-4">More Info</h5>
-      <p class="mb-3">Dal Makhani, Panneer Butter Masala, Kadhai Paneer, Raita, Veg Thali, Laccha Paratha, Butter Naan</p>
-      <div class="border-btn-main mb-4">
-        <a class="border-btn text-success mr-2" href="#"><i class="icofont-check-circled"></i> Breakfast</a>
-        <a class="border-btn text-danger mr-2" href="#"><i class="icofont-close-circled"></i> No Alcohol Available</a>
-        <a class="border-btn text-success mr-2" href="#"><i class="icofont-check-circled"></i> Vegetarian Only</a>
-        <a class="border-btn text-success mr-2" href="#"><i class="icofont-check-circled"></i> Indoor Seating</a>
-        <a class="border-btn text-success mr-2" href="#"><i class="icofont-check-circled"></i> Breakfast</a>
-        <a class="border-btn text-danger mr-2" href="#"><i class="icofont-close-circled"></i> No Alcohol Available</a>
-        <a class="border-btn text-success mr-2" href="#"><i class="icofont-check-circled"></i> Vegetarian Only</a>
-      </div>
-  </div>
-</div>
-                 <div class="tab-pane fade" id="pills-book" role="tabpanel" aria-labelledby="pills-book-tab">
+   <div id="restaurant-info" class="bg-white rounded shadow-sm p-4 mb-4">
+       <div class="address-map float-right ml-5">
+         <div class="mapouter">
+             <div class="gmap_canvas">
+               <iframe width="300" height="170" id="gmap_canvas"
+                       src="https://maps.google.com/maps?q=university%20of%20san%20francisco&t=&z=9&ie=UTF8&iwloc=&output=embed"
+                       frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+             </div>
+         </div>
+       </div>
+       <h5 class="mb-4">Market Info</h5>
+       <p class="mb-3">{{ $client->fullAddress }} </p>
+       <p class="mb-2 text-black"><i class="icofont-phone-circle text-primary mr-2"></i> {{ $client->phone }} </p>
+       <p class="mb-2 text-black"><i class="icofont-email text-primary mr-2"></i> {{ $client->email }} </p>
+       <p class="mb-2 text-black"><i class="icofont-clock-time text-primary mr-2"></i> Today  11am – 5pm, 6pm – 11pm
+         <span class="badge badge-success"> OPEN NOW </span>
+       </p>
+       <hr class="clearfix">
+       <p class="text-black mb-0">You can also check the 3D view by using our menu map clicking here &nbsp;&nbsp;&nbsp; 
+         <a class="text-info font-weight-bold" href="#">Venue Map</a>
+       </p>
+       <hr class="clearfix">
+       <h5 class="mt-4 mb-4">Menu Types</h5>
+       <p class="mb-3">
+         {{ $menus->pluck('menu_name')->implode(', ') }}
+       </p>
+       <div class="border-btn-main mb-4">
+         @foreach ($menus as $menu)
+           <a class="border-btn text-success mr-2" href="#">
+             <i class="icofont-check-circled"></i> {{ $menu->menu_name }}
+           </a>
+         @endforeach
+       </div>
+   </div>
+ </div>
+ 
+                 {{-- <div class="tab-pane fade" id="pills-book" role="tabpanel" aria-labelledby="pills-book-tab">
                     <div id="book-a-table" class="bg-white rounded shadow-sm p-4 mb-5 rating-review-select-page">
                        <h5 class="mb-4">Book A Table</h5>
                        <form>
@@ -299,7 +347,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                           </div>
                        </form>
                     </div>
-                 </div>
+                 </div> --}}
                  <div class="tab-pane fade" id="pills-reviews" role="tabpanel" aria-labelledby="pills-reviews-tab">
                     <div id="ratings-and-reviews" class="bg-white rounded shadow-sm p-4 mb-4 clearfix restaurant-detailed-star-rating">
                        <span class="star-rating float-right">
@@ -393,7 +441,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                   <p> {{ $review->comment }} </p>
                </div>
                <div class="reviews-members-footer">
-                  <a class="total-like" href="#"><i class="icofont-thumbs-up"></i> 856M</a> <a class="total-like" href="#"><i class="icofont-thumbs-down"></i> 158K</a> 
+                  <a class="total-like" href="#"><i class="icofont-thumbs-up"></i> ...</a> <a class="total-like" href="#"><i class="icofont-thumbs-down"></i> ...</a> 
                   
                </div>
             </div>

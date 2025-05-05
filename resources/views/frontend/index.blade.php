@@ -132,9 +132,18 @@
                         {{-- <form action="{{ route('cart.add', $product->id) }}" method="POST"> --}}
                         <form action="#" method="POST">
                            @csrf
-                           <button type="submit" class="btn btn-sm btn-primary w-100">
+                           {{-- <button type="submit" class="btn btn-sm btn-primary w-100">
+                              <i class="icofont-cart"></i> Thêm vào giỏ
+                           </button> --}}
+                           
+                           <button type="button"
+                              class="btn btn-sm btn-primary w-100"
+                              data-bs-toggle="modal"
+                              data-bs-target="#chooseMarketModal"
+                              data-product-id="{{ $product->id }}">
                               <i class="icofont-cart"></i> Thêm vào giỏ
                            </button>
+
                         </form>
                      </div>
                   </div>
@@ -147,6 +156,62 @@
 
 </div>
 </section>
+
+
+<!-- Modal: Choose Market -->
+<div id="chooseMarketModal" class="modal fade" tabindex="-1" aria-labelledby="chooseMarketLabel" aria-hidden="true" data-bs-scroll="true">
+   <div class="modal-dialog">
+       <div class="modal-content">
+           <form id="marketSelectorForm" method="GET" action="{{ route('market.details.redirect') }}">
+               @csrf
+               <input type="hidden" name="product_id" id="selectedProductId">
+               
+               <div class="modal-header">
+                   <h5 class="modal-title" id="chooseMarketLabel">Chọn địa điểm và cửa hàng</h5>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+               </div>
+
+               <div class="modal-body">
+                   <div class="mb-3">
+                       <label for="cityDropdown" class="form-label">Thành phố</label>
+                       <select class="form-select" name="city_id" id="cityDropdown">
+                           <option value="">-- Chọn thành phố --</option>
+                           @foreach ($cities as $city)
+                               <option value="{{ $city->id }}">{{ $city->city_name }}</option>
+                           @endforeach
+                       </select>
+                   </div>
+
+                   <div class="mb-3">
+                       <label for="districtDropdown" class="form-label">Quận/Huyện</label>
+                       <select class="form-select" name="district_id" id="districtDropdown">
+                           <option value="">-- Chọn quận/huyện --</option>
+                       </select>
+                   </div>
+
+                   <div class="mb-3">
+                       <label for="wardDropdown" class="form-label">Phường/Xã</label>
+                       <select class="form-select" name="ward_id" id="wardDropdown">
+                           <option value="">-- Chọn phường/xã --</option>
+                       </select>
+                   </div>
+
+                   <div class="mb-3">
+                       <label for="marketDropdown" class="form-label">Cửa hàng</label>
+                       <select class="form-select" name="market_id" id="marketDropdown">
+                           <option value="">-- Chọn cửa hàng --</option>
+                       </select>
+                   </div>
+               </div>
+
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                   <button type="submit" class="btn btn-primary">Xem chi tiết cửa hàng</button>
+               </div>
+           </form>
+       </div>
+   </div>
+</div>
 
 <style>
 #product-list .card {
@@ -177,5 +242,71 @@
       }
    }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+       const chooseMarketModal = document.getElementById('chooseMarketModal');
+   
+       // Gán sự kiện khi modal hiển thị
+       chooseMarketModal.addEventListener('shown.bs.modal', function (event) {
+           const productId = event.relatedTarget.getAttribute('data-product-id');
+           document.getElementById('selectedProductId').value = productId;
+   
+           const city = chooseMarketModal.querySelector('#cityDropdown');
+           const district = chooseMarketModal.querySelector('#districtDropdown');
+           const ward = chooseMarketModal.querySelector('#wardDropdown');
+           const market = chooseMarketModal.querySelector('#marketDropdown');
+   
+           // Gỡ event cũ trước khi gán lại
+           city.onchange = async function () {
+               const cityId = this.value;
+               district.innerHTML = '<option>Loading...</option>';
+               ward.innerHTML = '<option>-- Chọn phường/xã --</option>';
+               market.innerHTML = '<option>-- Chọn cửa hàng --</option>';
+   
+               if (cityId) {
+                   const res = await fetch(`/get-districts/${cityId}`);
+                   const data = await res.json();
+                   district.innerHTML = '<option>-- Chọn quận/huyện --</option>';
+                   data.forEach(d => {
+                       district.innerHTML += `<option value="${d.id}">${d.district_name}</option>`;
+                   });
+               }
+           };
+   
+           district.onchange = async function () {
+               const districtId = this.value;
+               ward.innerHTML = '<option>Loading...</option>';
+               market.innerHTML = '<option>-- Chọn cửa hàng --</option>';
+   
+               if (districtId) {
+                   const res = await fetch(`/get-wards/${districtId}`);
+                   const data = await res.json();
+                   ward.innerHTML = '<option>-- Chọn phường/xã --</option>';
+                   data.forEach(w => {
+                       ward.innerHTML += `<option value="${w.id}">${w.ward_name}</option>`;
+                   });
+               }
+           };
+   
+           ward.onchange = async function () {
+               const wardId = this.value;
+               market.innerHTML = '<option>Loading...</option>';
+   
+               if (wardId) {
+                   const res = await fetch(`/get-markets-by-ward/${wardId}`);
+                   const data = await res.json();
+                   market.innerHTML = '<option>-- Chọn cửa hàng --</option>';
+                   data.forEach(m => {
+                       market.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+                   });
+               }
+           };
+       });
+   });
+</script>
+   
+
 
 @endsection

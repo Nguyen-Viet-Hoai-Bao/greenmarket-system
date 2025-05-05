@@ -6,23 +6,23 @@
 <div class="page-content">
     <div class="container-fluid">
 
-        <!-- Page Title -->
+        <!-- Tiêu đề trang -->
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Edit Product</h4>
+                    <h4 class="mb-sm-0 font-size-18">Chỉnh sửa sản phẩm</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Edit Product</li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item active">Chỉnh sửa sản phẩm</li>
                         </ol>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End Page Title -->
+        <!-- Kết thúc tiêu đề trang -->
 
-        <!-- Form Start -->
+        <!-- Bắt đầu form -->
         <div class="row">
             <div class="col-xl-12">
                 <form id="myForm" action="{{ route('admin.product.update') }}" method="POST" enctype="multipart/form-data">
@@ -30,13 +30,13 @@
                     <input type="hidden" name="id" value="{{ $product->id }}">
 
                     <div class="row">
-                        <!-- Category -->
+                        <!-- Danh mục -->
 
                         <div class="col-xl-3 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Category Name</label>
+                                <label class="form-label">Tên danh mục</label>
                                 <select class="form-select" name="category_id">
-                                    <option>Select</option>
+                                    <option>Chọn</option>
                                     @foreach ($category as $cat)
                                         <option value="{{ $cat->id }}" 
                                                 {{ $cat->id == $product->category_id ? 'selected' : '' }}>
@@ -50,9 +50,9 @@
                         <!-- Menu -->
                         <div class="col-xl-3 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Menu Name</label>
+                                <label class="form-label">Tên menu</label>
                                 <select class="form-select" name="menu_id">
-                                    <option selected="" disabled>Select</option>
+                                    <option selected="" disabled>Chọn</option>
                                     @foreach ($menu as $men)
                                         <option value="{{ $men->id }}"
                                             {{ $men->id == $product->menu_id ? 'selected' : '' }}>
@@ -63,39 +63,38 @@
                             </div>
                         </div>
 
-                        <!-- Product Name -->
+                        <!-- Tên sản phẩm -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Product Name</label>
-                                <input class="form-control" type="text" name="name" value="{{ $product->name }}" placeholder="Enter product name">
+                                <label class="form-label">Tên sản phẩm</label>
+                                <input class="form-control" type="text" name="name" value="{{ $product->name }}" placeholder="Nhập tên sản phẩm">
                             </div>
                         </div>
 
-                        <!-- Additional Field 2 -->
+                        <!-- Kích thước -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Size</label>
-                                <input class="form-control" type="number" name="size" value="{{ $product->size }}" placeholder="Enter size">
+                                <label class="form-label">Kích thước</label>
+                                <input class="form-control" type="number" name="size" value="{{ $product->size }}" placeholder="Nhập kích thước">
                             </div>
                         </div>
 
-                        <!-- Additional Field 2 -->
+                        <!-- Đơn vị -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Unit</label>
-                                <input class="form-control" type="text" name="unit" value="{{ $product->unit }}" placeholder="Enter unit">
+                                <label class="form-label">Đơn vị</label>
+                                <input class="form-control" type="text" name="unit" value="{{ $product->unit }}" placeholder="Nhập đơn vị">
                             </div>
                         </div>
 
-                        <!-- Additional Field 2 -->
+                        <!-- Hình ảnh sản phẩm -->
                         <div class="col-xl-6 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Product Image</label>
+                                <label class="form-label">Hình ảnh sản phẩm</label>
                                 <input class="form-control" type="file" name="image" id="image">
                             </div>
                         </div>
                         
-                        <!-- Additional Field 2 -->
                         <div class="col-xl-6 col-md-6">
                             <div class="form-group mb-3">
                                 <img id="showImage"
@@ -104,21 +103,56 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Chi tiết sản phẩm -->
+                    <div class="col-xl-12 col-md-12">
+                        <h5>Chi tiết sản phẩm</h5>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Mô tả</label>
+                            <textarea class="form-control" name="description" rows="4">{{ $product->productDetail->description ?? '' }}</textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Thông tin sản phẩm</label>
+                            <textarea class="form-control" name="product_info" rows="4">{{ $product->productDetail->product_info ?? '' }}</textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" name="note" rows="4">{{ $product->productDetail->note ?? '' }}</textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Xuất xứ</label>
+                            <input class="form-control" type="text" name="origin" value="{{ $product->productDetail->origin ?? '' }}" placeholder="Nhập xuất xứ">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Bảo quản</label>
+                            <textarea class="form-control" name="preservation" rows="4">{{ $product->productDetail->preservation ?? '' }}</textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">Hướng dẫn sử dụng</label>
+                            <textarea class="form-control" name="usage_instructions" rows="4">{{ $product->productDetail->usage_instructions ?? '' }}</textarea>
+                        </div>
+
+                    </div>
                     
-                    <!-- Submit -->
+                    <!-- Nút submit -->
                     <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                     </div>
 
                 </form>
             </div>
         </div>
-        <!-- End Form -->
+        <!-- Kết thúc form -->
 
     </div>
 </div>
 
-<!-- Image Preview Script -->
+<!-- Script hiển thị hình ảnh -->
 <script>
     $(document).ready(function () {
         $('#image').change(function (e) {
@@ -131,7 +165,7 @@
     });
 </script>
 
-<!-- Form Validation Script -->
+<!-- Script kiểm tra form -->
 <script>
     $(document).ready(function () {
         $('#myForm').validate({
@@ -140,8 +174,8 @@
                 menu_id: { required: true, },
             },
             messages: {
-                name: { required: 'Please Enter Name', },
-                menu_id: { required: 'Please Select One Menu', },
+                name: { required: 'Vui lòng nhập tên', },
+                menu_id: { required: 'Vui lòng chọn một menu', },
             },
             errorElement: 'span',
             errorPlacement: function (error, element) {

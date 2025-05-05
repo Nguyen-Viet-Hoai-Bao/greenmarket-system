@@ -11,6 +11,6 @@ class Menu extends Model
     protected $guarded = [];
     
     public function products() {
-        return $this->hasMany(Product::class);
+        return $this->hasMany(ProductTemplate::class, 'menu_id', 'id');
     }
 }

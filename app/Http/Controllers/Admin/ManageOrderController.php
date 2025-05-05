@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
-use App\Models\Product;
+use App\Models\ProductNew;
+use App\Models\City;
+use App\Models\Menu;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
 
 class ManageOrderController extends Controller
 {
@@ -147,9 +150,25 @@ class ManageOrderController extends Controller
         $allUserOrder = Order::where('user_id', $userId)
                             ->orderBy('id', 'desc')
                             ->get();
+
+        
+        // For Footer
+        $cities = City::all();
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
                         
         return view('frontend.dashboard.order.order_list', 
-                    compact('allUserOrder'));
+                    compact('allUserOrder', 'cities', 'menus_footer', 'products_list'));
     }
     // End Method
      
