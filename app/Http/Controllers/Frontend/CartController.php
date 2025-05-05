@@ -9,60 +9,87 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-use App\Models\Product;
+use App\Models\ProductNew;
 use App\Models\Coupon;
+use App\Models\Menu;
+use App\Models\City;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
     public function AddToCart($id) {
-        $product = Product::find($id);
-        $cart = session()->get('cart', []);
-        if(isset($cart[$id])){
-            $cart[$id]['quantity']++;
+        $product = ProductNew::with('productTemplate')->find($id);
 
+        // Kiểm tra tồn tại
+        if (!$product) {
+            return redirect()->back()->with([
+                'message' => 'Product not found.',
+                'alert-type' => 'error'
+            ]);
+        }
+
+        // Kiểm tra client_id có trùng với selected_market_id
+        $selectedMarketId = session('selected_market_id');
+
+        if ($product->client_id != $selectedMarketId) {
+            return redirect()->back()->with([
+                'message' => 'Sản phẩm không thuộc cửa hàng hiện tại.',
+                'alert-type' => 'error'
+            ]);
+        }
+
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
         } else {
             $priceToShow = isset($product->discount_price) 
-                            ? $product->discount_price
+                            ? $product->discount_price 
                             : $product->price;
+
             $cart[$id] = [
                 'id' => $id,
-                'name' => $product->name,
-                'image' => $product->image,
+                'name' => $product->productTemplate->name,
+                'image' => $product->productTemplate->image,
                 'price' => $priceToShow,
                 'client_id' => $product->client_id,
-                'quantity' => 1
+                'quantity' => 1,
+                'menu_name' => optional($product->productTemplate->menu)->name ?? null, // nếu muốn thêm
             ];
         }
-        session()->put('cart', $cart);
-        // return response()->json($cart);
 
-        // Recalculate Coupon
+        session()->put('cart', $cart);
+
         $this->recalculateCoupon();
 
-        $notification = array(
-            'message' => 'Add to Cart Successfully',
+        return redirect()->back()->with([
+            'message' => 'Thêm vào giỏ hàng thành công.',
             'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
-
+        ]);
     }
+
     // End Method
 
     public function UpdateCartQuantity(Request $request) {
         $cart = session()->get('cart', []);
-        if(isset($cart[$request->id])){
+    
+        if (isset($cart[$request->id])) {
             $cart[$request->id]['quantity'] = $request->quantity;
+    
+            if ($cart[$request->id]['quantity'] <= 0) {
+                unset($cart[$request->id]);
+            }
+    
             session()->put('cart', $cart);
         }
-        
-        // Recalculate Coupon
+    
         $this->recalculateCoupon();
-
+    
         return response()->json([
             'message' => 'Quantity Updated',
             'alert-type' => 'success'
         ]);
-    }
+    }    
     // End Method
 
     public function CartRemove(Request $request) {
@@ -92,7 +119,7 @@ class CartController extends Controller
 
         foreach ($cart as $car) {
             $totalAmount += ($car['price'] * $car['quantity']);
-            $pd = Product::find($car['id']);
+            $pd = ProductNew::find($car['id']);
             $clid = $pd->client_id;
             array_push($clientIds, $clid);
         }
@@ -156,7 +183,7 @@ class CartController extends Controller
 
         foreach ($cart as $car) {
             $totalAmount += ($car['price'] * $car['quantity']);
-            $pd = Product::find($car['id']);
+            $pd = ProductNew::find($car['id']);
             $clid = $pd->client_id;
             array_push($clientIds, $clid);
         }
@@ -174,6 +201,22 @@ class CartController extends Controller
     // End Method
 
     public function MarketCheckout(){
+        // For Footer
+        $cities = City::all();
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+
         if(Auth::check()){
             $cart = session()->get('cart', []);
             $totalAmount = 0;
@@ -183,7 +226,7 @@ class CartController extends Controller
 
             if ($totalAmount > 0) {
 
-                return view('frontend.checkout.view_checkout', compact('cart'));
+                return view('frontend.checkout.view_checkout', compact('cart', 'cities', 'menus_footer', 'products_list'));
 
             } else {
 

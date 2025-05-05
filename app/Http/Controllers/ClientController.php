@@ -94,7 +94,9 @@ class ClientController extends Controller
         $data->email = $request->email;
         $data->phone = $request->phone;
         $data->address = $request->address;
-        $data->ward_id = $request->ward_id;
+        if ($request->filled('ward_id')) {
+            $data->ward_id = $request->ward_id;
+        }
         $data->city_id = $request->city_id;
         $data->shop_info = $request->shop_info;
         $data->cover_photo = $request->cover_photo;

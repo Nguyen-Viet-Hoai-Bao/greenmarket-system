@@ -11,10 +11,14 @@ use Illuminate\Support\Facades\Notification;
 use Carbon\Carbon;
 
 use App\Notifications\OrderComplete;
-use App\Models\Product;
+use App\Models\ProductNew;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Admin;
+
+use App\Models\Menu;
+use App\Models\City;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -96,7 +100,24 @@ class OrderController extends Controller
             'message' => 'Đặt hàng thành công',
             'alert-type' => 'success'
         );
-        return view('frontend.checkout.thanks')->with($notification);
+
+        
+        // For Footer
+        $cities = City::all();
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+        return view('frontend.checkout.thanks', compact('cities', 'menus_footer', 'products_list'))->with($notification);
         
     }
     // End Method
@@ -181,7 +202,22 @@ class OrderController extends Controller
             'message' => 'Đặt hàng thành công',
             'alert-type' => 'success'
         );
-        return view('frontend.checkout.thanks')->with($notification);
+        
+        // For Footer
+        $cities = City::all();
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
+        return view('frontend.checkout.thanks', compact('cities', 'menus_footer', 'products_list'))->with($notification);
         
     }
     // End Method
@@ -191,7 +227,22 @@ class OrderController extends Controller
             'message' => 'Đặt hàng thành công',
             'alert-type' => 'success'
         );
-        return view('frontend.checkout.thanks')->with($notification);
+        
+        // For Footer
+        $cities = City::all();
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
+        return view('frontend.checkout.thanks', compact('cities', 'menus_footer', 'products_list'))->with($notification);
     }
 
     public function MarkAsRead(Request $request, $notificationId){

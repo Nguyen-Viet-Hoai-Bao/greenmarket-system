@@ -23,15 +23,41 @@ use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\FilterController;
 
+use App\Models\City;
+use App\Models\Menu;
+use App\Models\ProductNew;
+use Illuminate\Support\Facades\DB;
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
 Route::get('/', [UserController::class, 'Index'])->name('index');
 
+// Route::get('/dashboard', function () {
+//     return view('frontend.dashboard.profile');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::get('/dashboard', function () {
-    return view('frontend.dashboard.profile');
+    // For Header        
+    $cities = City::all();
+    
+    // For Footer        
+    $menus_footer = Menu::all();
+    $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                            ->groupBy('client_id')
+                            ->orderByDesc('total')
+                            ->value('client_id'); 
+    $products_list = ProductNew::with([
+                    'productTemplate.menu',
+                    'productTemplate.category'
+                ])
+                ->where('client_id', $topClientId)
+                ->orderBy('id', 'desc')
+                ->get();
+    return view('frontend.dashboard.profile', compact('cities', 'menus_footer', 'products_list'));
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::post('/profile/store', [UserController::class, 'ProfileStore'])->name('profile.store');
@@ -331,6 +357,12 @@ Route::controller(HomeController::class)->group(function(){
     Route::get('/market/details/{id}', 'MarketDetails')->name('market.details');
     Route::post('/add-wish-list/{id}', 'AddWishlist');
 
+    Route::get('/get-districts/{city_id}', 'GetDistricts');
+    Route::get('/get-wards/{district_id}', 'GetWards');
+    Route::get('/get-markets-by-ward/{ward_id}', 'GetMarketsByWard');
+    Route::get('/redirect-to-market-details', 'RedirectToDetails')->name('market.details.redirect');
+
+
 });
 
 Route::controller(CartController::class)->group(function(){
@@ -369,6 +401,9 @@ Route::controller(ReviewController::class)->group(function(){
 Route::controller(FilterController::class)->group(function(){
     Route::get('/list/market', 'ListMarket')->name('list.market');  
     Route::get('/filter/products', 'FilterProducts')->name('filter.products');
+
+    Route::get('/product/detail/{id}', 'ProductDetail')->name('product.detail');
+
     
 });
 

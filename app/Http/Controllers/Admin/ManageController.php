@@ -17,6 +17,7 @@ use App\Models\City;
 use App\Models\Product;
 use App\Models\ProductNew;
 use App\Models\ProductTemplate;
+use App\Models\ProductDetail;
 use App\Models\Client;
 use App\Models\Banner;
 
@@ -86,7 +87,7 @@ class ManageController extends Controller
     public function AdminEditProduct($id) {
         $category = Category::latest()->get();
         $menu = Menu::latest()->get();
-        $product = ProductTemplate::find($id);
+        $product = ProductTemplate::with('productDetail')->find($id);
         return view('admin.backend.product.edit_product', compact('category', 'menu', 'product'));
 
     }
@@ -122,8 +123,21 @@ class ManageController extends Controller
             ]);
 
             $notification = array(
-                'message' => 'Create Menu Successfully',
+                'message' => 'Cập nhật sản phẩm thành công',
                 'alert-type' => 'success'
+            );
+
+            // Cập nhật hoặc tạo mới ProductDetail
+            $productDetail = ProductDetail::updateOrCreate(
+                ['product_template_id' => $pro_id], // Tìm theo product_template_id
+                [
+                    'description' => $request->description ?? 'Đang cập nhật',
+                    'product_info' => $request->product_info ?? 'Đang cập nhật',
+                    'note' => $request->note ?? 'Đang cập nhật',
+                    'origin' => $request->origin ?? 'Đang cập nhật',
+                    'preservation' => $request->preservation ?? 'Đang cập nhật',
+                    'usage_instructions' => $request->usage_instructions ?? 'Đang cập nhật',
+                ]
             );
     
             return redirect()->route('admin.all.product')->with($notification);
@@ -138,8 +152,21 @@ class ManageController extends Controller
                 'created_at' => Carbon::now(),
             ]);
 
+            // Cập nhật hoặc tạo mới ProductDetail
+            $productDetail = ProductDetail::updateOrCreate(
+                ['product_template_id' => $pro_id], // Tìm theo product_template_id
+                [
+                    'description' => $request->description ?? 'Đang cập nhật',
+                    'product_info' => $request->product_info ?? 'Đang cập nhật',
+                    'note' => $request->note ?? 'Đang cập nhật',
+                    'origin' => $request->origin ?? 'Đang cập nhật',
+                    'preservation' => $request->preservation ?? 'Đang cập nhật',
+                    'usage_instructions' => $request->usage_instructions ?? 'Đang cập nhật',
+                ]
+            );
+
             $notification = array(
-                'message' => 'Create Menu Successfully',
+                'message' => 'Cập nhật sản phẩm thành công',
                 'alert-type' => 'success'
             );
     

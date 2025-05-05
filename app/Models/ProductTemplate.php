@@ -10,7 +10,7 @@ class ProductTemplate extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function productNews(): HasMany
+    public function productNews()
     {
         return $this->hasMany(ProductNew::class);
     }
@@ -22,4 +22,10 @@ class ProductTemplate extends Model
     public function category() {
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
+    
+    public function productDetail()
+    {
+        return $this->hasOne(ProductDetail::class, 'product_template_id');
+    }
+
 }
