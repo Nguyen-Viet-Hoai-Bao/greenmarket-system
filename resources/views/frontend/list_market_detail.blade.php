@@ -72,45 +72,6 @@
    </div>
 </div>
 
-
-
-{{-- @php
-   $cities = App\Models\City::orderBy('id','desc')->limit(10)->get();
-@endphp             
-<div class="filters-body">
-   <div id="accordion">
-      <div class="filters-card border-bottom p-4">
-         <div class="filters-card-header" id="headingOnecity">
-            <h6 class="mb-0">
-               <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseOnecity" aria-expanded="true" aria-controls="collapseOnecity">
-               City <i class="icofont-arrow-down float-right"></i>
-               </a>
-            </h6>
-         </div>
-
-
-      <div id="collapseOnecity" class="collapse show" aria-labelledby="headingOnecity" data-parent="#accordion">
-         <div class="filters-card-body card-shop-filters">
-            @foreach ($cities as $city) 
-            @php
-               $cityProductCount = $products->where('city_id',$city->id)->count();
-            @endphp
-            <div class="custom-control custom-checkbox">
-               <input type="checkbox" class="custom-control-input filter-checkbox" id="city-{{$city->id}}" data-type="city" data-id="{{$city->id}}">
-                <label class="custom-control-label" for="city-{{$city->id}}">{{$city->city_name}} <small class="text-black-50">({{$cityProductCount}})</small>   
-               </label>
-            </div> 
-            @endforeach 
-         </div>
-      </div>
-
-
-      </div>  
-   </div>
-</div> --}}
-
-
-
 @php
    $menus = App\Models\Menu::orderBy('menu_name','desc')->limit(10)->get();
 @endphp             

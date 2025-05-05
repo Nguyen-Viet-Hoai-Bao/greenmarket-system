@@ -1,6 +1,8 @@
 @extends('frontend.master')
 @section('content')
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 <section class="section pt-5 pb-5 products-section">
   <div class="container">
      <div class="section-header text-center">
@@ -83,7 +85,97 @@
 
 @endforeach
      </div>
-  </div>
+
+
+     <div class="section-header text-center">
+      <h2>List sản phẩm</h2>
+      <p>Top markets, vegetables, milks, and ...</p>
+      <span class="line"></span>
+   </div>
+   
+   <div class="col-12">
+      <div class="row" id="product-list">
+         @foreach ($products_list as $product)
+            <div class="custom-col mb-4">
+               <div class="card h-100 shadow-sm rounded border-0 d-flex flex-column">
+                  <a href="{{ route('market.details', $product->client_id) }}" class="text-decoration-none">
+                     <img src="{{ asset(optional($product->productTemplate)->image ?? 'upload/no_image.jpg') }}"
+                        class="card-img-top"
+                        alt="{{ optional($product->productTemplate)->name }}"
+                        style="height:200px; object-fit:cover;">
+                  </a>
+                  <div class="card-body d-flex flex-column">
+                     <h5 class="card-title mb-2" style="min-height: 48px;">
+                        <a href="{{ route('market.details', $product->client_id) }}" class="text-dark">
+                           {{ optional($product->productTemplate)->name ?? 'No Name' }}
+                        </a>
+                     </h5>
+                     <p class="card-text text-muted mb-2" style="font-size:14px; min-height: 20px;">
+                        {{ $product->productTemplate->category->category_name ?? 'No Category' }}
+                     </p>
+                     <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-success font-weight-bold">{{ number_format($product->price) }} VNĐ</span>
+                        @php
+                           $discountPercent = null;
+                           if (!empty($product->discount_price) && $product->price > 0) {
+                              $discountPercent = round((1 - $product->discount_price / $product->price) * 100);
+                           }
+                        @endphp
+                        @if ($discountPercent)
+                           <span class="badge badge-danger">{{ $discountPercent }}% OFF</span>
+                        @else
+                           <span class="badge badge-secondary">No Discount</span>
+                        @endif
+                     </div>
+            
+                     <div class="mt-auto">
+                        {{-- <form action="{{ route('cart.add', $product->id) }}" method="POST"> --}}
+                        <form action="#" method="POST">
+                           @csrf
+                           <button type="submit" class="btn btn-sm btn-primary w-100">
+                              <i class="icofont-cart"></i> Thêm vào giỏ
+                           </button>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         
+         @endforeach
+      </div>
+   </div>
+
+</div>
 </section>
+
+<style>
+#product-list .card {
+   min-height: 100%;
+   display: flex;
+   flex-direction: column;
+}
+
+.custom-col {
+      width: 20%;
+      padding: 0 10px;
+      box-sizing: border-box;
+   }
+
+   @media (max-width: 992px) {
+      .custom-col {
+         width: 33.3333%; /* 3 cột trên tablet */
+      }
+   }
+   @media (max-width: 768px) {
+      .custom-col {
+         width: 50%; /* 2 cột trên mobile */
+      }
+   }
+   @media (max-width: 576px) {
+      .custom-col {
+         width: 100%; /* 1 cột nhỏ */
+      }
+   }
+</style>
 
 @endsection

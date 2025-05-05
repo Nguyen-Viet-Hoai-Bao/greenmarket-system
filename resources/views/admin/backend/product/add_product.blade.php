@@ -10,11 +10,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Add Product</h4>
+                    <h4 class="mb-sm-0 font-size-18">Add Product Template</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Add Product</li>
+                            <li class="breadcrumb-item active">Add Product Template</li>
                         </ol>
                     </div>
                 </div>
@@ -30,20 +30,6 @@
 
                     <div class="row">
                         <!-- Category -->
-                        
-                        <!-- Menu -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Client Name</label>
-                                <select class="form-select" name="client_id">
-                                    <option selected="" disabled>Select</option>
-                                    @foreach ($client as $cli)
-                                        <option value="{{ $cli->id }}">{{ $cli->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        
                         <div class="col-xl-3 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Category Name</label>
@@ -69,19 +55,6 @@
                             </div>
                         </div>
 
-                        <!-- Menu -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">City Name</label>
-                                <select class="form-select" name="city_id">
-                                    <option value="">Select</option>
-                                    @foreach ($city as $cit)
-                                        <option value="{{ $cit->id }}">{{ $cit->city_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
                         <!-- Product Name -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
@@ -90,35 +63,19 @@
                             </div>
                         </div>
 
-                        <!-- Additional Field 1 -->
-                        <div class="col-xl-4 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Price</label>
-                                <input class="form-control" type="text" name="price" placeholder="Enter price">
-                            </div>
-                        </div>
-
-                        <!-- Additional Field 1 -->
-                        <div class="col-xl-4 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Discount Price</label>
-                                <input class="form-control" type="text" name="discount_price" placeholder="Enter discount price">
-                            </div>
-                        </div>
-
                         <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
+                        <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Size</label>
                                 <input class="form-control" type="number" name="size" placeholder="Enter size">
                             </div>
                         </div>
 
-                        <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
+                        <!-- Product Unit -->
+                        <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Quantity QTY</label>
-                                <input class="form-control" type="number" name="qty" placeholder="Enter quantity">
+                                <label class="form-label">Unit</label>
+                                <input class="form-control" type="text" name="unit" value="" placeholder="Enter product unit">
                             </div>
                         </div>
                         
@@ -139,20 +96,10 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" name="best_seller" id="formCheck2" value="1">
-                        <label for="formCheck2" class="form-check-lable">Best Seller</label>
-                    </div>
-                    <br>
-                    <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" name="most_popular" id="formCheck2" value="1">
-                        <label for="formCheck2" name="" class="form-check-lable">Most Popular</label>
-                    </div>
 
                     <!-- Submit -->
                     <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Add Product</button>
+                        <button type="submit" class="btn btn-primary">Add Product Template</button>
                     </div>
 
                 </form>

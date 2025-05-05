@@ -42,4 +42,31 @@ class Client extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // 💡 Relationship: each Client belongs to one Ward
+    public function ward()
+    {
+        return $this->belongsTo(Ward::class);
+    }
+
+    // 💡 Optional helper accessors
+    public function getDistrictAttribute()
+    {
+        return $this->ward?->district;
+    }
+
+    public function getCityAttribute()
+    {
+        return $this->ward?->district?->city;
+    }
+
+    public function getFullAddressAttribute()
+    {
+        return implode(', ', array_filter([
+            $this->address,
+            $this->ward?->ward_name,
+            $this->district?->district_name,
+            $this->city?->city_name,
+        ]));
+    }
 }

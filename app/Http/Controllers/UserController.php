@@ -6,11 +6,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\ProductNew;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
     public function Index() {
-        return view('frontend.index');
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+
+        $products_list = ProductNew::with([
+                                        'productTemplate.menu',
+                                        'productTemplate.category'
+                                    ])
+                                    ->where('client_id', $topClientId)
+                                    ->orderBy('id', 'desc')
+                                    ->get();
+
+        return view('frontend.index', compact('products_list'));
     }
     // End Method
     

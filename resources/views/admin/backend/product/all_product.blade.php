@@ -36,10 +36,10 @@
         <th>Sl</th>
         <th>Image</th>
         <th>Product Name</th>
-        <th>Market</th>
-        <th>QTY</th>
-        <th>Price</th>
-        <th>Discount</th>
+        <th>Category Name</th>
+        <th>Menu Name</th>
+        <th>Size</th>
+        <th>Unit</th>
         <th>Status</th>
         <th>Action</th>
     </tr>
@@ -55,20 +55,10 @@
                     alt=""
                     style="width: 70px; heigh:40px;"></td>
             <td>{{ $item->name }}</td>
-            <td>{{ $item['client']['name'] }}</td>
-            <td>{{ $item->qty }}</td>
-            <td>{{ $item->price }}</td>
-            <td>
-                @if ($item->discount_price == NULL)
-                    <span class="badge bg-danger">No Discount</span>
-                @else
-                    @php
-                        $amount = $item->price - $item->discount_price;
-                        $discount = ($amount / $item->price)*100;
-                    @endphp      
-                    <span class="badge bg-danger">{{ round($discount) }}%</span>
-                @endif    
-            </td>
+            <td>{{ $item->category->category_name }}</td>
+            <td>{{ $item->menu->menu_name }}</td>
+            <td>{{ $item->size }}</td>
+            <td>{{ $item->unit }}</td>
             <td class="status-text-{{ $item->id }}">
                 @if ($item->status == 1)
                     <span class="text-success"><b>Active</b></span>
@@ -120,7 +110,7 @@
         $.ajax({
             type: "GET",
             dataType: "json",
-            url: '/changeStatus',
+            url: '/changeStatusProductTemplate',
             data: {'status': status, 'product_id': product_id},
             success: function(data){
                 const Toast = Swal.mixin({
