@@ -17,8 +17,7 @@ class HomeController extends Controller
 {
     public function MarketDetails($id) {
         $client = Client::find($id);
-        $menus = Menu::where('client_id', $client->id)
-                    ->get()
+        $menus = Menu::get()
                     ->filter(
                         function($menu){
                             return $menu->products->isNotEmpty();

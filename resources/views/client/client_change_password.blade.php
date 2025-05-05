@@ -45,7 +45,7 @@
 
                               <div class="d-flex flex-wrap align-items-start gap-2 gap-lg-3 text-muted font-size-13">
                                   <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>{{ $profileData->phone }}</div>
-                                  <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>{{ $profileData->address }}</div>
+                                  <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>{{ $profileData->full_address }}</div>
                               </div>
                           </div>
                       </div>

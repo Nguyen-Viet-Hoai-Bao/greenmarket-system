@@ -31,20 +31,6 @@
 
                     <div class="row">
                         <!-- Category -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Client Name</label>
-                                <select class="form-select" name="client_id">
-                                    <option>Select</option>
-                                    @foreach ($client as $cli)
-                                        <option value="{{ $cli->id }}" 
-                                                {{ $cli->id == $product->client_id ? 'selected' : '' }}>
-                                            {{ $cli->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
 
                         <div class="col-xl-3 col-md-6">
                             <div class="form-group mb-3">
@@ -77,22 +63,6 @@
                             </div>
                         </div>
 
-                        <!-- Menu -->
-                        <div class="col-xl-3 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">City Name</label>
-                                <select class="form-select" name="city_id">
-                                    <option value="">Select</option>
-                                    @foreach ($city as $cit)
-                                        <option value="{{ $cit->id }}" 
-                                                {{ $cit->id == $product->city_id ? 'selected' : '' }}>
-                                            {{ $cit->city_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
                         <!-- Product Name -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
@@ -101,24 +71,8 @@
                             </div>
                         </div>
 
-                        <!-- Additional Field 1 -->
-                        <div class="col-xl-4 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Price</label>
-                                <input class="form-control" type="text" name="price" value="{{ $product->price }}" placeholder="Enter price">
-                            </div>
-                        </div>
-
-                        <!-- Additional Field 1 -->
-                        <div class="col-xl-4 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Discount Price</label>
-                                <input class="form-control" type="text" name="discount_price" value="{{ $product->discount_price }}" placeholder="Enter discount price">
-                            </div>
-                        </div>
-
                         <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
+                        <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Size</label>
                                 <input class="form-control" type="number" name="size" value="{{ $product->size }}" placeholder="Enter size">
@@ -126,13 +80,13 @@
                         </div>
 
                         <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
+                        <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Quantity QTY</label>
-                                <input class="form-control" type="number" name="qty" value="{{ $product->qty }}" placeholder="Enter quantity">
+                                <label class="form-label">Unit</label>
+                                <input class="form-control" type="text" name="unit" value="{{ $product->unit }}" placeholder="Enter unit">
                             </div>
                         </div>
-                        
+
                         <!-- Additional Field 2 -->
                         <div class="col-xl-6 col-md-6">
                             <div class="form-group mb-3">
@@ -151,18 +105,6 @@
                         </div>
                     </div>
                     
-                    <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" name="best_seller" id="formCheck2" value="1"
-                                {{ $product->best_seller == 1 ? 'checked' : '' }}>
-                        <label for="formCheck2" class="form-check-lable">Best Seller</label>
-                    </div>
-                    <br>
-                    <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" name="most_popular" id="formCheck2" value="1"
-                                {{ $product->most_popular == 1 ? 'checked' : '' }}>
-                        <label for="formCheck2" name="" class="form-check-lable">Most Popular</label>
-                    </div>
-
                     <!-- Submit -->
                     <div class="text-end">
                         <button type="submit" class="btn btn-primary">Save Changes</button>

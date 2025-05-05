@@ -45,7 +45,7 @@
 
                               <div class="d-flex flex-wrap align-items-start gap-2 gap-lg-3 text-muted font-size-13">
                                   <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>{{ $profileData->phone }}</div>
-                                  <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>{{ $profileData->address }}</div>
+                                  <div><i class="mdi mdi-circle-medium me-1 text-success align-middle"></i>{{ $profileData->full_address }}</div>
                               </div>
                           </div>
                       </div>
@@ -87,18 +87,39 @@
                   <input class="form-control" type="text" name="phone" value="{{ $profileData->phone }}" id="example-text-input">
                 </div>
                 
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="example-text-input" class="form-label">City</label>
-                    <select class="form-select" name="city_id">
-                        <option value="">Select</option>
+                    <input class="form-control" type="text" 
+                            value="{{ $profileData->city?->city_name ?? 'N/A' }}" 
+                            id="example-text-input" readonly>
+                </div> --}}
+                
+                <div class="mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <select class="form-select" id="city" name="city_id">
+                        <option value="">-- Select City --</option>
                         @foreach ($city as $cit)
-                            <option value="{{ $cit->id }}" 
-                                    {{ $cit->id == $profileData->city_id ? 'selected' : '' }}>
+                            <option value="{{ $cit->id }}" {{ $cit->id == $profileData->ward?->district?->city_id ? 'selected' : '' }}>
                                 {{ $cit->city_name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+                
+                <div class="mb-3">
+                <label for="district" class="form-label">District</label>
+                <select class="form-select" id="district" name="district_id">
+                    <option value="">-- Select District --</option>
+                </select>
+                </div>
+                
+                <div class="mb-3">
+                <label for="ward" class="form-label">Ward</label>
+                <select class="form-select" id="ward" name="ward_id">
+                    <option value="">-- Select Ward --</option>
+                </select>
+                </div>
+                         
                 
                 <div class="mb-3">
                     <label for="example-text-input" class="form-label">Market Info</label>
@@ -174,6 +195,46 @@
         })
     })
 
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#city').on('change', function () {
+        var city_id = $(this).val();
+        $('#district').html('<option>Loading...</option>');
+        $('#ward').html('<option>-- Select Ward --</option>');
+        if (city_id) {
+            $.ajax({
+                url: "{{ url('/client/district/ajax') }}/" + city_id,
+                type: "GET",
+                success: function (data) {
+                    $('#district').html('<option>-- Select District --</option>');
+                    $.each(data, function (key, value) {
+                        $('#district').append('<option value="' + value.id + '">' + value.district_name + '</option>');
+                    });
+                }
+            });
+        }
+    });
+
+    $('#district').on('change', function () {
+        var district_id = $(this).val();
+        $('#ward').html('<option>Loading...</option>');
+        if (district_id) {
+            $.ajax({
+                url: "{{ url('/client/ward/ajax') }}/" + district_id,
+                type: "GET",
+                success: function (data) {
+                    $('#ward').html('<option>-- Select Ward --</option>');
+                    $.each(data, function (key, value) {
+                        $('#ward').append('<option value="' + value.id + '">' + value.ward_name + '</option>');
+                    });
+                }
+            });
+        }
+    });
+});
 </script>
 
 @endsection

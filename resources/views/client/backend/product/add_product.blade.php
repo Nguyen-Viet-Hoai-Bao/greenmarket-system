@@ -29,18 +29,6 @@
                     @csrf
 
                     <div class="row">
-                        <!-- Category -->
-                        <div class="col-xl-4 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Category Name</label>
-                                <select class="form-select" name="category_id">
-                                    <option value="">Select</option>
-                                    @foreach ($category as $cat)
-                                        <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
 
                         <!-- Menu -->
                         <div class="col-xl-4 col-md-6">
@@ -48,31 +36,53 @@
                                 <label class="form-label">Menu Name</label>
                                 <select class="form-select" name="menu_id">
                                     <option selected="" disabled>Select</option>
-                                    @foreach ($menu as $men)
+                                    @foreach ($menus as $men)
                                         <option value="{{ $men->id }}">{{ $men->menu_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Menu -->
+                        <!-- Product Template -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">City Name</label>
-                                <select class="form-select" name="city_id">
-                                    <option value="">Select</option>
-                                    @foreach ($city as $cit)
-                                        <option value="{{ $cit->id }}">{{ $cit->city_name }}</option>
-                                    @endforeach
+                                <label class="form-label">Product Template</label>
+                                <select class="form-select" name="product_template_id" id="productTemplateSelect">
+                                    <option selected disabled>Select product template</option>
                                 </select>
                             </div>
                         </div>
-
-                        <!-- Product Name -->
+                        
+                        <!-- Additional Field 2 -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Product Name</label>
-                                <input class="form-control" type="text" name="name" value="" placeholder="Enter product name">
+                                <img id="showImage"
+                                    src="{{ url('upload/no_image.jpg') }}" 
+                                    alt="" class="rounded p-1 bg-primary" width="110">
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-xl-4 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Category:</label>
+                                <div id="categoryLabel" class="form-control" readonly>-</div>
+                            </div>
+                        </div>
+
+                        <!-- Size -->
+                        <div class="col-xl-4 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Size:</label>
+                                <div id="sizeLabel" class="form-control" readonly>-</div>
+                            </div>
+                        </div>
+
+                        <!-- Unit -->
+                        <div class="col-xl-4 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Unit:</label>
+                                <div id="unitLabel" class="form-control" readonly>-</div>
                             </div>
                         </div>
 
@@ -93,37 +103,13 @@
                         </div>
 
                         <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Size</label>
-                                <input class="form-control" type="number" name="size" placeholder="Enter size">
-                            </div>
-                        </div>
-
-                        <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
+                        <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Quantity QTY</label>
                                 <input class="form-control" type="number" name="qty" placeholder="Enter quantity">
                             </div>
                         </div>
-                        
-                        <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Product Image</label>
-                                <input class="form-control" type="file" name="image" id="image">
-                            </div>
-                        </div>
-                        
-                        <!-- Additional Field 2 -->
-                        <div class="col-xl-6 col-md-6">
-                            <div class="form-group mb-3">
-                                <img id="showImage"
-                                    src="{{ url('upload/no_image.jpg')}}" 
-                                    alt="" class="rounded-circle p-1 bg-primary" width="110">
-                            </div>
-                        </div>
+
                     </div>
                     
                     <div class="form-check mt-4">
@@ -148,6 +134,59 @@
 
     </div>
 </div>
+
+<script>
+    const productTemplatesByMenu = @json($productTemplates);
+
+    const menuSelect = document.querySelector('select[name="menu_id"]');
+    const productTemplateSelect = document.getElementById('productTemplateSelect');
+    const imagePreview = document.getElementById('showImage');
+
+    let currentTemplates = []; // lưu tạm các template theo menu đang chọn
+
+    menuSelect.addEventListener('change', function () {
+        const selectedMenuId = this.value;
+
+        // Xóa options cũ
+        productTemplateSelect.innerHTML = '<option selected disabled>Select product template</option>';
+        currentTemplates = productTemplatesByMenu[selectedMenuId] || [];
+
+        currentTemplates.forEach(template => {
+            const option = document.createElement('option');
+            option.value = template.id;
+            option.textContent = template.name; // đổi theo tên cột bạn muốn
+            productTemplateSelect.appendChild(option);
+        });
+
+        imagePreview.src = '{{ url('upload/no_image.jpg') }}'; // reset ảnh nếu đổi menu
+    });
+
+    productTemplateSelect.addEventListener('change', function () {
+        const selectedId = parseInt(this.value);
+        const selectedTemplate = currentTemplates.find(t => t.id === selectedId);
+
+        if (selectedTemplate) {
+            // Cập nhật ảnh
+            if (selectedTemplate.image) {
+                imagePreview.src = '{{ url('/') }}/' + selectedTemplate.image;
+            } else {
+                imagePreview.src = '{{ url('upload/no_image.jpg') }}';
+            }
+
+            // Cập nhật các label mới
+            categoryLabel.textContent = selectedTemplate.category.category_name || '-';
+            sizeLabel.textContent = selectedTemplate.size || '-';
+            unitLabel.textContent = selectedTemplate.unit || '-';
+        } else {
+            imagePreview.src = '{{ url('upload/no_image.jpg') }}';
+            categoryLabel.textContent = '-';
+            sizeLabel.textContent = '-';
+            unitLabel.textContent = '-';
+        }
+    });
+</script>
+
+
 
 <!-- Image Preview Script -->
 <script>

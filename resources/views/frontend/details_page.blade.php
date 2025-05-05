@@ -81,94 +81,102 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
   
 {{-- Most Popular --}}
   @php
-    $populers = App\Models\Product::where('status', 1)
+    $populers = App\Models\ProductNew::with('productTemplate')
+                ->where('status', 1)
                 ->where('client_id', $client->id)
                 ->where('most_popular', 1)
                 ->orderBy('id', 'desc')
                 ->limit(5)
                 ->get();
   @endphp
-  <div id="#menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
-      <h6 class="mb-3">Most Popular  <span class="badge badge-success"><i class="icofont-tags"></i> 15% Off All Items </span></h6>
-      <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
-        @foreach ($populers as $populer)
-          <div class="item">
-            <div class="mall-category-item">
-              <a href="#">
-                  <img class="img-fluid" src="{{ asset($populer->image) }}">
-                  <h6>{{ $populer->name }}</h6>
-                  @if ($populer->discount_price == NULL)
-                    {{ number_format($populer->price, 0, ',', '.') }}
-                  @else
-                    <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
-                    {{ number_format($populer->discount_price, 0, ',', '.') }}
-                  @endif
-                  <span class="float-right">
-                    <a class="btn btn-outline-secondary btn-sm" 
-                        href="{{ route('add_to_cart', $populer->id) }}">
-                        ADD
-                     </a>
-                  </span>
-              </a>
-            </div>
-        </div>
-        @endforeach
-      </div>
+  <div id="menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
+   <h6 class="mb-3">Most Popular <span class="badge badge-success"><i class="icofont-tags"></i> 15% Off All Items </span></h6>
+   <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
+       @foreach ($populers as $populer)
+           <div class="item">
+               <div class="mall-category-item">
+                   <a href="#">
+                       <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
+                       <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
 
-  </div>
+                       @if ($populer->discount_price == NULL)
+                           {{ number_format($populer->price, 0, ',', '.') }}
+                       @else
+                           <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
+                           {{ number_format($populer->discount_price, 0, ',', '.') }}
+                       @endif
+
+                       <span class="float-right">
+                           <a class="btn btn-outline-secondary btn-sm" href="{{ route('add_to_cart', $populer->id) }}">
+                               ADD
+                           </a>
+                       </span>
+                   </a>
+               </div>
+           </div>
+       @endforeach
+   </div>
+</div>
+
 
 {{-- Best Sellers --}}
-  @php
-    $bestsellers = App\Models\Product::where('status', 1)
-                ->where('client_id', $client->id)
-                ->where('best_seller', 1)
-                ->orderBy('id', 'desc')
-                ->limit(3)
-                ->get();
-  @endphp
-  <div class="row">
-    <h5 class="mb-4 mt-3 col-md-12">Best Sellers</h5>
-    @foreach ($bestsellers as $bestseller)
-      <div class="col-md-4 col-sm-6 mb-4">
-        <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
-            <div class="list-card-image">
-              <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
-              <div class="favourite-heart text-danger position-absolute"><a href="#"><i class="icofont-heart"></i></a></div>
-              <div class="member-plan position-absolute"><span class="badge badge-dark">Promoted</span></div>
-              <a href="#">
-              <img src="{{ asset($bestseller->image) }}" class="img-fluid item-img">
-              </a>
-            </div>
-            <div class="p-3 position-relative">
-              <div class="list-card-body">
-                  <h6 class="mb-1"><a href="#" class="text-black">{{ $bestseller->name }}</a></h6>
-                  <p class="text-gray mb-2">{{ $bestseller['city']['city_name'] }}</p>
-                  <p class="text-gray time mb-0">
-                    @if ($bestseller->discount_price == NULL)
-                      <a class="btn btn-link btn-sm text-black" href="#">
-                        {{ number_format($bestseller->price, 0, ',', '.') }}
-                      </a>  
-                    @else
-                      <del>
-                        {{ number_format($bestseller->price, 0, ',', '.') }}
-                      </del>
-                      <a class="btn btn-link btn-sm text-black" href="#">
-                        {{ number_format($bestseller->discount_price, 0, ',', '.') }}
-                      </a>  
-                    @endif
-                    <span class="float-right"> 
-                      <a class="btn btn-outline-secondary btn-sm" 
-                           href="{{ route('add_to_cart', $bestseller->id) }}">
-                           ADD
-                      </a>
-                    </span>
-                  </p>
-              </div>
-            </div>
-        </div>
-      </div>
-    @endforeach
-  </div>
+   @php
+   $bestsellers = App\Models\ProductNew::with('productTemplate')
+               ->where('status', 1)
+               ->where('client_id', $client->id)
+               ->where('best_seller', 1)
+               ->orderBy('id', 'desc')
+               ->limit(3)
+               ->get();
+   @endphp
+
+<div class="row">
+   <h5 class="mb-4 mt-3 col-md-12">Best Sellers</h5>
+   @foreach ($bestsellers as $bestseller)
+     <div class="col-md-4 col-sm-6 mb-4">
+       <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
+           <div class="list-card-image">
+             <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
+             <div class="favourite-heart text-danger position-absolute"><a href="#"><i class="icofont-heart"></i></a></div>
+             <div class="member-plan position-absolute"><span class="badge badge-dark">Promoted</span></div>
+             <a href="#">
+               <img src="{{ asset($bestseller->productTemplate->image ?? $bestseller->image) }}" class="img-fluid item-img" alt="">
+             </a>
+           </div>
+           <div class="p-3 position-relative">
+             <div class="list-card-body">
+                 <h6 class="mb-1">
+                   <a href="#" class="text-black">
+                     {{ $bestseller->productTemplate->name ?? $bestseller->name }}
+                   </a>
+                 </h6>
+                 <p class="text-gray mb-2">
+                   {{ $bestseller->productTemplate->category->category_name ?? '-' }}
+                 </p>
+                 <p class="text-gray time mb-0">
+                   @if ($bestseller->discount_price == NULL)
+                     <a class="btn btn-link btn-sm text-black" href="#">
+                       {{ number_format($bestseller->price, 0, ',', '.') }}
+                     </a>  
+                   @else
+                     <del>{{ number_format($bestseller->price, 0, ',', '.') }}</del>
+                     <a class="btn btn-link btn-sm text-black" href="#">
+                       {{ number_format($bestseller->discount_price, 0, ',', '.') }}
+                     </a>  
+                   @endif
+                   <span class="float-right"> 
+                     <a class="btn btn-outline-secondary btn-sm" href="{{ route('add_to_cart', $bestseller->id) }}">
+                       ADD
+                     </a>
+                   </span>
+                 </p>
+             </div>
+           </div>
+       </div>
+     </div>
+   @endforeach
+ </div>
+ 
 
 {{-- menus --}}
   @foreach ($menus as $menu)

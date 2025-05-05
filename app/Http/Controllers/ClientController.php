@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Client;
 use App\Models\City;
+use App\Models\District;
+use App\Models\Ward;
 
 class ClientController extends Controller
 {
@@ -32,6 +34,7 @@ class ClientController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
+            'ward_id' => $request->ward_id,
             'password' => Hash::make($request->password),
             'role' => 'client',
             'status' => '0',
@@ -78,7 +81,7 @@ class ClientController extends Controller
     public function ClientProfile() {
         $city = City::latest()->get();
         $id = Auth::guard('client')->id();
-        $profileData = Client::find($id);
+        $profileData = Client::with('ward.district.city')->find($id);
         return view('client.client_profile', compact('profileData', 'city'));
     }
     //End Method
@@ -91,6 +94,7 @@ class ClientController extends Controller
         $data->email = $request->email;
         $data->phone = $request->phone;
         $data->address = $request->address;
+        $data->ward_id = $request->ward_id;
         $data->city_id = $request->city_id;
         $data->shop_info = $request->shop_info;
         $data->cover_photo = $request->cover_photo;
@@ -167,4 +171,25 @@ class ClientController extends Controller
         return back()->with($notification);
     }
     //End Method
+
+
+    public function getFullAddressAttribute()
+    {
+        return $this->address . ', ' . 
+            $this->ward?->ward_name . ', ' . 
+            $this->district?->district_name . ', ' . 
+            $this->city?->city_name;
+    }
+
+    public function GetDistrictAjax($city_id)
+    {
+        $district = District::where('city_id', $city_id)->orderBy('district_name', 'ASC')->get();
+        return response()->json($district);
+    }
+
+    public function GetWardAjax($district_id)
+    {
+        $ward = Ward::where('district_id', $district_id)->orderBy('ward_name', 'ASC')->get();
+        return response()->json($ward);
+    }
 }

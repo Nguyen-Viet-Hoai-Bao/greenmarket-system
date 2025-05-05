@@ -21,25 +21,6 @@
                   </a>
               </li>
               @if ($status === '1')
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow">
-                        <i data-feather="grid"></i>
-                        <span data-key="t-apps">Menu</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li>
-                            <a href="{{ route('all.menu') }}">
-                                <span data-key="t-calendar">All Menu</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="{{ route('add.menu') }}">
-                                <span data-key="t-chat">Add Menu</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
 
                     <li>
                         <a href="javascript: void(0);" class="has-arrow">

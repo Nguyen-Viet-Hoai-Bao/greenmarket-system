@@ -77,6 +77,11 @@ Route::middleware('client')->group(function () {
     Route::post('/client/profile/store', [ClientController::class, 'ClientProfileStore'])->name('client.profile.store');
     Route::get('/client/change/password', [ClientController::class, 'ClientChangePassword'])->name('client.change.password');
     Route::post('/client/password/update', [ClientController::class, 'ClientPasswordUpdate'])->name('client.password.update');
+
+    // web.php
+    Route::get('/client/district/ajax/{city_id}', [ClientController::class, 'GetDistrictAjax']);
+    Route::get('/client/ward/ajax/{district_id}', [ClientController::class, 'GetWardAjax']);
+
 });
 
 Route::get('/client/login', [ClientController::class, 'ClientLogin'])->name('client.login');
@@ -90,7 +95,7 @@ Route::middleware('admin')->group(function () {
 
     // ALL ADMIN CATEGORY
     Route::controller(CategoryController::class)->group(function(){
-        Route::get('/all/category', 'AllCategory')->name('all.category')->middleware('permission:category.all');
+        Route::get('/all/category', 'AllCategory')->name('all.category');
         
         Route::get('/add/category', 'AddCategory')->name('add.category');
         Route::post('/store/category', 'StoreCategory')->name('category.store');
@@ -99,6 +104,18 @@ Route::middleware('admin')->group(function () {
         Route::post('/update/category', 'UpdateCategory')->name('category.update');
         
         Route::get('/delete/category{id}', 'DeleteCategory')->name('delete.category');
+    });
+    
+    Route::controller(MarketController::class)->group(function(){
+        Route::get('/all/menu', 'AllMenu')->name('all.menu');
+        
+        Route::get('/add/menu', 'AddMenu')->name('add.menu');
+        Route::post('/store/menu', 'StoreMenu')->name('menu.store');
+        
+        Route::get('/edit/menu/{id}', 'EditMenu')->name('edit.menu');
+        Route::post('/update/menu', 'UpdateMenu')->name('menu.update');
+        
+        Route::get('/delete/menu/{id}', 'DeleteMenu')->name('delete.menu');
     });
 
     // ALL ADMIN City
@@ -246,17 +263,6 @@ Route::middleware('admin')->group(function () {
 
 
 Route::middleware(['client', 'status'])->group(function () {
-    Route::controller(MarketController::class)->group(function(){
-        Route::get('/all/menu', 'AllMenu')->name('all.menu');
-        
-        Route::get('/add/menu', 'AddMenu')->name('add.menu');
-        Route::post('/store/menu', 'StoreMenu')->name('menu.store');
-        
-        Route::get('/edit/menu/{id}', 'EditMenu')->name('edit.menu');
-        Route::post('/update/menu', 'UpdateMenu')->name('menu.update');
-        
-        Route::get('/delete/menu/{id}', 'DeleteMenu')->name('delete.menu');
-    });
 
     Route::controller(MarketController::class)->group(function(){
         Route::get('/all/product', 'AllProduct')->name('all.product');
@@ -298,7 +304,7 @@ Route::middleware(['client', 'status'])->group(function () {
     
     Route::controller(ManageOrderController::class)->group(function(){
         Route::get('/all/clients/orders', 'AllClientsOrders')->name('all.clients.orders');
-        Route::get('/client/order/details/{id}', 'ClientOrderDetails')->name('client.order_details');
+        Route::get('/client/order/details/{id}', 'ClientOrderDetails')->name('client.order.details');
     });
     
     // ALL CLIENT REPORT 
@@ -319,6 +325,7 @@ Route::middleware(['client', 'status'])->group(function () {
 
 /// For All User
 Route::get('/changeStatus', [MarketController::class, 'ChangeStatus']);
+Route::get('/changeStatusProductTemplate', [MarketController::class, 'ChangeStatusProductTemplate']);
 
 Route::controller(HomeController::class)->group(function(){
     Route::get('/market/details/{id}', 'MarketDetails')->name('market.details');

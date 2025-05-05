@@ -39,6 +39,7 @@
         <th>Menu</th>
         <th>QTY</th>
         <th>Price</th>
+        <th>Discount Price</th>
         <th>Discount</th>
         <th>Status</th>
         <th>Action</th>
@@ -51,13 +52,14 @@
         <tr>
             <td>{{ $key+1 }}</td>
             <td>
-              <img src="{{ asset($item->image) }}" 
+              <img src="{{ asset($item['productTemplate']['image']) }}" 
                     alt=""
                     style="width: 70px; heigh:40px;"></td>
-            <td>{{ $item->name }}</td>
-            <td>{{ $item['menu']['menu_name'] }}</td>
+            <td>{{ $item['productTemplate']['name'] }}</td>
+            <td>{{ $item['productTemplate']['menu']['menu_name'] }}</td>
             <td>{{ $item->qty }}</td>
             <td>{{ $item->price }}</td>
+            <td>{{ $item->discount_price }}</td>
             <td>
                 @if ($item->discount_price == NULL)
                     <span class="badge bg-danger">No Discount</span>
