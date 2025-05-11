@@ -10,11 +10,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Add Product Template</h4>
+                    <h4 class="mb-sm-0 font-size-18">Thêm Mẫu Sản Phẩm</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Add Product Template</li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Bảng Điều Khiển</a></li>
+                            <li class="breadcrumb-item active">Thêm Mẫu Sản Phẩm</li>
                         </ol>
                     </div>
                 </div>
@@ -32,9 +32,9 @@
                         <!-- Category -->
                         <div class="col-xl-3 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Category Name</label>
+                                <label class="form-label">Tên Danh Mục</label>
                                 <select class="form-select" name="category_id">
-                                    <option value="">Select</option>
+                                    <option value="">Chọn</option>
                                     @foreach ($category as $cat)
                                         <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
                                     @endforeach
@@ -45,9 +45,9 @@
                         <!-- Menu -->
                         <div class="col-xl-3 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Menu Name</label>
+                                <label class="form-label">Tên Menu</label>
                                 <select class="form-select" name="menu_id">
-                                    <option selected="" disabled>Select</option>
+                                    <option selected="" disabled>Chọn</option>
                                     @foreach ($menu as $men)
                                         <option value="{{ $men->id }}">{{ $men->menu_name }}</option>
                                     @endforeach
@@ -58,7 +58,7 @@
                         <!-- Product Name -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Product Name</label>
+                                <label class="form-label">Tên Sản Phẩm</label>
                                 <input class="form-control" type="text" name="name" value="" placeholder="Enter product name">
                             </div>
                         </div>
@@ -66,7 +66,7 @@
                         <!-- Additional Field 2 -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Size</label>
+                                <label class="form-label">Kích Cỡ</label>
                                 <input class="form-control" type="number" name="size" placeholder="Enter size">
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                         <!-- Product Unit -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Unit</label>
+                                <label class="form-label">Đơn Vị</label>
                                 <input class="form-control" type="text" name="unit" value="" placeholder="Enter product unit">
                             </div>
                         </div>
@@ -82,7 +82,7 @@
                         <!-- Additional Field 2 -->
                         <div class="col-xl-6 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Product Image</label>
+                                <label class="form-label">Ảnh Sản Phẩm</label>
                                 <input class="form-control" type="file" name="image" id="image">
                             </div>
                         </div>
@@ -99,7 +99,7 @@
 
                     <!-- Submit -->
                     <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Add Product Template</button>
+                        <button type="submit" class="btn btn-primary">Thêm Mẫu Sản Phẩm</button>
                     </div>
 
                 </form>

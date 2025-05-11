@@ -17,7 +17,7 @@
      <div class="osahan-account-page-right rounded shadow-sm bg-white p-4 h-100">
      <div class="tab-content" id="myTabContent">
          <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-             <h4 class="font-weight-bold mt-0 mb-4">Order Details   </h4>
+             <h4 class="font-weight-bold mt-0 mb-4">Chi tiết đơn hàng</h4>
              
              
      
@@ -26,7 +26,7 @@
                  <div class="col">
                      <div class="card">
                       <div class="card-header">
-                         <h4>Shipping Details</h4>
+                         <h4>Thông tin giao hàng</h4>
                       </div>
                              
                          <div class="card-body">
@@ -35,23 +35,23 @@
               
                      <tbody>
                          <tr> 
-                             <th width="50%">Shipping Name: </th>
+                             <th width="50%">Tên người nhận: </th>
                              <td>{{ $order->name }}</td> 
                          </tr> 
                          <tr> 
-                             <th width="50%">Shipping Phone: </th>
+                             <th width="50%">Số điện thoại: </th>
                              <td>{{ $order->phone }}</td> 
                          </tr>
                          <tr> 
-                             <th width="50%">Shipping Email: </th>
+                             <th width="50%">Email: </th>
                              <td>{{ $order->email }}</td> 
                          </tr>
                          <tr> 
-                             <th width="50%">Shipping Address: </th>
+                             <th width="50%">Địa chỉ: </th>
                              <td>{{ $order->address }}</td> 
                          </tr>
                          <tr> 
-                             <th width="50%">Order Date: </th>
+                             <th width="50%">Ngày đặt hàng: </th>
                              <td>{{ $order->order_date }}</td> 
                          </tr> 
                          
@@ -66,8 +66,8 @@
                  <div class="col">
                      <div class="card">
                       <div class="card-header">
-                         <h4>Order Details
-                         <span class="text-danger">Invoice: {{ $order->invoice_no }}</span></h4>
+                         <h4>Chi tiết đơn hàng
+                         <span class="text-danger">Mã hóa đơn: {{ $order->invoice_no }}</span></h4>
                       </div>
                              
                          <div class="card-body">
@@ -76,11 +76,11 @@
               
                      <tbody>
                          <tr> 
-                             <th width="50%"> Name: </th>
+                             <th width="50%"> Tên khách hàng: </th>
                              <td>{{ $order->user->name }}</td> 
                          </tr> 
                          <tr> 
-                             <th width="50%"> Phone: </th>
+                             <th width="50%"> Số điện thoại: </th>
                              <td>{{ $order->user->phone }}</td> 
                          </tr>
                          <tr> 
@@ -88,23 +88,23 @@
                              <td>{{ $order->user->email }}</td> 
                          </tr>
                          <tr> 
-                             <th width="50%">Payment Type: </th>
+                             <th width="50%">Hình thức thanh toán: </th>
                              <td>{{ $order->payment_method }}</td> 
                          </tr>
                          <tr> 
-                             <th width="50%">Transx Id: </th>
+                             <th width="50%">Mã giao dịch: </th>
                              <td>{{ $order->transaction_id }}</td> 
                          </tr> 
                          <tr> 
-                             <th width="50%">Invoice: </th>
+                             <th width="50%">Mã hóa đơn: </th>
                              <td class="text-danger">{{ $order->invoice_no }}</td> 
                          </tr> 
                          <tr> 
-                             <th width="50%">Order Amount: </th>
+                             <th width="50%">Tổng tiền: </th>
                              <td>${{ $order->amount }}</td> 
                          </tr> 
                          <tr> 
-                             <th width="50%">Order Status: </th>
+                             <th width="50%">Trạng thái: </th>
                              <td><span class="badge bg-success">{{ $order->status }}</span></td> 
                          </tr>
               
@@ -128,22 +128,22 @@
                              <tbody>
                                  <tr>
                                      <td class="col-md-1">
-                                         <label>Image</label>
+                                         <label>Hình ảnh</label>
                                      </td>
                                      <td class="col-md-1">
-                                         <label>Product Name</label>
+                                         <label>Tên sản phẩm</label>
                                      </td>
                                      <td class="col-md-1">
-                                         <label>Restruatnt Name </label>
+                                         <label>Nhà hàng</label>
                                      </td>
                                      <td class="col-md-1">
-                                         <label>Product Code</label>
+                                         <label>Mã sản phẩm</label>
                                      </td>
                                      <td class="col-md-1">
-                                         <label>Quantity</label>
+                                         <label>Số lượng</label>
                                      </td>
                                      <td class="col-md-1">
-                                         <label>Price</label>
+                                         <label>Giá</label>
                                      </td> 
                                  </tr>
                  @foreach ($orderItem as $item)
@@ -161,7 +161,7 @@
                      @if ($item->client_id == NULL)
                      <td class="col-md-2">
                          <label>
-                            Owner
+                            Chính chủ
                          </label>
                      </td>
                      @else

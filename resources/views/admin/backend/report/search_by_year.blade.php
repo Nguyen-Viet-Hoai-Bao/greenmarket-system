@@ -8,7 +8,7 @@
          <div class="row">
              <div class="col-12">
                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                     <h4 class="mb-sm-0 font-size-18">All Search By Month Order</h4>
+                     <h4 class="mb-sm-0 font-size-18">Tìm kiếm tất cả theo năm đơn hàng</h4>
  
                      <div class="page-title-right">
                          <ol class="breadcrumb m-0">
@@ -26,17 +26,17 @@
                  <div class="card">
                       
                      <div class="card-body">
-         <h3 class="text-danger">Search By Year: {{ $year }}</h3>
+         <h3 class="text-danger">Tìm kiếm theo năm: {{ $year }}</h3>
          <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
              <thead>
              <tr>
-                 <th>Sl</th>
-                 <th>Date</th>
-                 <th>Invoice</th>
-                 <th>Amount</th>
-                 <th>Payment</th> 
-                 <th>Status</th>
-                 <th>Action </th> 
+                <th>STT</th>
+                <th>Ngày</th>
+                <th>Hóa đơn</th>
+                <th>Số tiền</th>
+                <th>Phương thức thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
              </tr>
              </thead>
  

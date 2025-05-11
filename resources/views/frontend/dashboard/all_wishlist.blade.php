@@ -13,7 +13,7 @@
 <div class="col-md-9">
   <div class="osahan-account-page-right rounded shadow-sm bg-white p-4 h-100">
     <div class="tab-pane">
-      <h4 class="font-weight-bold mt-0 mb-4">Favourites</h4>
+      <h4 class="font-weight-bold mt-0 mb-4">Danh sách yêu thích</h4>
       <div class="row">
 
 @foreach ($wishlist as $wish)

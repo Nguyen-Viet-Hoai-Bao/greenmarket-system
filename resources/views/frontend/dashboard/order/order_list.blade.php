@@ -17,7 +17,7 @@
      <div class="osahan-account-page-right rounded shadow-sm bg-white p-4 h-100">
      <div class="tab-content" id="myTabContent">
          <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-             <h4 class="font-weight-bold mt-0 mb-4">Order List   </h4>
+             <h4 class="font-weight-bold mt-0 mb-4">Danh sách đơn hàng </h4>
              
              
      <div class="bg-white card mb-4 order-list shadow-sm">
@@ -26,13 +26,13 @@
              <table class="table table-bordered dt-responsive  nowrap w-100">
                  <thead>
                  <tr>
-                     <th>Sl</th>
-                     <th>Date</th>
-                     <th>Invoice</th>
-                     <th>Amount</th>
-                     <th>Payment</th> 
-                     <th>Status</th>
-                     <th>Action </th> 
+                    <th>STT</th>
+                    <th>Ngày đặt</th>
+                    <th>Mã hóa đơn</th>
+                    <th>Số tiền</th>
+                    <th>Thanh toán</th> 
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
                  </tr>
                  </thead>
      
@@ -47,21 +47,21 @@
                      <td>{{ $item->payment_method }}</td>
                      <td>
                      @if ($item->status == 'pending')
-                     <span class="badge bg-info">Pending</span>
+                     <span class="badge bg-info">Chờ xử lý</span>
                      @elseif ($item->status == 'confirm')
-                     <span class="badge bg-primary">Confirm</span>
+                     <span class="badge bg-primary">Đã xác nhận</span>
                      @elseif ($item->status == 'processing')
-                     <span class="badge bg-warning">Processing</span>
+                     <span class="badge bg-warning">Đang xử lý</span>
                      @elseif ($item->status == 'deliverd')
-                     <span class="badge bg-success">Deliverd</span>
+                     <span class="badge bg-success">Đã giao hàng</span>
                      @endif
                      </td>                
                     
                      
              <td class="d-flex justify-content-between">
-              <a href="{{ route('user.order.details',$item->id) }}" class="btn-small d-block text-primary"> <i class="fas fa-eye"></i> View</a> 
+              <a href="{{ route('user.order.details',$item->id) }}" class="btn-small d-block text-primary"> <i class="fas fa-eye"></i> Xem</a> 
  
-             <a href="{{ route('user.invoice.download',$item->id) }}" class="btn-small d-block text-danger"> <i class="fa fa-download"></i> Invoice</a>
+             <a href="{{ route('user.invoice.download',$item->id) }}" class="btn-small d-block text-danger"> <i class="fa fa-download"></i> Tải hóa đơn</a>
      
                      </td> 
                  </tr>

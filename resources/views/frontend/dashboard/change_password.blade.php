@@ -16,7 +16,7 @@
   <div class="osahan-account-page-right rounded shadow-sm bg-white p-4 h-100">
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-          <h4 class="font-weight-bold mt-0 mb-4">Change Password</h4>
+          <h4 class="font-weight-bold mt-0 mb-4">Đổi mật khẩu</h4>
           <div class="bg-white card mb-4 order-list shadow-sm">
               <div class="gold-members p-4">
 <form action="{{ route('user.password.update') }}" method="POST" enctype="multipart/form-data">
@@ -26,7 +26,7 @@
       <div class="col-lg-12">
           <div>
               <div class="mb-6">
-                  <label for="example-text-input" class="form-label">Old Password</label>
+                  <label for="example-text-input" class="form-label">Mật khẩu cũ</label>
                   <input class="form-control @error('old_password') is-invalid @enderror" 
                         type="password" name="old_password" id="old_password">
                   @error('old_password')
@@ -35,7 +35,7 @@
               </div>
               
               <div class="mb-6">
-                <label for="example-text-input" class="form-label">New Password</label>
+                <label for="example-text-input" class="form-label">Mật khẩu mới</label>
                 <input class="form-control @error('new_password') is-invalid @enderror" 
                       type="password" name="new_password" id="new_password">
                 @error('new_password')
@@ -44,12 +44,12 @@
               </div>
               
               <div class="mb-6">
-                <label for="example-text-input" class="form-label">Confirm New Password</label>
+                <label for="example-text-input" class="form-label">Xác nhận mật khẩu mới</label>
                 <input class="form-control" 
                   type="password" name="new_password_confirmation" id="new_password_confirmation">
               </div></br>
                 
-              <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+              <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu thay đổi</button>
               
           </div>
       </div>

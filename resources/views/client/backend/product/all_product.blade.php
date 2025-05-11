@@ -11,12 +11,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">All Product</h4>
+                  <h4 class="mb-sm-0 font-size-18">Tất Cả Sản Phẩm</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
                         <a href="{{ route('add.product') }}" 
-                            class="btn btn-info waves-effect waves-light">Add Product</a>
+                            class="btn btn-info waves-effect waves-light">Thêm Sản Phẩm</a>
                       </ol>
                   </div>
 
@@ -33,16 +33,16 @@
 <table id="datatable" class="table table-bordered dt-responsive w-100">
     <thead>
     <tr>
-        <th>Sl</th>
-        <th>Image</th>
-        <th>Product Name</th>
-        <th>Menu</th>
-        <th>QTY</th>
-        <th>Price</th>
-        <th>Discount Price</th>
-        <th>Discount</th>
-        <th>Status</th>
-        <th>Action</th>
+        <th>STT</th>
+        <th>Hình ảnh</th>
+        <th>Tên Sản Phẩm</th>
+        <th>Danh Mục</th>
+        <th>Số Lượng</th>
+        <th>Giá</th>
+        <th>Giá Giảm</th>
+        <th>Giảm Giá</th>
+        <th>Trạng Thái</th>
+        <th>Hành Động</th>
     </tr>
     </thead>
 
@@ -62,7 +62,7 @@
             <td>{{ $item->discount_price }}</td>
             <td>
                 @if ($item->discount_price == NULL)
-                    <span class="badge bg-danger">No Discount</span>
+                    <span class="badge bg-danger">Không có giảm giá</span>
                 @else
                     @php
                         $amount = $item->price - $item->discount_price;
@@ -73,9 +73,9 @@
             </td>
             <td class="status-text-{{ $item->id }}">
                 @if ($item->status == 1)
-                    <span class="text-success"><b>Active</b></span>
+                    <span class="text-success"><b>Hoạt Động</b></span>
                 @else
-                    <span class="text-danger"><b>InActive</b></span>
+                    <span class="text-danger"><b>Ngừng Hoạt Động</b></span>
                 @endif
             </td>
             <td class="d-flex align-items-center gap-1">

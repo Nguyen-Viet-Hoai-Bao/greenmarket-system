@@ -11,7 +11,7 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Pending Market</h4>
+                  <h4 class="mb-sm-0 font-size-18">Chờ Duyệt Chợ</h4>
               </div>
           </div>
       </div>
@@ -25,13 +25,13 @@
 <table id="datatable" class="table table-bordered dt-responsive w-100">
     <thead>
     <tr>
-        <th>Sl</th>
-        <th>Image</th>
-        <th>Market Name</th>
+        <th>STT</th>
+        <th>Hình ảnh</th>
+        <th>Tên chợ</th>
         <th>Email</th>
-        <th>Phone</th>
-        <th>Status</th>
-        <th>Action</th>
+        <th>Điện thoại</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
     </tr>
     </thead>
 
@@ -51,9 +51,9 @@
             <td>{{ $item->phone }}</td>
             <td class="status-text-{{ $item->id }}">
                 @if ($item->status == 1)
-                    <span class="text-success"><b>Active</b></span>
+                    <span class="text-success"><b>Đang hoạt động</b></span>
                 @else
-                    <span class="text-danger"><b>InActive</b></span>
+                    <span class="text-danger"><b>Không hoạt động</b></span>
                 @endif
             </td>
             <td class="d-flex align-items-center gap-1">

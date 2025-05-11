@@ -40,8 +40,8 @@
                                     </div>
                                     <div class="auth-content my-auto">
                                         <div class="text-center">
-                                            <h5 class="mb-0">Welcome Back !</h5>
-                                            <p class="text-muted mt-2">Sign in to continue to Green Food.</p>
+                                            <h5 class="mb-0">Chào mừng bạn trở lại!</h5>
+                                            <p class="text-muted mt-2">Đăng nhập để tiếp tục sử dụng Green Food.</p>
                                         </div>
 
               @if ($errors->any())
@@ -61,15 +61,15 @@
               <form class="mt-4 pt-2" action="{{ route('client.register.submit') }}" method="POST">
                 @csrf
                   <div class="mb-3">
-                      <label class="form-label">Store Name</label>
+                      <label class="form-label">Tên cửa hàng</label>
                       <input type="text" name="name" class="form-control" id="name" placeholder="Enter Name">
                   </div>
                   <div class="mb-3">
-                      <label class="form-label">Phone</label>
+                      <label class="form-label">Số điện thoại</label>
                       <input type="text" name="phone" class="form-control" id="phone" placeholder="Enter Phone">
                   </div>
                   <div class="mb-3">
-                      <label class="form-label">Address</label>
+                      <label class="form-label">Địa chỉ</label>
                       <input type="text" name="address" class="form-control" id="address" placeholder="Enter Address">
                   </div>
                   <div class="mb-3">
@@ -79,11 +79,11 @@
                   <div class="mb-3">
                       <div class="d-flex align-items-start">
                           <div class="flex-grow-1">
-                              <label class="form-label">Password</label>
+                              <label class="form-label">Mật khẩu</label>
                           </div>
                           <div class="flex-shrink-0">
                               <div class="">
-                                  <a href="{{ route('admin.forget_password') }}" class="text-muted">Forgot password?</a>
+                                  <a href="{{ route('admin.forget_password') }}" class="text-muted">Quên mật khẩu?</a>
                               </div>
                           </div>
                       </div>
@@ -101,13 +101,13 @@
                       
                   </div>
                   <div class="mb-3">
-                      <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Register</button>
+                      <button class="btn btn-primary w-100 waves-effect waves-light" type="submit">Đăng ký</button>
                   </div>
               </form>
 
                                         <div class="mt-4 pt-2 text-center">
                                             <div class="signin-other-title">
-                                                <h5 class="font-size-14 mb-3 text-muted fw-medium">- Sign in with -</h5>
+                                                <h5 class="font-size-14 mb-3 text-muted fw-medium">- Đăng nhập bằng -</h5>
                                             </div>
 
                                             <ul class="list-inline mb-0">
@@ -133,8 +133,8 @@
                                         </div>
 
                                         <div class="mt-5 text-center">
-                                            <p class="text-muted mb-0">Don't have an account ? <a href="auth-register.html"
-                                                    class="text-primary fw-semibold"> Signup now </a> </p>
+                                            <p class="text-muted mb-0">Bạn chưa có tài khoản? <a href="auth-register.html"
+                                                    class="text-primary fw-semibold"> Đăng ký ngay </a> </p>
                                         </div>
                                     </div>
                                     <div class="mt-4 mt-md-5 text-center">

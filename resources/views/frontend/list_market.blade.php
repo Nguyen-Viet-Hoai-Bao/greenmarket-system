@@ -2,8 +2,8 @@
  @section('dashboard')
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
  <section class="breadcrumb-osahan pt-5 pb-5 bg-dark position-relative text-center">
-     <h1 class="text-white">Offers Near You</h1>
-     <h6 class="text-white-50">Best deals at your favourite markets</h6>
+     <h1 class="text-white">Ưu Đãi Gần Bạn</h1>
+     <h6 class="text-white-50">Những ưu đãi tốt nhất tại các cửa hàng yêu thích của bạn</h6>
   </section>
   <section class="section pt-5 pb-5 products-listing">
      <div class="container">
@@ -11,15 +11,15 @@
            <div class="col-md-12">
               <div class="dropdown float-right">
                  <a class="btn btn-outline-info dropdown-toggle btn-sm border-white-btn" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                 Sort by: <span class="text-theme">Distance</span> &nbsp;&nbsp;
+                  Sắp xếp theo: <span class="text-theme">Khoảng cách</span> &nbsp;&nbsp;
                  </a>
                  <div class="dropdown-menu dropdown-menu-right shadow-sm border-0 ">
-                    <a class="dropdown-item" href="#">Distance</a>
-                    <a class="dropdown-item" href="#">No Of Offers</a>
-                    <a class="dropdown-item" href="#">Rating</a>
+                    <a class="dropdown-item" href="#">Khoảng cách</a>
+                    <a class="dropdown-item" href="#">Số Lượng Ưu Đãi</a>
+                    <a class="dropdown-item" href="#">Đánh Giá</a>
                  </div>
               </div>
-              <h4 class="font-weight-bold mt-0 mb-3">OFFERS <small class="h6 mb-0 ml-2">299 markets
+              <h4 class="font-weight-bold mt-0 mb-3">ƯU ĐÃI <small class="h6 mb-0 ml-2">299 cửa hàng
                  </small>
               </h4>
            </div>
@@ -28,7 +28,7 @@
            <div class="col-md-3">
               <div class="filters shadow-sm rounded bg-white mb-4">
                  <div class="filters-header border-bottom pl-4 pr-4 pt-3 pb-3">
-                    <h5 class="m-0">Filter By</h5>
+                    <h5 class="m-0">Lọc Theo</h5>
                  </div>
                  
 @php
@@ -40,7 +40,7 @@
          <div class="filters-card-header" id="headingOne">
             <h6 class="mb-0">
                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-               Category <i class="icofont-arrow-down float-right"></i>
+                  Loại Hàng <i class="icofont-arrow-down float-right"></i>
                </a>
             </h6>
          </div>
@@ -119,7 +119,7 @@
          <div class="filters-card-header" id="headingOnemenu">
             <h6 class="mb-0">
                <a href="#" class="btn-link" data-toggle="collapse" data-target="#collapseOnemenu" aria-expanded="true" aria-controls="collapseOnemenu">
-               Menu <i class="icofont-arrow-down float-right"></i>
+                  Thực Đơn <i class="icofont-arrow-down float-right"></i>
                </a>
             </h6>
          </div>

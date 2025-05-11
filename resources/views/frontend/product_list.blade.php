@@ -13,7 +13,7 @@
         <div class="p-3 position-relative flex-grow-1">
             <div class="list-card-body">
                 <h6 class="mb-1 text-truncate"><a href="{{ route('product.detail', $product->id) }}" class="text-black"> {{ $product->productTemplate->name}}</a></h6>
-                <p class="text-gray mb-3 time"><span class="bg-light text-dark rounded-sm pl-2 pb-1 pt-1 pr-2"><i class="icofont-wall-clock"></i> 20–25 min</span> <span class="float-right text-black-50"> {{ number_format($product->price, 0, ',', '.') }} VNĐ</span></p>
+                <p class="text-gray mb-3 time"><span class="bg-light text-dark rounded-sm pl-2 pb-1 pt-1 pr-2"><i class="icofont-wall-clock"></i> 20–25 phút</span> <span class="float-right text-black-50"> {{ number_format($product->price, 0, ',', '.') }} VNĐ</span></p>
             </div>
             @php
                 $discount = $product->price - $product->discount_price;
@@ -21,7 +21,7 @@
             @endphp
             <div class="list-card-badge mb-2 text-center">
                 <span class="badge badge-success">GIẢM GIÁ</span>
-                <small class="text-success ml-1 font-weight-bold">{{ $percent }}% OFF</small>
+                <small class="text-success ml-1 font-weight-bold">{{ $percent }}% Giảm</small>
             </div>
             @php
                 $cart = session('cart', []);

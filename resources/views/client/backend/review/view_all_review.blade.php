@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Admin Pending Review</h4>
+                    <h4 class="mb-sm-0 font-size-18">Đánh Giá Đang Chờ Xem Duyệt</h4>
 
                     
 
@@ -28,12 +28,12 @@
         <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
             <thead>
             <tr>
-                <th>Sl</th>
-                <th>User</th>
-                <th>Resturant</th>
-                <th>Comment</th>
-                <th>Rating</th>                
-                <th>Status</th>  
+                <th>STT</th>
+                <th>Người Dùng</th>
+                <th>Nhà Hàng</th>
+                <th>Bình Luận</th>
+                <th>Đánh Giá</th>                
+                <th>Trạng Thái</th>   
             </tr>
             </thead>
 
@@ -52,9 +52,9 @@
                     </td> 
                 <td> 
                     @if ($item->status == 1)
-                    <span class="text-success"><b>Active</b></span>
+                    <span class="text-success"><b>Đang Hoạt Động</b></span>
                     @else
-                    <span class="text-danger"><b>InActive</b></span>
+                    <span class="text-danger"><b>Không Hoạt Động</b></span>
                     @endif
                 </td>
                 

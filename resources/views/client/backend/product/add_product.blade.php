@@ -10,11 +10,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Add Product</h4>
+                    <h4 class="mb-sm-0 font-size-18">Thêm Sản Phẩm</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Add Product</li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item active">Thêm Sản Phẩm</li>
                         </ol>
                     </div>
                 </div>
@@ -33,9 +33,9 @@
                         <!-- Menu -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Menu Name</label>
+                                <label class="form-label">Tên Menu</label>
                                 <select class="form-select" name="menu_id">
-                                    <option selected="" disabled>Select</option>
+                                    <option selected="" disabled>Chọn</option>
                                     @foreach ($menus as $men)
                                         <option value="{{ $men->id }}">{{ $men->menu_name }}</option>
                                     @endforeach
@@ -46,9 +46,9 @@
                         <!-- Product Template -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Product Template</label>
+                                <label class="form-label">Mẫu Sản Phẩm</label>
                                 <select class="form-select" name="product_template_id" id="productTemplateSelect">
-                                    <option selected disabled>Select product template</option>
+                                    <option selected disabled>SChọn mẫu sản phẩm</option>
                                 </select>
                             </div>
                         </div>
@@ -65,7 +65,7 @@
                         <!-- Category -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Category:</label>
+                                <label class="form-label">Danh Mục:</label>
                                 <div id="categoryLabel" class="form-control" readonly>-</div>
                             </div>
                         </div>
@@ -73,7 +73,7 @@
                         <!-- Size -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Size:</label>
+                                <label class="form-label">Kích Cỡ:</label>
                                 <div id="sizeLabel" class="form-control" readonly>-</div>
                             </div>
                         </div>
@@ -81,7 +81,7 @@
                         <!-- Unit -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Unit:</label>
+                                <label class="form-label">Đơn Vị:</label>
                                 <div id="unitLabel" class="form-control" readonly>-</div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                         <!-- Additional Field 1 -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Price</label>
+                                <label class="form-label">Giá</label>
                                 <input class="form-control" type="text" name="price" placeholder="Enter price">
                             </div>
                         </div>
@@ -97,7 +97,7 @@
                         <!-- Additional Field 1 -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Discount Price</label>
+                                <label class="form-label">Giá Giảm</label>
                                 <input class="form-control" type="text" name="discount_price" placeholder="Enter discount price">
                             </div>
                         </div>
@@ -105,7 +105,7 @@
                         <!-- Additional Field 2 -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Quantity QTY</label>
+                                <label class="form-label">Số Lượng</label>
                                 <input class="form-control" type="number" name="qty" placeholder="Enter quantity">
                             </div>
                         </div>
@@ -114,17 +114,17 @@
                     
                     <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" name="best_seller" id="formCheck2" value="1">
-                        <label for="formCheck2" class="form-check-lable">Best Seller</label>
+                        <label for="formCheck2" class="form-check-lable">Sản Phẩm Bán Chạy</label>
                     </div>
                     <br>
                     <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" name="most_popular" id="formCheck2" value="1">
-                        <label for="formCheck2" name="" class="form-check-lable">Most Popular</label>
+                        <label for="formCheck2" name="" class="form-check-lable">Sản Phẩm Phổ Biến</label>
                     </div>
 
                     <!-- Submit -->
                     <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Add Product</button>
+                        <button type="submit" class="btn btn-primary">Thêm Sản Phẩm</button>
                     </div>
 
                 </form>

@@ -16,7 +16,7 @@
   <div class="osahan-account-page-right rounded shadow-sm bg-white p-4 h-100">
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-          <h4 class="font-weight-bold mt-0 mb-4">User Profile</h4>
+          <h4 class="font-weight-bold mt-0 mb-4">Thông Tin Tài Khoản</h4>
           <div class="bg-white card mb-4 order-list shadow-sm">
               <div class="gold-members p-4">
 <form action="{{ route('profile.store') }}" method="POST" enctype="multipart/form-data">
@@ -26,7 +26,7 @@
       <div class="col-lg-6">
           <div>
               <div class="mb-3">
-                  <label for="example-text-input" class="form-label">Name</label>
+                  <label for="example-text-input" class="form-label">Tên</label>
                   <input class="form-control" type="text" name="name" value="{{ $profileData->name }}" id="example-text-input">
               </div>
               
@@ -36,7 +36,7 @@
               </div>
               
               <div class="mb-3">
-                <label for="example-text-input" class="form-label">Phone</label>
+                <label for="example-text-input" class="form-label">Số điện thoại</label>
                 <input class="form-control" type="text" name="phone" value="{{ $profileData->phone }}" id="example-text-input">
               </div>
                 
@@ -46,12 +46,12 @@
 
       <div class="col-lg-6">
         <div class="mb-3">
-          <label for="example-text-input" class="form-label">Address</label>
+          <label for="example-text-input" class="form-label">Địa chỉ</label>
           <input class="form-control" type="text" name="address" value="{{ $profileData->address }}" id="example-text-input">
         </div>
         
         <div class="mb-3">
-          <label for="example-text-input" class="form-label">Profile Image</label>
+          <label for="example-text-input" class="form-label">Ảnh đại diện</label>
           <input class="form-control" type="file" name="photo" id="image">
         </div>
         
@@ -64,7 +64,7 @@
         </div>
 
         <div class="mt-4">
-          <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+          <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu thay đổi</button>
         </div>
       </div>
   </div>

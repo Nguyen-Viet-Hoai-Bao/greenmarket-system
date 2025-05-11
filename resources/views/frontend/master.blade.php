@@ -7,7 +7,7 @@
       <meta name="csrf-token" content="{{ csrf_token() }}">
       <meta name="description" content="Askbootstrap">
       <meta name="author" content="Askbootstrap">
-      <title>Osahan Eat - Online Food Ordering Website HTML Template</title>
+      <title>Osahan Eat - Website Đặt Món Ăn Trực Tuyến</title>
       <!-- Favicon Icon -->
       <link rel="icon" type="image/png" href="img/favicon.png">
       <!-- Bootstrap core CSS-->
@@ -134,6 +134,29 @@
          }
 
       </script>
+
+
+
+
+      
+<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+<script>
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7501326586944323601',
+    },
+    componentProps: {
+      title: 'Coze',
+    },
+    auth: {
+      type: 'token',
+      token: 'pat_********',
+      onRefreshToken: function () {
+        return 'pat_********'
+      }
+    }
+  });
+</script>
 
    </body>
 </html>

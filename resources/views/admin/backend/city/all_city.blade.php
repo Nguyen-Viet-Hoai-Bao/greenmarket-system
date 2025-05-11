@@ -25,10 +25,10 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">All City</h4>
+                    <h4 class="mb-sm-0 font-size-18">Tất Cả Thành Phố</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myModal">Add City</button>
+                            <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myModal">Thêm Thành Phố</button>
                         </ol>
                     </div>
                 </div>
@@ -43,10 +43,9 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>Location Name</th>
-                                            <th>Location Slug</th>
-                                            <th>Actions</th>
-                                        </tr>
+                                            <th>Tên Địa Điểm</th>
+                                            <th>Slug Địa Điểm</th>
+                                            <th>Hành Động</th>                                        </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($city as $item)
@@ -54,9 +53,9 @@
                                                 <td><strong>{{ $item->city_name }}</strong></td>
                                                 <td><strong>{{ $item->city_slug }}</strong></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-edit waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myCityEdit"  id="{{ $item->id }}" onclick="cityEdit(this.id)">Edit</button>
+                                                    <button type="button" class="btn btn-sm btn-edit waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myCityEdit"  id="{{ $item->id }}" onclick="cityEdit(this.id)">Sửa</button>
                                                     <a href="{{ route('delete.city', $item->id) }}" 
-                                                        class="btn btn-sm btn-delete waves-effect waves-light" id="delete">Delete</a>
+                                                        class="btn btn-sm btn-delete waves-effect waves-light" id="delete">Xóa</a>
                                                     <button
                                                         type="button"
                                                         class="btn btn-sm btn-add-district"
@@ -64,7 +63,7 @@
                                                         data-bs-target="#myModalDistrict"
                                                         data-city-id="{{ $item->id }}"
                                                     >
-                                                        Add District
+                                                    Thêm Quận/Huyện
                                                     </button>
                                                 </td>
                                             </tr>
@@ -73,10 +72,10 @@
                                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $district->district_name }}</td>
                                                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $district->district_slug }}</td>
                                                     <td>
-                                                        <button type="button" class="btn btn-sm btn-edit waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myDistrictEdit"  id="{{ $district->id }}" onclick="districtEdit(this.id)">Edit</button>
+                                                        <button type="button" class="btn btn-sm btn-edit waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myDistrictEdit"  id="{{ $district->id }}" onclick="districtEdit(this.id)">Sửa</button>
 
                                                         <a href="{{ route('delete.district', $district->id) }}" 
-                                                            class="btn btn-sm btn-delete waves-effect waves-light" id="delete">Delete</a>
+                                                            class="btn btn-sm btn-delete waves-effect waves-light" id="delete">Xóa</a>
                                                         <button
                                                             type="button"
                                                             class="btn btn-add-ward btn-sm"
@@ -84,7 +83,7 @@
                                                             data-bs-target="#myModalWard"
                                                             data-district-id="{{ $district->id }}"
                                                         >
-                                                            Add Ward
+                                                        Thêm Phường/Xã
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -95,10 +94,10 @@
                                                         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $ward->ward_slug }}</td>
                                                         <td>
-                                                          <button type="button" class="btn btn-sm btn-edit waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myWardEdit"  id="{{ $ward->id }}" onclick="wardEdit(this.id)">Edit</button>
+                                                          <button type="button" class="btn btn-sm btn-edit waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#myWardEdit"  id="{{ $ward->id }}" onclick="wardEdit(this.id)">Sửa</button>
   
                                                           <a href="{{ route('delete.ward', $ward->id) }}" 
-                                                              class="btn btn-sm btn-delete waves-effect waves-light" id="delete">Delete</a>
+                                                              class="btn btn-sm btn-delete waves-effect waves-light" id="delete">Xóa</a>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -121,16 +120,16 @@
             <form action="{{ route('city.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Create City</h5>
+                    <h5 class="modal-title">Tạo Thành Phố</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <label class="form-label">City Name</label>
+                    <label class="form-label">Tên Thành phố</label>
                     <input class="form-control" type="text" name="city_name">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" type="submit">Save changes</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button class="btn btn-primary" type="submit">Lưu Thay Đổi</button>
                 </div>
             </form>
         </div>
@@ -143,17 +142,17 @@
             <form id="districtForm" method="POST" action="">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Create District</h5>
+                    <h5 class="modal-title">Tạo Quận/Huyện</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="city_id" id="district_city_id">
-                    <label class="form-label">District Name</label>
+                    <label class="form-label">Tên Quận/Huyện</label>
                     <input class="form-control" type="text" name="district_name">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" type="submit">Save changes</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button class="btn btn-primary" type="submit">Lưu Thay Đổi</button>
                 </div>
             </form>
         </div>
@@ -166,17 +165,17 @@
             <form id="wardForm" method="POST" action="">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title">Create Ward</h5>
+                    <h5 class="modal-title">Tạo Phường/Xã</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="district_id" id="ward_district_id">
-                    <label class="form-label">Ward Name</label>
+                    <label class="form-label">Tên Phường/Xã</label>
                     <input class="form-control" type="text" name="ward_name">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" type="submit">Save changes</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button class="btn btn-primary" type="submit">Lưu Thay Đổi</button>
                 </div>
             </form>
         </div>
@@ -189,7 +188,7 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="myModalLabel">Edit City</h5>
+              <h5 class="modal-title" id="myModalLabel">Sửa Quận/Huyện</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -201,7 +200,7 @@
                       <div class="col-lg-12">
                           <div>
                               <div class="form-group mb-6">
-                                  <label for="example-text-input" class="form-label">City Name</label>
+                                  <label for="example-text-input" class="form-label">Tên Thành phố</label>
                                   <input class="form-control" type="text" name="city_name" value="" id="cat">
                               </div>
                           </div>
@@ -209,8 +208,8 @@
                   </div>
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary waves-effect waves-light">Save changes</button>
+                  <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Đóng</button>
+                  <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
               </div>
           </form>
       </div><!-- /.modal-content -->
@@ -222,7 +221,7 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="myModalLabel">Edit Distric</h5>
+              <h5 class="modal-title" id="myModalLabel">Sửa Quận/Huyện</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -234,7 +233,7 @@
                       <div class="col-lg-12">
                           <div>
                               <div class="form-group mb-6">
-                                  <label for="example-text-input" class="form-label">District Name</label>
+                                  <label for="example-text-input" class="form-label">Tên Quận/Huyện</label>
                                   <input class="form-control" type="text" name="district_name" value="" id="cat_1">
                               </div>
                           </div>
@@ -242,8 +241,8 @@
                   </div>
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary waves-effect waves-light">Save changes</button>
+                  <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Đóng</button>
+                  <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
               </div>
           </form>
       </div><!-- /.modal-content -->
@@ -256,7 +255,7 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="myModalLabel">Edit Ward</h5>
+              <h5 class="modal-title" id="myModalLabel">Sửa Phường/Xã</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -268,7 +267,7 @@
                       <div class="col-lg-12">
                           <div>
                               <div class="form-group mb-6">
-                                  <label for="example-text-input" class="form-label">Ward Name</label>
+                                  <label for="example-text-input" class="form-label">Tên Phường/Xã</label>
                                   <input class="form-control" type="text" name="ward_name" value="" id="cat_2">
                               </div>
                           </div>
@@ -276,8 +275,8 @@
                   </div>
               </div>
               <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary waves-effect waves-light">Save changes</button>
+                  <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Đóng</button>
+                  <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
               </div>
           </form>
       </div><!-- /.modal-content -->

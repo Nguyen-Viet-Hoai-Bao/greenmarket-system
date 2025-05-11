@@ -11,25 +11,25 @@
   <div class="container-fluid">
 
     @if ($status === '1')
-        <h4>Market Account is 
-            <span class="text-success">Active</span>
+        <h4>Tài khoản cửa hàng đang
+            <span class="text-success">Hoạt động</span>
         </h4>
     @else
-        <h4>Market Account is 
-            <span class="text-danger">Inactive</span>
+        <h4>Tài khoản cửa hàng đang
+            <span class="text-danger">Không hoạt động</span>
         </h4>
-        <p class="text-danger"><b>Please wait Admin will check and approve your account</b></p>
+        <p class="text-danger"><b>Vui lòng đợi, Quản trị viên sẽ kiểm tra và phê duyệt tài khoản của bạn</b></p>
     @endif
       <!-- start page title -->
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Dashboard</h4>
+                  <h4 class="mb-sm-0 font-size-18">Bảng điều khiển</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
                           <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                          <li class="breadcrumb-item active">Dashboard</li>
+                          <li class="breadcrumb-item active">Bảng điều khiển</li>
                       </ol>
                   </div>
 
@@ -46,7 +46,7 @@
                   <div class="card-body">
                       <div class="row align-items-center">
                           <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">My Wallet</span>
+                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Ví của tôi</span>
                               <h4 class="mb-3">
                                   $<span class="counter-value" data-target="865.2">0</span>k
                               </h4>
@@ -58,7 +58,7 @@
                       </div>
                       <div class="text-nowrap">
                           <span class="badge bg-success-subtle text-success">+$20.9k</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
+                          <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
                       </div>
                   </div><!-- end card body -->
               </div><!-- end card -->
@@ -71,7 +71,7 @@
                   <div class="card-body">
                       <div class="row align-items-center">
                           <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Number of Trades</span>
+                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Số giao dịch</span>
                               <h4 class="mb-3">
                                   <span class="counter-value" data-target="6258">0</span>
                               </h4>
@@ -81,8 +81,8 @@
                           </div>
                       </div>
                       <div class="text-nowrap">
-                          <span class="badge bg-danger-subtle text-danger">-29 Trades</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
+                          <span class="badge bg-danger-subtle text-danger">-29 Giao dịch</span>
+                          <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
                       </div>
                   </div><!-- end card body -->
               </div><!-- end card -->
@@ -95,7 +95,7 @@
                   <div class="card-body">
                       <div class="row align-items-center">
                           <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Invested Amount</span>
+                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Số tiền đầu tư</span>
                               <h4 class="mb-3">
                                   $<span class="counter-value" data-target="4.32">0</span>M
                               </h4>
@@ -106,7 +106,7 @@
                       </div>
                       <div class="text-nowrap">
                           <span class="badge bg-success-subtle text-success">+ $2.8k</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
+                          <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
                       </div>
                   </div><!-- end card body -->
               </div><!-- end card -->
@@ -119,7 +119,7 @@
                   <div class="card-body">
                       <div class="row align-items-center">
                           <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Profit Ration</span>
+                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Tỷ lệ lợi nhuận</span>
                               <h4 class="mb-3">
                                   <span class="counter-value" data-target="12.57">0</span>%
                               </h4>
@@ -130,7 +130,7 @@
                       </div>
                       <div class="text-nowrap">
                           <span class="badge bg-success-subtle text-success">+2.95%</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
+                          <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
                       </div>
                   </div><!-- end card body -->
               </div><!-- end card -->

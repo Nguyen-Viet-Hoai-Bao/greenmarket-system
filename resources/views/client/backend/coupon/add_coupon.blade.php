@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Add Coupon</h4>
+                  <h4 class="mb-sm-0 font-size-18">Thêm Mã Giảm Giá</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
-                          <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                          <li class="breadcrumb-item active">Add Coupon</li>
+                          <li class="breadcrumb-item"><a href="javascript: void(0);">Bảng điều khiển</a></li>
+                          <li class="breadcrumb-item active">Thêm Mã Giảm Giá</li>
                       </ol>
                   </div>
 
@@ -34,28 +34,28 @@
         <div class="row">
             <div class="col-xl-6 col-md-6">
                 <div class="form-group mb-6">
-                    <label for="example-text-input" class="form-label">Coupon Name</label>
+                    <label for="example-text-input" class="form-label">Tên Mã Giảm Giá</label>
                     <input class="form-control" type="text" name="coupon_name" value="" id="example-text-input">
                 </div>
             </div>
             
             <div class="col-xl-6 col-md-6">
                 <div class="form-group mb-6">
-                    <label for="example-text-input" class="form-label">Coupon Desc</label>
+                    <label for="example-text-input" class="form-label">Mô Tả Mã</label>
                     <input class="form-control" type="text" name="coupon_desc" value="" id="example-text-input">
                 </div>
             </div>
             
             <div class="col-xl-6 col-md-6">
                 <div class="form-group mb-6">
-                    <label for="example-text-input" class="form-label">Coupon Discount</label>
+                    <label for="example-text-input" class="form-label">Giảm Giá</label>
                     <input class="form-control" type="text" name="discount" value="" id="example-text-input">
                 </div>
             </div>
             
             <div class="col-xl-6 col-md-6">
                 <div class="form-group mb-6">
-                    <label for="example-text-input" class="form-label">Coupon Validity</label>
+                    <label for="example-text-input" class="form-label">Ngày Hết Hạn</label>
                     <input class="form-control" type="date" name="validity" value="" id="example-text-input"
                             min="{{ Carbon\Carbon::now('Asia/Ho_Chi_Minh')->format('Y-m-d') }}">
                 </div>
@@ -64,7 +64,7 @@
         
         <div class="col-lg-12">
             <div class="mt-4">
-              <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+              <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
             </div>
           </div>
       </div>

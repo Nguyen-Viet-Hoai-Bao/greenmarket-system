@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Change Password</h4>
+                  <h4 class="mb-sm-0 font-size-18">Đổi Mật Khẩu</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
-                          <li class="breadcrumb-item"><a href="javascript: void(0);">Contacts</a></li>
-                          <li class="breadcrumb-item active">Change Password</li>
+                          <li class="breadcrumb-item"><a href="javascript: void(0);">Liên Hệ</a></li>
+                          <li class="breadcrumb-item active">Đổi Mật Khẩu</li>
                       </ol>
                   </div>
 
@@ -54,7 +54,7 @@
               <div class="col-sm-auto order-1 order-sm-2">
                   <div class="d-flex align-items-start justify-content-end gap-2">
                       <div>
-                          <button type="button" class="btn btn-soft-light"><i class="me-1"></i> Message</button>
+                          <button type="button" class="btn btn-soft-light"><i class="me-1"></i> Tin Nhắn</button>
                       </div>
                   </div>
               </div>
@@ -73,7 +73,7 @@
         <div class="col-lg-6">
             <div>
                 <div class="mb-3">
-                    <label for="example-text-input" class="form-label">Old Password</label>
+                    <label for="example-text-input" class="form-label">Mật Khẩu Cũ</label>
                     <input class="form-control @error('old_password') is-invalid @enderror" 
                           type="password" name="old_password" id="old_password">
                     @error('old_password')
@@ -82,7 +82,7 @@
                 </div>
                 
                 <div class="mb-3">
-                  <label for="example-text-input" class="form-label">New Password</label>
+                  <label for="example-text-input" class="form-label">Mật Khẩu Mới</label>
                   <input class="form-control @error('new_password') is-invalid @enderror" 
                         type="password" name="new_password" id="new_password">
                   @error('new_password')
@@ -91,12 +91,12 @@
                 </div>
                 
                 <div class="mb-3">
-                  <label for="example-text-input" class="form-label">Confirm New Password</label>
+                  <label for="example-text-input" class="form-label">Xác Nhận Mật Khẩu Mới</label>
                   <input class="form-control" 
                     type="password" name="new_password_confirmation" id="new_password_confirmation">
                 </div>
                   
-                <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+                <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
                 
             </div>
         </div>

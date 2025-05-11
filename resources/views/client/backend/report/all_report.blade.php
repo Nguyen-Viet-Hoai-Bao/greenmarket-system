@@ -8,7 +8,7 @@
          <div class="row">
              <div class="col-12">
                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                     <h4 class="mb-sm-0 font-size-18">Client All Report</h4>
+                     <h4 class="mb-sm-0 font-size-18">>Báo cáo tổng hợp của khách hàng</h4>
  
                      <div class="page-title-right">
                          <ol class="breadcrumb m-0">
@@ -39,14 +39,14 @@
                   <div class="row">
                       <div class="col-lg-12">
                           <div>
-                              <h4>Search By Date</h4>
+                              <h4>Tìm kiếm theo ngày</h4>
                               <div class="form-group mb-3">
-                                  <label for="example-text-input" class="form-label">Date</label>
+                                  <label for="example-text-input" class="form-label">Ngày</label>
                                   <input class="form-control" type="date" name="date"  id="example-text-input">
                               </div>
               
                               <div class="mt-4">
-                                  <button type="submit" class="btn btn-primary waves-effect waves-light">Search</button>
+                                  <button type="submit" class="btn btn-primary waves-effect waves-light">Tìm kiếm</button>
                               </div>
                       
                           </div>
@@ -64,39 +64,39 @@
                   <div class="row">
                       <div class="col-lg-12">
                           <div>
-                              <h4>Search By Month</h4>
+                              <h4>Tìm kiếm theo tháng</h4>
                               <div class="form-group mb-3">
-                                  <label for="example-text-input" class="form-label">Select Month:</label>
+                                  <label for="example-text-input" class="form-label">Chọn tháng:</label>
                                   <select name="month" class="form-select">
-                                      <option selected>Select Month</option>
-                                      <option value="Janurary">Janurary</option>
-                                      <option value="February">February</option>
-                                      <option value="March">March</option>
-                                      <option value="April">April</option>
-                                      <option value="May">May</option>
-                                      <option value="Jun">June</option>
-                                      <option value="July">July</option>
-                                      <option value="August">August</option>
-                                      <option value="September">September</option>
-                                      <option value="October">October</option>
-                                      <option value="November">November</option>
-                                      <option value="December">December</option>
+                                    <option selected>Chọn tháng</option>
+                                    <option value="Janurary">Tháng 1</option>
+                                    <option value="February">Tháng 2</option>
+                                    <option value="March">Tháng 3</option>
+                                    <option value="April">Tháng 4</option>
+                                    <option value="May">Tháng 5</option>
+                                    <option value="Jun">Tháng 6</option>
+                                    <option value="July">Tháng 7</option>
+                                    <option value="August">Tháng 8</option>
+                                    <option value="September">Tháng 9</option>
+                                    <option value="October">Tháng 10</option>
+                                    <option value="November">Tháng 11</option>
+                                    <option value="December">Tháng 12</option>
                                   </select>
               
-                                  <label for="example-text-input" class="form-label">Select Year:</label>
+                                  <label for="example-text-input" class="form-label">Chọn năm:</label>
                                   <select name="year_name" class="form-select">
-                                      <option selected>Select Year</option>
-                                      <option value="2022">2022</option>
-                                      <option value="2023">2023</option>
-                                      <option value="2024">2024</option>
-                                      <option value="2025">2025</option>
-                                      <option value="2026">2026</option> 
+                                    <option selected>Chọn năm</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option> 
                                   </select>
               
                               </div>
               
                               <div class="mt-4">
-                                  <button type="submit" class="btn btn-primary waves-effect waves-light">Search</button>
+                                  <button type="submit" class="btn btn-primary waves-effect waves-light">Tìm kiếm</button>
                               </div>
                       
                           </div>
@@ -116,22 +116,22 @@
                   <div class="row">
                       <div class="col-lg-12">
                           <div>
-                              <h4>Search By Year</h4>
+                              <h4>Tìm kiếm theo năm</h4>
                               <div class="form-group mb-3"> 
                                   <label for="example-text-input" class="form-label">Select Year:</label>
                                   <select name="year" class="form-select">
-                                      <option selected>Select Year</option>
-                                      <option value="2022">2022</option>
-                                      <option value="2023">2023</option>
-                                      <option value="2024">2024</option>
-                                      <option value="2025">2025</option>
-                                      <option value="2026">2026</option> 
+                                    <option selected>Chọn năm</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option> 
                                   </select>
               
                               </div>
               
                               <div class="mt-4">
-                                  <button type="submit" class="btn btn-primary waves-effect waves-light">Search</button>
+                                  <button type="submit" class="btn btn-primary waves-effect waves-light">Tìm kiếm</button>
                               </div>
                       
                           </div>

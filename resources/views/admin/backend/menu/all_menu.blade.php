@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">All Menu</h4>
+                  <h4 class="mb-sm-0 font-size-18">Tất cả Menu</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
                         <a href="{{ route('add.menu') }}" 
-                            class="btn btn-info waves-effect waves-light">Add Menu</a>
+                            class="btn btn-info waves-effect waves-light">Thêm Menu</a>
                       </ol>
                   </div>
 
@@ -31,10 +31,10 @@
 <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
     <thead>
     <tr>
-        <th>Sl</th>
-        <th>Menu Name</th>
-        <th>Image</th>
-        <th>Action</th>
+        <th>STT</th>
+        <th>Tên Menu</th>
+        <th>Hình ảnh</th>
+        <th>Hành động</th>
     </tr>
     </thead>
 
@@ -50,9 +50,9 @@
                     style="width: 70px; heigh:40px;"></td>
             <td>
               <a href="{{ route('edit.menu', $item->id) }}"
-                  class="btn btn-info waves-effect waves-light">Edit</a>
+                  class="btn btn-info waves-effect waves-light">Chỉnh sửa</a>
               <a href="{{ route('delete.menu', $item->id) }}" 
-                  class="btn btn-danger waves-effect waves-light" id="delete">Delete</a>
+                  class="btn btn-danger waves-effect waves-light" id="delete">Xóa</a>
             </td>
         </tr>
       @endforeach

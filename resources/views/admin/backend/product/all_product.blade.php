@@ -11,12 +11,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">All Product</h4>
+                  <h4 class="mb-sm-0 font-size-18">Tất Cả Sản Phẩm</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
                         <a href="{{ route('admin.add.product') }}" 
-                            class="btn btn-info waves-effect waves-light">Add Product</a>
+                            class="btn btn-info waves-effect waves-light">Thêm Sản Phẩm</a>
                       </ol>
                   </div>
 
@@ -33,15 +33,15 @@
 <table id="datatable" class="table table-bordered dt-responsive w-100">
     <thead>
     <tr>
-        <th>Sl</th>
-        <th>Image</th>
-        <th>Product Name</th>
-        <th>Category Name</th>
-        <th>Menu Name</th>
-        <th>Size</th>
-        <th>Unit</th>
-        <th>Status</th>
-        <th>Action</th>
+        <th>STT</th>
+        <th>Hình Ảnh</th>
+        <th>Tên Sản Phẩm</th>
+        <th>Tên Danh Mục</th>
+        <th>Tên Menu</th>
+        <th>Kích Cỡ</th>
+        <th>Đơn Vị</th>
+        <th>Trạng Thái</th>
+        <th>Hành Động</th>
     </tr>
     </thead>
 

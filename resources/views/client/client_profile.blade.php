@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Profile</h4>
+                  <h4 class="mb-sm-0 font-size-18">Hồ sơ</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
-                          <li class="breadcrumb-item"><a href="javascript: void(0);">Contacts</a></li>
-                          <li class="breadcrumb-item active">Profile</li>
+                          <li class="breadcrumb-item"><a href="javascript: void(0);">Liên hệ</a></li>
+                          <li class="breadcrumb-item active">Hồ sơ</li>
                       </ol>
                   </div>
 
@@ -54,7 +54,7 @@
               <div class="col-sm-auto order-1 order-sm-2">
                   <div class="d-flex align-items-start justify-content-end gap-2">
                       <div>
-                          <button type="button" class="btn btn-soft-light"><i class="me-1"></i> Message</button>
+                          <button type="button" class="btn btn-soft-light"><i class="me-1"></i> Nhắn tin</button>
                       </div>
                   </div>
               </div>
@@ -73,7 +73,7 @@
         <div class="col-lg-6">
             <div>
                 <div class="mb-3">
-                    <label for="example-text-input" class="form-label">Name</label>
+                    <label for="example-text-input" class="form-label">Họ tên</label>
                     <input class="form-control" type="text" name="name" value="{{ $profileData->name }}" id="example-text-input">
                 </div>
                 
@@ -83,7 +83,7 @@
                 </div>
                 
                 <div class="mb-3">
-                  <label for="example-text-input" class="form-label">Phone</label>
+                  <label for="example-text-input" class="form-label">Số điện thoại</label>
                   <input class="form-control" type="text" name="phone" value="{{ $profileData->phone }}" id="example-text-input">
                 </div>
                 
@@ -95,9 +95,9 @@
                 </div> --}}
                 
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">Tỉnh / Thành phố</label>
                     <select class="form-select" id="city" name="city_id">
-                        <option value="">-- Select City --</option>
+                        <option value="">-- Chọn Tỉnh / Thành phố --</option>
                         @foreach ($city as $cit)
                             <option value="{{ $cit->id }}" {{ $cit->id == $profileData->ward?->district?->city_id ? 'selected' : '' }}>
                                 {{ $cit->city_name }}
@@ -107,22 +107,22 @@
                 </div>
                 
                 <div class="mb-3">
-                <label for="district" class="form-label">District</label>
+                <label for="district" class="form-label">Quận / Huyện</label>
                 <select class="form-select" id="district" name="district_id">
-                    <option value="">-- Select District --</option>
+                    <option value="">-- Chọn Quận / Huyện --</option>
                 </select>
                 </div>
                 
                 <div class="mb-3">
                 <label for="ward" class="form-label">Ward</label>
                 <select class="form-select" id="ward" name="ward_id">
-                    <option value="">-- Select Ward --</option>
+                    <option value="">-- Chọn Phường / Xã --</option>
                 </select>
                 </div>
                          
                 
                 <div class="mb-3">
-                    <label for="example-text-input" class="form-label">Market Info</label>
+                    <label for="example-text-input" class="form-label">Thông tin gian hàng</label>
                     <textarea name="shop_info" 
                             id="basicpill-address-input" 
                             rows="2"
@@ -131,7 +131,7 @@
                 </div>
                 
                 <div class="mb-3">
-                    <label for="example-text-input" class="form-label">Cover Photo</label>
+                    <label for="example-text-input" class="form-label">Ảnh bìa</label>
                     <input class="form-control" type="file" name="cover_photo" id="image">
                 </div>
                 
@@ -148,12 +148,12 @@
 
         <div class="col-lg-6">
           <div class="mb-3">
-            <label for="example-text-input" class="form-label">Address</label>
+            <label for="example-text-input" class="form-label">Địa chỉ</label>
             <input class="form-control" type="text" name="address" value="{{ $profileData->address }}" id="example-text-input">
           </div>
           
           <div class="mb-3">
-            <label for="example-text-input" class="form-label">Profile Image</label>
+            <label for="example-text-input" class="form-label">Ảnh đại diện</label>
             <input class="form-control" type="file" name="photo" id="image">
           </div>
           
@@ -166,7 +166,7 @@
           </div>
 
           <div class="mt-4">
-            <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+            <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu thay đổi</button>
           </div>
         </div>
     </div>

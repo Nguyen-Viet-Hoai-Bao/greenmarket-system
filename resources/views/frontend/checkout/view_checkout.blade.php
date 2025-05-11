@@ -20,8 +20,8 @@
 
   <div class="pt-2"></div>
   <div class="bg-white rounded shadow-sm p-4 mb-4">
-    <h4 class="mb-1">Choose a delivery address</h4>
-    <h6 class="mb-3 text-black-50">Multiple addresses in this location</h6>
+    <h4 class="mb-1">Chọn địa chỉ giao hàng</h4>
+    <h6 class="mb-3 text-black-50">Nhiều địa chỉ tại vị trí này</h6>
     <div class="row">
       <div class="col-md-6">
           <div class="bg-white card addresses-item mb-4 border border-success">
@@ -29,11 +29,11 @@
                 <div class="media">
                   <div class="mr-3"><i class="icofont-ui-home icofont-3x"></i></div>
                   <div class="media-body">
-                      <h6 class="mb-1 text-black">Home</h6>
+                      <h6 class="mb-1 text-black">Nhà riêng</h6>
                       <p class="text-black">{{ $profileData->address }}
                       </p>
                       <p class="mb-0 text-black font-weight-bold"><a class="btn btn-sm btn-success mr-2" href="#"> DELIVER HERE</a> 
-                        <span>30MIN</span>
+                        <span>30 PHÚT</span>
                       </p>
                   </div>
                 </div>
@@ -46,11 +46,11 @@
                 <div class="media">
                   <div class="mr-3"><i class="icofont-briefcase icofont-3x"></i></div>
                   <div class="media-body">
-                      <h6 class="mb-1 text-secondary">Work</h6>
-                      <p>NCC, Model Town Rd Town, Ludhiana, Punjab 141002, India
+                      <h6 class="mb-1 text-secondary">Nơi làm việc</h6>
+                      <p>Đà Nẵng
                       </p>
                       <p class="mb-0 text-black font-weight-bold"><a class="btn btn-sm btn-secondary mr-2" href="#"> DELIVER HERE</a> 
-                        <span>40MIN</span>
+                        <span>40 PHÚT</span>
                       </p>
                   </div>
                 </div>
@@ -63,8 +63,8 @@
 
             <div class="pt-2"></div>
               <div class="bg-white rounded shadow-sm p-4 osahan-payment">
-                 <h4 class="mb-1">Choose payment method</h4>
-                 <h6 class="mb-3 text-black-50">Credit/Debit Cards</h6>
+                 <h4 class="mb-1">Chọn phương thức thanh toán</h4>
+                 <h6 class="mb-3 text-black-50">Thẻ Tín Dụng/Ghi Nợ</h6>
                  <div class="row">
                     <div class="col-sm-4 pr-0">
                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -72,7 +72,7 @@
                         
                           <a class="nav-link active" id="v-pills-cash-tab" data-toggle="pill" href="#v-pills-cash" role="tab" aria-controls="v-pills-cash" aria-selected="false">
                             <i class="icofont-money"></i> 
-                              Pay on Delivery
+                            Thanh toán khi giao hàng
                           </a>
                           <a class="nav-link" id="v-pills-vnpay-tab" data-toggle="pill" href="#v-pills-vnpay" role="tab" aria-controls="v-pills-vnpay" aria-selected="false">
                             <i class="icofont-bank-transfer"></i>
@@ -87,8 +87,8 @@
                        <div class="tab-content h-100" id="v-pills-tabContent">
 
   <div class="tab-pane fade show active" id="v-pills-cash" role="tabpanel" aria-labelledby="v-pills-cash-tab">
-    <h6 class="mb-3 mt-0">Cash</h6>
-    <p>Please keep exact change handy to help us serve you better</p>
+    <h6 class="mb-3 mt-0">Tiền mặt</h6>
+    <p>Vui lòng chuẩn bị tiền lẻ để giúp chúng tôi phục vụ bạn tốt hơn</p>
     <hr>
     <form action="{{ route('cash_order') }}" method="POST">
       @csrf
@@ -97,22 +97,22 @@
       <input type="hidden" name="phone" id="" value="{{ Auth::user()->phone }}">
       <input type="hidden" name="address" id="" value="{{ Auth::user()->address }}">
 
-      <button type="submit" class="btn btn-success btn-block btn-lg">PAY
+      <button type="submit" class="btn btn-success btn-block btn-lg">THANH TOÁN
       <i class="icofont-long-arrow-right"></i></butt>
     </form>
   </div>
                     
 
   <div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-    <h6 class="mb-3 mt-0">Add new card</h6>
-    <p>WE ACCEPT <span class="osahan-card">
+    <h6 class="mb-3 mt-0">Thêm thẻ mới</h6>
+    <p>CHÚNG TÔI CHẤP NHẬN <span class="osahan-card">
       <i class="icofont-visa-alt"></i> <i class="icofont-mastercard-alt"></i> <i class="icofont-american-express-alt"></i> <i class="icofont-payoneer-alt"></i> <i class="icofont-apple-pay-alt"></i> <i class="icofont-bank-transfer-alt"></i> <i class="icofont-discover-alt"></i> <i class="icofont-jcb-alt"></i>
       </span>
     </p>
     <form>
       <div class="form-row">
           <div class="form-group col-md-12">
-            <label for="inputPassword4">Card number</label>
+            <label for="inputPassword4">Số thẻ</label>
             <div class="input-group">
                 <input type="number" class="form-control" placeholder="Card number">
                 <div class="input-group-append">
@@ -121,28 +121,28 @@
             </div>
           </div>
           <div class="form-group col-md-8">
-            <label>Valid through(MM/YY)
+            <label>Hạn sử dụng (MM/YY)
             </label>
             <input type="number" class="form-control" placeholder="Enter Valid through(MM/YY)">
           </div>
           <div class="form-group col-md-4">
-            <label>CVV
+            <label>Mã CVV
             </label>
             <input type="number" class="form-control" placeholder="Enter CVV Number">
           </div>
           <div class="form-group col-md-12">
-            <label>Name on card
+            <label>Tên trên thẻ
             </label>
             <input type="text" class="form-control" placeholder="Enter Card number">
           </div>
           <div class="form-group col-md-12">
             <div class="custom-control custom-checkbox">
                 <input type="checkbox" class="custom-control-input" id="customCheck1">
-                <label class="custom-control-label" for="customCheck1">Securely save this card for a faster checkout next time.</label>
+                <label class="custom-control-label" for="customCheck1">Lưu thẻ này để thanh toán nhanh hơn lần sau.</label>
             </div>
           </div>
           <div class="form-group col-md-12 mb-0">
-            <a href="thanks.html" class="btn btn-success btn-block btn-lg">PAY $1329
+            <a href="thanks.html" class="btn btn-success btn-block btn-lg">THANH TOÁN 1329₫
             <i class="icofont-long-arrow-right"></i></a>
           </div>
       </div>
@@ -212,7 +212,7 @@
                  </div>
               </div>
 
-  <p class="mb-4 text-white">{{ count((array) session('cart')) }} Items</p>
+  <p class="mb-4 text-white">{{ count((array) session('cart')) }} Sản phẩm</p>
   <div class="bg-white rounded shadow-sm mb-2">
       @php $total = 0;@endphp
 
@@ -270,12 +270,12 @@
   
         @if (Session::has('coupon'))
         <div class="mb-2 bg-white rounded p-2 clearfix">
-          <p class="mb-1">Item Total 
+          <p class="mb-1">Tổng số mặt hàng
               <span class="float-right text-dark">
                 {{ count((array) session('cart')) }}
               </span>
           </p>
-          <p class="mb-1">Coupon Name 
+          <p class="mb-1">Tên mã giảm giá 
               <span class="float-right text-dark">
                 {{ (session()->get('coupon')['coupon_name']) }}
                 ({{ (session()->get('coupon')['discount']) }}%)
@@ -285,7 +285,7 @@
                 </a>
               </span>
           </p>
-          <p class="mb-1 text-success">Total Discount 
+          <p class="mb-1 text-success">Giảm giá 
               <span class="float-right text-success">
                 @if (Session::has('coupon'))
                     {{ number_format($total - Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
@@ -295,7 +295,7 @@
               </span>
           </p>
           <hr />
-          <h6 class="font-weight-bold mb-0">TO PAY  
+          <h6 class="font-weight-bold mb-0">SỐ TIỀN PHẢI TRẢ
               <span class="float-right">
                 @if (Session::has('coupon'))
                     {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
@@ -312,7 +312,7 @@
               <div class="input-group-append">
                 <button class="btn btn-primary" type="submit" id="button-addon2" onclick="ApplyCoupon()">
                     <i class="icofont-sale-discount"></i> 
-                    APPLY
+                    ÁP DỤNG
                 </button>
               </div>
           </div>
@@ -322,7 +322,7 @@
   
 
               <a href="thanks.html" class="btn btn-success btn-block btn-lg">
-                PAY @if (Session::has('coupon'))
+                THANH TOÁN  @if (Session::has('coupon'))
                       {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
                     @else
                       {{ number_format($total, 0, ',', '.') }} VNĐ

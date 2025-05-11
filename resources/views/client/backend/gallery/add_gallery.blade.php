@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Add Gallery</h4>
+                  <h4 class="mb-sm-0 font-size-18">Thêm Thư Viện Ảnh</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
-                          <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                          <li class="breadcrumb-item active">Add Gallery</li>
+                          <li class="breadcrumb-item"><a href="javascript: void(0);">Trang Chủ</a></li>
+                          <li class="breadcrumb-item active">Thêm Thư Viện Ảnh</li>
                       </ol>
                   </div>
 
@@ -34,7 +34,7 @@
     <div class="row">
           <div class="col-lg-12">
             <div class="form-group mb-6">
-              <label for="example-text-input" class="form-label">Gallery Image</label>
+              <label for="example-text-input" class="form-label">Ảnh Thư Viện</label>
               <input class="form-control" type="file" name="gallery_img[]" id="multiImg" multiple>
               <div class="row" id="preview_img">
 
@@ -42,7 +42,7 @@
             </div> </br>
 
             <div class="mt-4">
-              <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+              <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
             </div>
           </div>
       </div>

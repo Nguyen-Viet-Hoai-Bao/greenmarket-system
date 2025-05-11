@@ -10,11 +10,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Edit Product</h4>
+                    <h4 class="mb-sm-0 font-size-18">Chỉnh sửa sản phẩm</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Edit Product</li>
+                            <li class="breadcrumb-item active">Chỉnh sửa sản phẩm</li>
                         </ol>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                         <!-- Menu -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Menu Name</label>
+                                <label class="form-label">Tên Menu</label>
                                 <div class="form-control" readonly>
                                     {{ $productTemplateEdit->menu->menu_name ?? '-' }}
                                 </div>
@@ -45,7 +45,7 @@
                         <!-- Product Template -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Product Template</label>
+                                <label class="form-label">Mẫu sản phẩm</label>
                                 <div class="form-control" readonly>
                                     {{ $productTemplateEdit->name ?? '-' }}
                                 </div>
@@ -65,7 +65,7 @@
                         <!-- Category -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Category:</label>
+                                <label class="form-label">Danh mục:</label>
                                 <div id="categoryLabel" class="form-control" readonly>
                                     {{ $productTemplateEdit->category->category_name ?? '-' }}
                                 </div>
@@ -75,7 +75,7 @@
                         <!-- Size -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Size:</label>
+                                <label class="form-label">Kích cỡ:</label>
                                 <div id="sizeLabel" class="form-control" readonly>
                                     {{ $productTemplateEdit->size ?? '-' }}
                                 </div>
@@ -85,7 +85,7 @@
                         <!-- Unit -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Unit:</label>
+                                <label class="form-label">Đơn vị:</label>
                                 <div id="unitLabel" class="form-control" readonly>
                                     {{ $productTemplateEdit->unit ?? '-' }}
                                 </div>
@@ -95,7 +95,7 @@
                         <!-- Price -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Price</label>
+                                <label class="form-label">Giá</label>
                                 <input class="form-control" type="text" name="price" value="{{ $product->price }}" placeholder="Enter price">
                             </div>
                         </div>
@@ -103,7 +103,7 @@
                         <!-- Discount Price -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Discount Price</label>
+                                <label class="form-label">Giá giảm giá</label>
                                 <input class="form-control" type="text" name="discount_price" value="{{ $product->discount_price }}" placeholder="Enter discount price">
                             </div>
                         </div>
@@ -111,7 +111,7 @@
                         <!-- Quantity -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Quantity QTY</label>
+                                <label class="form-label">Số lượng</label>
                                 <input class="form-control" type="number" name="qty" value="{{ $product->qty }}" placeholder="Enter quantity">
                             </div>
                         </div>
@@ -120,19 +120,19 @@
                 
                     <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" name="best_seller" id="formCheckBestSeller" value="1" {{ $product->best_seller ? 'checked' : '' }}>
-                        <label for="formCheckBestSeller" class="form-check-label">Best Seller</label>
+                        <label for="formCheckBestSeller" class="form-check-label">Sản phẩm bán chạy</label>
                     </div>
                 
                     <br>
                 
                     <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" name="most_popular" id="formCheckMostPopular" value="1" {{ $product->most_popular ? 'checked' : '' }}>
-                        <label for="formCheckMostPopular" class="form-check-label">Most Popular</label>
+                        <label for="formCheckMostPopular" class="form-check-label">Sản phẩm phổ biến nhất</label>
                     </div>
                 
                     <!-- Submit -->
                     <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                     </div>
                 
                 </form>

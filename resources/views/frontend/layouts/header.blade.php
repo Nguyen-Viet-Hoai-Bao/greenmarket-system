@@ -8,7 +8,7 @@
      <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav ml-auto">
            <li class="nav-item active">
-              <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="index.html">Trang Chủ <span class="sr-only">(current)</span></a>
            </li>
            <li class="nav-item">
                @if (session()->has('selected_market_id') && isset($fullAddress))
@@ -31,15 +31,15 @@
         
            <li class="nav-item dropdown">
                <a class="nav-link" href="{{ route('list.market') }}" role="button" aria-haspopup="true" aria-expanded="false">
-               Markets
+               Cửa hàng
                </a>
            </li>
            <li class="nav-item dropdown">
               <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
-                 <a class="dropdown-item" href="track-order.html">Track Order</a>
-                 <a class="dropdown-item" href="invoice.html">Invoice</a>
-                 <a class="dropdown-item" href="login.html">Login</a>
-                 <a class="dropdown-item" href="register.html">Register</a>
+                 <a class="dropdown-item" href="track-order.html">Theo Dõi Đơn Hàng</a>
+                 <a class="dropdown-item" href="invoice.html">Hóa Đơn</a>
+                 <a class="dropdown-item" href="login.html">Đăng Nhập</a>
+                 <a class="dropdown-item" href="register.html">Đăng Ký</a>
                  <a class="dropdown-item" href="404.html">404</a>
                  <a class="dropdown-item" href="extra.html">Extra :)</a>
               </div>
@@ -57,22 +57,22 @@
          src="{{ (!empty($profileData->photo)) 
          ? url('upload/user_images/'.$profileData->photo)
          : url('upload/no_image.jpg')}}"    
-         class="nav-osahan-pic rounded-pill"> My Account
+         class="nav-osahan-pic rounded-pill"> Tài Khoản Của Tôi
       </a>
       <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
-         <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Dashboard</a>
-         <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Logout</a>
+         <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Thống kê</a>
+         <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Đăng Xuất</a>
       </div>
    </li>
    @else
    <li class="nav-item dropdown">
       <a class="nav-link" href="{{ route('login') }}" role="button" aria-haspopup="true" aria-expanded="false">
-      Login
+         Đăng Nhập
       </a>
    </li>
    <li class="nav-item dropdown">
       <a class="nav-link" href="{{ route('register') }}" role="button" aria-haspopup="true" aria-expanded="false">
-      Register
+         Đăng Ký
       </a>
    </li>
 @endauth
@@ -92,7 +92,7 @@
 
             <li class="nav-item dropdown dropdown-cart">
                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="fas fa-shopping-basket"></i> Cart
+                  <i class="fas fa-shopping-basket"></i> Giỏ Hàng
                   <span class="badge badge-success">{{ count((array) session('cart')) }}</span>
                </a>
                <div class="dropdown-menu dropdown-cart-top p-0 dropdown-menu-right shadow-sm border-0">
@@ -125,7 +125,7 @@
          
                   </div>
                   <div class="dropdown-cart-top-footer border-top p-4">
-                     <p class="mb-0 font-weight-bold text-secondary">Sub Total <span class="float-right text-dark"> 
+                     <p class="mb-0 font-weight-bold text-secondary">Tổng Cộng <span class="float-right text-dark"> 
                         @if (Session::has('coupon'))
                         ${{ Session()->get('coupon')['discount_amount'] }}
                         @else
@@ -134,7 +134,7 @@
                         
                   </div>
                   <div class="dropdown-cart-top-footer border-top p-2">
-                     <a class="btn btn-success btn-block btn-lg" href="{{ route('checkout') }}"> Checkout</a>
+                     <a class="btn btn-success btn-block btn-lg" href="{{ route('checkout') }}"> Thanh Toán</a>
                   </div>
                </div>
            </li> 
