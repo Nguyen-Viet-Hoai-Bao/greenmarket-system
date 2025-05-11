@@ -8,7 +8,7 @@
                       <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24">
                   </span>
                   <span class="logo-lg">
-                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Client</span>
+                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Khách Hàng</span>
                   </span>
               </a>
 
@@ -17,7 +17,7 @@
                       <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24">
                   </span>
                   <span class="logo-lg">
-                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Client</span>
+                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Khách Hàng</span>
                   </span>
               </a>
           </div>
@@ -75,10 +75,10 @@
                   <div class="p-3">
                       <div class="row align-items-center">
                           <div class="col">
-                              <h6 class="m-0"> Notifications </h6>
+                              <h6 class="m-0">Thông báo </h6>
                           </div>
                           <div class="col-auto">
-                              <a href="#!" class="small text-reset text-decoration-underline"> Unread (3)</a>
+                              <a href="#!" class="small text-reset text-decoration-underline"> Chưa đọc (3)</a>
                           </div>
                       </div>
                   </div>
@@ -91,8 +91,8 @@
                               <div class="flex-grow-1">
                                   <h6 class="mb-1">James Lemire</h6>
                                   <div class="font-size-13 text-muted">
-                                      <p class="mb-1">It will seem like simplified English.</p>
-                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>1 hour ago</span></p>
+                                      <p class="mb-1">Nó sẽ giống như tiếng Anh đơn giản hóa.</p>
+                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>1 giờ trước</span></p>
                                   </div>
                               </div>
                           </div>
@@ -105,10 +105,10 @@
                                   </span>
                               </div>
                               <div class="flex-grow-1">
-                                  <h6 class="mb-1">Your order is placed</h6>
+                                  <h6 class="mb-1">Đơn hàng của bạn đã được đặt</h6>
                                   <div class="font-size-13 text-muted">
-                                      <p class="mb-1">If several languages coalesce the grammar</p>
-                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>3 min ago</span></p>
+                                      <p class="mb-1">Nếu nhiều ngôn ngữ kết hợp lại với nhau, ngữ pháp...</p>
+                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>3 phút trước</span></p>
                                   </div>
                               </div>
                           </div>
@@ -121,10 +121,10 @@
                                   </span>
                               </div>
                               <div class="flex-grow-1">
-                                  <h6 class="mb-1">Your item is shipped</h6>
+                                  <h6 class="mb-1">Món hàng của bạn đã được gửi đi</h6>
                                   <div class="font-size-13 text-muted">
-                                      <p class="mb-1">If several languages coalesce the grammar</p>
-                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>3 min ago</span></p>
+                                      <p class="mb-1">Nếu nhiều ngôn ngữ kết hợp lại với nhau, ngữ pháp...</p>
+                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>3 phút trước</span></p>
                                   </div>
                               </div>
                           </div>
@@ -138,8 +138,8 @@
                               <div class="flex-grow-1">
                                   <h6 class="mb-1">Salena Layfield</h6>
                                   <div class="font-size-13 text-muted">
-                                      <p class="mb-1">As a skeptical Cambridge friend of mine occidental.</p>
-                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>1 hour ago</span></p>
+                                      <p class="mb-1">Là một người bạn Cambridge hoài nghi của tôi phương Tây...</p>
+                                      <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>1 giờ trước</span></p>
                                   </div>
                               </div>
                           </div>
@@ -147,7 +147,7 @@
                   </div>
                   <div class="p-2 border-top d-grid">
                       <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
-                          <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View More..</span> 
+                          <i class="mdi mdi-arrow-right-circle me-1"></i> <span>Xem thêm...</span> 
                       </a>
                   </div>
               </div>
@@ -177,10 +177,10 @@
               </button>
               <div class="dropdown-menu dropdown-menu-end">
                   <!-- item-->
-                  <a class="dropdown-item" href="{{ route('client.profile') }}"><i class="mdi mdi mdi-face-man font-size-16 align-middle me-1"></i> Profile</a>
-                  <a class="dropdown-item" href="{{ route('client.change.password') }}"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Change Password</a>
+                  <a class="dropdown-item" href="{{ route('client.profile') }}"><i class="mdi mdi mdi-face-man font-size-16 align-middle me-1"></i> Hồ sơ</a>
+                  <a class="dropdown-item" href="{{ route('client.change.password') }}"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Đổi mật khẩu</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{{ route('client.logout') }}"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
+                  <a class="dropdown-item" href="{{ route('client.logout') }}"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Đăng xuất</a>
               </div>
           </div>
 

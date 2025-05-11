@@ -8,7 +8,7 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Client All Orders</h4>
+                  <h4 class="mb-sm-0 font-size-18">Tất Cả Đơn Hàng Của Khách Hàng</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
@@ -30,13 +30,13 @@
       <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
           <thead>
           <tr>
-              <th>Sl</th>
-              <th>Date</th>
-              <th>Invoice</th>
-              <th>Amount</th>
-              <th>Payment</th> 
-              <th>Status</th>
-              <th>Action </th> 
+            <th>STT</th>
+            <th>Ngày</th>
+            <th>Hóa Đơn</th>
+            <th>Số Tiền</th>
+            <th>Phương Thức Thanh Toán</th> 
+            <th>Trạng Thái</th>
+            <th>Hành Động</th>
           </tr>
           </thead>
 
@@ -55,13 +55,13 @@
               <td>{{ $order->payment_method }}</td>
               <td>
                   @if ($order->status == 'pending')
-                  <span class="badge bg-info">Pending</span>
+                  <span class="badge bg-info">Chờ Xử Lý</span>
                   @elseif ($order->status == 'confirm')
-                  <span class="badge bg-primary">Confirm</span>
+                  <span class="badge bg-primary">Đã Xác Nhận</span>
                   @elseif ($order->status == 'processing')
-                  <span class="badge bg-warning">Processing</span>
+                  <span class="badge bg-warning">Đang Xử Lý</span>
                   @elseif ($order->status == 'delivered')
-                  <span class="badge bg-success">Delivered</span>
+                  <span class="badge bg-success">Đã Giao</span>
                   @endif
                  </td>                
              

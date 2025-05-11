@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Edit Permission</h4>
+                  <h4 class="mb-sm-0 font-size-18">Chỉnh Sửa Quyền</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
                           <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                          <li class="breadcrumb-item active">Edit Permission</li>
+                          <li class="breadcrumb-item active">Chỉnh Sửa Quyền</li>
                       </ol>
                   </div>
 
@@ -37,7 +37,7 @@
           <div class="col-lg-6">
               <div>
                   <div class="form-group mb-6">
-                      <label for="example-text-input" class="form-label">Permission Name</label>
+                      <label for="example-text-input" class="form-label">Tên Quyền</label>
                       <input class="form-control" type="text" name="name" value="{{ $permission->name }}" id="example-text-input">
                   </div>
               </div>
@@ -45,22 +45,21 @@
 
           <div class="col-lg-6">
             <div class="form-group mb-6">
-              <label for="example-text-input" class="form-label">Permission Group</label>
+              <label for="example-text-input" class="form-label">Nhóm Quyền</label>
               <select name="group_name" id="" class="form-select">
-                <option disabled value="">Select Permission</option>
-                <option value="Category" {{ $permission->group_name == 'Category' ? 'selected' : '' }}>Category</option>
-                <option value="City" {{ $permission->group_name == 'City' ? 'selected' : '' }}>City</option>
-                <option value="Product" {{ $permission->group_name == 'Product' ? 'selected' : '' }}>Product</option>
-                <option value="Market" {{ $permission->group_name == 'Market' ? 'selected' : '' }}>Market</option>
-                <option value="Banner" {{ $permission->group_name == 'Banner' ? 'selected' : '' }}>Banner</option>
-                <option value="Order" {{ $permission->group_name == 'Order' ? 'selected' : '' }}>Order</option>
-                <option value="Reports" {{ $permission->group_name == 'Reports' ? 'selected' : '' }}>Reports</option>
-                <option value="Review" {{ $permission->group_name == 'Review' ? 'selected' : '' }}>Review</option>
+                <option value="Category" {{ $permission->group_name == 'Category' ? 'selected' : '' }}>Danh Mục</option>
+                <option value="City" {{ $permission->group_name == 'City' ? 'selected' : '' }}>Thành Phố</option>
+                <option value="Product" {{ $permission->group_name == 'Product' ? 'selected' : '' }}>Sản Phẩm</option>
+                <option value="Market" {{ $permission->group_name == 'Market' ? 'selected' : '' }}>Chợ</option>
+                <option value="Banner" {{ $permission->group_name == 'Banner' ? 'selected' : '' }}>Quảng Cáo</option>
+                <option value="Order" {{ $permission->group_name == 'Order' ? 'selected' : '' }}>Đơn Hàng</option>
+                <option value="Reports" {{ $permission->group_name == 'Reports' ? 'selected' : '' }}>Báo Cáo</option>
+                <option value="Review" {{ $permission->group_name == 'Review' ? 'selected' : '' }}>Đánh Giá</option>
               </select>
             </div> </br>
             
             <div class="mt-4">
-              <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+              <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
             </div>
             
           </div>

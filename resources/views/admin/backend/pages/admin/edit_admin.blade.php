@@ -9,12 +9,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Edit Admin</h4>
+                    <h4 class="mb-sm-0 font-size-18">Sửa Quản Trị Viên</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Edit Admin  </li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Bảng Điều Khiển</a></li>
+                            <li class="breadcrumb-item active">Sửa Quản Trị Viên</li>
                         </ol>
                     </div>
 
@@ -38,28 +38,28 @@
   
 <div class="col-xl-6 col-md-6"> 
     <div class="form-group mb-3">
-        <label for="example-text-input" class="form-label">Admin Name</label>
+        <label for="example-text-input" class="form-label">Tên Quản Trị Viên</label>
         <input class="form-control" type="text" name="name"  id="example-text-input" value="{{ $admin->name }}">
     </div> 
 </div>
 
 <div class="col-xl-6 col-md-6"> 
     <div class="form-group mb-3">
-        <label for="example-text-input" class="form-label">Admin Email</label>
+        <label for="example-text-input" class="form-label">Email Quản Trị Viên</label>
         <input class="form-control" type="email" name="email"  id="example-text-input"  value="{{ $admin->email }}">
     </div> 
 </div>
 
 <div class="col-xl-6 col-md-6"> 
     <div class="form-group mb-3">
-        <label for="example-text-input" class="form-label">Admin Phone  </label>
+        <label for="example-text-input" class="form-label">SĐT Quản Trị Viên </label>
         <input class="form-control" type="text" name="phone"  id="example-text-input"  value="{{ $admin->phone }}">
     </div> 
 </div>
 
 <div class="col-xl-6 col-md-6"> 
     <div class="form-group mb-3">
-        <label for="example-text-input" class="form-label">Admin Address</label>
+        <label for="example-text-input" class="form-label">Địa Chỉ Quản Trị Viên</label>
         <input class="form-control" type="text" name="address"  id="example-text-input"  value="{{ $admin->address }}">
     </div> 
 </div>
@@ -67,9 +67,9 @@
 
 <div class="col-xl-6 col-md-6"> 
     <div class="form-group mb-3">
-        <label for="example-text-input" class="form-label">Role Name</label>
+        <label for="example-text-input" class="form-label">Chức Vụ</label>
         <select name="roles" class="form-select">
-            <option>Select</option>
+            <option>Chọn</option>
             @foreach ($roles as $role)
             <option value="{{ $role->id }}" {{ $admin->hasRole($role->name) ? 'selected' : '' }} >{{ $role->name }}</option>
             @endforeach 
@@ -79,7 +79,7 @@
 
 
 <div class="mt-4">
-    <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+    <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
 </div>
   
 </div>

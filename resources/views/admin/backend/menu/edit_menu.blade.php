@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Edit Menu</h4>
+                  <h4 class="mb-sm-0 font-size-18">Chỉnh Sửa Menu</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
-                          <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                          <li class="breadcrumb-item active">Edit Menu</li>
+                          <li class="breadcrumb-item"><a href="javascript: void(0);">Bảng điều khiển</a></li>
+                          <li class="breadcrumb-item active">Chỉnh Sửa Menu</li>
                       </ol>
                   </div>
 
@@ -35,7 +35,7 @@
           <div class="col-lg-12">
               <div>
                   <div class="form-group mb-6">
-                      <label for="example-text-input" class="form-label">Menu Name</label>
+                      <label for="example-text-input" class="form-label">Tên Menu</label>
                       <input class="form-control" type="text" value="{{ $menu->menu_name }}" name="menu_name" value="" id="example-text-input">
                   </div>
               </div>
@@ -43,7 +43,7 @@
 
           <div class="col-lg-12">
             <div class="form-group mb-6">
-              <label for="example-text-input" class="form-label">Menu Image</label>
+              <label for="example-text-input" class="form-label">Hình Ảnh Menu</label>
               <input class="form-control" type="file" name="image" id="image">
             </div> </br>
             
@@ -54,7 +54,7 @@
             </div>
 
             <div class="mt-4">
-              <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+              <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
             </div>
           </div>
       </div>

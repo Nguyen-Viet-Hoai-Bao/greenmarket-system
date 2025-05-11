@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">All Coupon</h4>
+                  <h4 class="mb-sm-0 font-size-18">Danh sách mã giảm giá</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
                         <a href="{{ route('add.coupon') }}" 
-                            class="btn btn-info waves-effect waves-light">Add Coupon</a>
+                            class="btn btn-info waves-effect waves-light">Thêm mã giảm giá</a>
                       </ol>
                   </div>
 
@@ -31,13 +31,13 @@
 <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
     <thead>
     <tr>
-        <th>Sl</th>
-        <th>Coupon Name</th>
-        <th>Coupon Desc</th>
-        <th>Discount</th>
-        <th>Validity</th>
-        <th>Status</th>
-        <th>Action</th>
+        <th>STT</th>
+        <th>Tên mã giảm giá</th>
+        <th>Mô tả</th>
+        <th>Giảm giá</th>
+        <th>Hiệu lực</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
     </tr>
     </thead>
 
@@ -52,16 +52,16 @@
             <td>{{ Carbon\Carbon::parse($item->validity)->format('D, d F Y') }}</td>
             <td>
                 @if ($item->validity >= Carbon\Carbon::now()->format('Y-m-d'))
-                    <span class="badge rounded-pill bg-success">Valid</span>
+                    <span class="badge rounded-pill bg-success">Còn hiệu lực</span>
                 @else
-                    <span class="badge rounded-pill bg-danger">Invalid</span>
+                    <span class="badge rounded-pill bg-danger">Hết hạn</span>
                 @endif
             </td>
             <td>
                 <a href="{{ route('edit.coupon', $item->id) }}"
-                    class="btn btn-info waves-effect waves-light">Edit</a>
+                    class="btn btn-info waves-effect waves-light">Chỉnh sửa</a>
                 <a href="{{ route('delete.coupon', $item->id) }}" 
-                    class="btn btn-danger waves-effect waves-light" id="delete">Delete</a>
+                    class="btn btn-danger waves-effect waves-light" id="delete">Xóa</a>
               </td>
         </tr>
       @endforeach

@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Edit Category</h4>
+                  <h4 class="mb-sm-0 font-size-18">Chỉnh Sửa Danh Mục</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
-                          <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                          <li class="breadcrumb-item active">Edit Category</li>
+                          <li class="breadcrumb-item"><a href="javascript: void(0);">Trang Chủ</a></li>
+                          <li class="breadcrumb-item active">Chỉnh Sửa Danh Mục</li>
                       </ol>
                   </div>
 
@@ -35,15 +35,15 @@
           <div class="col-lg-12">
               <div>
                   <div class="form-group mb-6">
-                      <label for="example-text-input" class="form-label">Category Name</label>
-                      <input class="form-control" type="text" value="{{ $category->category_name }}" name="category_name" value="" id="example-text-input">
+                      <label for="example-text-input" class="form-label">Tên Danh Mục</label>
+                      <input class="form-control" type="text" value="{{ $category->category_name }}" name="category_name" id="example-text-input">
                   </div>
               </div>
           </div>
 
           <div class="col-lg-12">
             <div class="form-group mb-6">
-              <label for="example-text-input" class="form-label">Category Image</label>
+              <label for="example-text-input" class="form-label">Hình Ảnh Danh Mục</label>
               <input class="form-control" type="file" name="image" id="image">
             </div> </br>
             
@@ -54,22 +54,16 @@
             </div>
 
             <div class="mt-4">
-              <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+              <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
             </div>
           </div>
       </div>
     </form>
   </div>            
 
-                <!-- end tab content -->
             </div>
-            <!-- end col -->
-
-            <!-- end col -->
         </div>
-        <!-- end row -->
-        
-    </div> <!-- container-fluid -->
+    </div> 
   </div>
 </div>
 
@@ -83,39 +77,44 @@
             reader.readAsDataURL(e.target.files['0']);
         })
     })
-
 </script>
 
 <script type="text/javascript">
-  $(document).ready(function (){
-      $('#myForm').validate({
-          rules: {
-            category_name: {
-                  required : true,
+    $(document).ready(function (){
+        $('#myForm').validate({
+            rules: {
+              category_name: {
+                    required : true,
+                }, 
+              image: {
+                    required : true,
+                }, 
+                
+            },
+            messages :{
+              category_name: {
+                  required : 'Please Enter Category Name',
               }, 
-              
-          },
-          messages :{
-            category_name: {
-                required : 'Please Enter Category Name',
-            }, 
-               
-
-          },
-          errorElement : 'span', 
-          errorPlacement: function (error,element) {
-              error.addClass('invalid-feedback');
-              element.closest('.form-group').append(error);
-          },
-          highlight : function(element, errorClass, validClass){
-              $(element).addClass('is-invalid');
-          },
-          unhighlight : function(element, errorClass, validClass){
-              $(element).removeClass('is-invalid');
-          },
-      });
-  });
+              image: {
+                  required : 'Please Select New Image',
+              }, 
+                 
   
-</script>
+            },
+            errorElement : 'span', 
+            errorPlacement: function (error,element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight : function(element, errorClass, validClass){
+                $(element).addClass('is-invalid');
+            },
+            unhighlight : function(element, errorClass, validClass){
+                $(element).removeClass('is-invalid');
+            },
+        });
+    });
+    
+  </script>
 
 @endsection

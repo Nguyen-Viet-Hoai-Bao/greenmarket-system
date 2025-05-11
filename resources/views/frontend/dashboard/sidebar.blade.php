@@ -23,16 +23,16 @@
      </div>
      <ul class="nav nav-tabs flex-column border-0 pt-4 pl-4 pb-4" id="myTab" role="tablist">
         <li class="nav-item">
-          <a class="nav-link {{ Route::currentRouteName() === 'dashboard' ? 'active' : '' }}" href="{{ route('dashboard') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-location-pin"></i> Profile</a>
+          <a class="nav-link {{ Route::currentRouteName() === 'dashboard' ? 'active' : '' }}" href="{{ route('dashboard') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-location-pin"></i> Hồ Sơ</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ Route::currentRouteName() === 'change.password' ? 'active' : '' }}" href="{{ route('change.password') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-food-cart"></i> Change Password</a>
+          <a class="nav-link {{ Route::currentRouteName() === 'change.password' ? 'active' : '' }}" href="{{ route('change.password') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-food-cart"></i> Đổi Mật Khẩu</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ Route::currentRouteName() === 'all.wishlist' ? 'active' : '' }}" href="{{ route('all.wishlist') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-heart"></i> Favourites</a>
+          <a class="nav-link {{ Route::currentRouteName() === 'all.wishlist' ? 'active' : '' }}" href="{{ route('all.wishlist') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-heart"></i> Danh Sách Yêu Thích</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ Route::currentRouteName() === 'user.order.list' ? 'active' : '' }}" href="{{ route('user.order.list') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-credit-card"></i> Orders</a>
+          <a class="nav-link {{ Route::currentRouteName() === 'user.order.list' ? 'active' : '' }}" href="{{ route('user.order.list') }}" role="tab" aria-controls="orders" aria-selected="true"><i class="icofont-credit-card"></i> Đơn Hàng</a>
         </li>
      </ul>
   </div>

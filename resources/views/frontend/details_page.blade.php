@@ -36,21 +36,21 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
               <div class="restaurant-detailed-header-left">
                  <img class="img-fluid mr-3 float-left" alt="osahan" src="{{ asset('upload/client_images/'. $client->photo) }}">
                  <h2 class="text-white">{{ $client->name }}</h2>
-                 <p class="text-white mb-1"><i class="icofont-location-pin"></i> {{ $client->fullAddress }} <span class="badge badge-success">OPEN</span>
+                 <p class="text-white mb-1"><i class="icofont-location-pin"></i> {{ $client->fullAddress }} <span class="badge badge-success">Mở</span>
                  </p>
                  <p class="text-white mb-0"><i class="icofont-food-cart"></i> {{ $menuNamesString }}</p>
               </div>
            </div>
            <div class="col-md-4">
               <div class="restaurant-detailed-header-right text-right">
-                 <button class="btn btn-success" type="button"><i class="icofont-clock-time"></i> 25–35 min
+                 <button class="btn btn-success" type="button"><i class="icofont-clock-time"></i> 25–35 phút
                  </button>
                  <h6 class="text-white mb-0 restaurant-detailed-ratings">
                   <span class="generator-bg rounded text-white">
                      <i class="icofont-star"></i> {{ $roundedAverageRating }}
                   </span> 
-                  {{ $totalReviews }} Ratings 
-                  <i class="ml-3 icofont-speech-comments"></i> {{ $reviews->count() }} reviews                  
+                  {{ $totalReviews }} Đánh giá 
+                  <i class="ml-3 icofont-speech-comments"></i> {{ $reviews->count() }} đánh giá                  
               </div>
            </div>
         </div>
@@ -78,24 +78,24 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                </button>
             @endauth
         
-           <button class="btn btn-light btn-sm border-light-btn" type="button"><i class="icofont-cauli-flower text-success"></i>  Pure Veg</button>
-           <button class="btn btn-outline-danger btn-sm" type="button"><i class="icofont-sale-discount"></i>  OFFERS</button>
+           <button class="btn btn-light btn-sm border-light-btn" type="button"><i class="icofont-cauli-flower text-success"></i>  Chay Thuần</button>
+           <button class="btn btn-outline-danger btn-sm" type="button"><i class="icofont-sale-discount"></i>  Ưu đãi</button>
            </span>
            <ul class="nav" id="pills-tab" role="tablist">
               <li class="nav-item">
-                 <a class="nav-link active" id="pills-order-online-tab" data-toggle="pill" href="#pills-order-online" role="tab" aria-controls="pills-order-online" aria-selected="true">Order Online</a>
+                 <a class="nav-link active" id="pills-order-online-tab" data-toggle="pill" href="#pills-order-online" role="tab" aria-controls="pills-order-online" aria-selected="true">Đặt hàng trực tuyến</a>
               </li>
               <li class="nav-item">
-                 <a class="nav-link" id="pills-gallery-tab" data-toggle="pill" href="#pills-gallery" role="tab" aria-controls="pills-gallery" aria-selected="false">Gallery</a>
+                 <a class="nav-link" id="pills-gallery-tab" data-toggle="pill" href="#pills-gallery" role="tab" aria-controls="pills-gallery" aria-selected="false">Thư viện ảnh</a>
               </li>
               <li class="nav-item">
-                 <a class="nav-link" id="pills-restaurant-info-tab" data-toggle="pill" href="#pills-restaurant-info" role="tab" aria-controls="pills-restaurant-info" aria-selected="false">Market Info</a>
+                 <a class="nav-link" id="pills-restaurant-info-tab" data-toggle="pill" href="#pills-restaurant-info" role="tab" aria-controls="pills-restaurant-info" aria-selected="false">Thông tin cửa hàng</a>
               </li>
               {{-- <li class="nav-item">
-                 <a class="nav-link" id="pills-book-tab" data-toggle="pill" href="#pills-book" role="tab" aria-controls="pills-book" aria-selected="false">Book A Table</a>
+                 <a class="nav-link" id="pills-book-tab" data-toggle="pill" href="#pills-book" role="tab" aria-controls="pills-book" aria-selected="false">Đặt bàn</a>
               </li> --}}
               <li class="nav-item">
-                 <a class="nav-link" id="pills-reviews-tab" data-toggle="pill" href="#pills-reviews" role="tab" aria-controls="pills-reviews" aria-selected="false">Ratings & Reviews</a>
+                 <a class="nav-link" id="pills-reviews-tab" data-toggle="pill" href="#pills-reviews" role="tab" aria-controls="pills-reviews" aria-selected="false">Đánh giá & Phản hồi</a>
               </li>
            </ul>
         </div>
@@ -121,7 +121,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                 ->get();
   @endphp
   <div id="menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
-   <h6 class="mb-3">Most Popular <span class="badge badge-success"><i class="icofont-tags"></i> 15% Off All Items </span></h6>
+   <h6 class="mb-3">Sản Phẩm Phổ Biến Nhất <span class="badge badge-success"><i class="icofont-tags"></i> Giảm 15% Cho Tất Cả Sản Phẩm </span></h6>
    <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
        @foreach ($populers as $populer)
            <div class="item">
@@ -139,7 +139,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 
                        <span class="float-right">
                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('add_to_cart', $populer->id) }}">
-                               ADD
+                              THÊM VÀO GIỎ
                            </a>
                        </span>
                    </a>
@@ -162,14 +162,14 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
    @endphp
 
 <div class="row">
-   <h5 class="mb-4 mt-3 col-md-12">Best Sellers</h5>
+   <h5 class="mb-4 mt-3 col-md-12">Bán Chạy Nhất</h5>
    @foreach ($bestsellers as $bestseller)
      <div class="col-md-4 col-sm-6 mb-4">
        <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
            <div class="list-card-image">
              <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
              <div class="favourite-heart text-danger position-absolute"><a href="#"><i class="icofont-heart"></i></a></div>
-             <div class="member-plan position-absolute"><span class="badge badge-dark">Promoted</span></div>
+             <div class="member-plan position-absolute"><span class="badge badge-dark">Được Quảng Bá</span></div>
              <a href="#">
                <img src="{{ asset($bestseller->productTemplate->image ?? $bestseller->image) }}" class="img-fluid item-img" alt="">
              </a>
@@ -197,7 +197,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                    @endif
                    <span class="float-right"> 
                      <a class="btn btn-outline-secondary btn-sm" href="{{ route('add_to_cart', $bestseller->id) }}">
-                       ADD
+                        THÊM VÀO GIỎ
                      </a>
                    </span>
                  </p>
@@ -212,7 +212,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
  <div class="row">
    <h5 class="mb-4 mt-3 col-md-12">
        {{ $menu->menu_name }}
-       <small class="h6 text-black-50">{{ $menu->products->sum(fn($p) => $p->productNews->count()) }} ITEMS</small>
+       <small class="h6 text-black-50">{{ $menu->products->sum(fn($p) => $p->productNews->count()) }} MÓN</small>
    </h5>
    <div class="col-md-12">
      <div class="bg-white rounded border shadow-sm mb-4">
@@ -221,7 +221,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
            <div class="menu-list p-3 border-bottom">
              <a class="btn btn-outline-secondary btn-sm float-right" 
                 href="{{ route('add_to_cart', $product->id) }}">
-                ADD
+                THÊM VÀO GIỎ
              </a>
              <div class="media">
                  <img class="mr-3 rounded-pill" src="{{ asset($productTemplate->image ?? 'upload/no_image.jpg') }} " alt="{{ $product->name }}">
@@ -264,7 +264,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
           @foreach ($gallerys as $index => $gallery)
             <div class="item">
               <img class="img-fluid" src="{{ asset($gallery->gallery_img) }}">
-              <div class="position-absolute restaurant-slider-pics bg-dark text-white">{{ $index + 1 }} of {{ $gallery->count() }} Photos</div>
+              <div class="position-absolute restaurant-slider-pics bg-dark text-white">{{ $index + 1 }} of {{ $gallery->count() }} Ảnh</div>
             </div>
           @endforeach
         </div>
@@ -284,19 +284,19 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
              </div>
          </div>
        </div>
-       <h5 class="mb-4">Market Info</h5>
+       <h5 class="mb-4">Thông tin thị trường</h5>
        <p class="mb-3">{{ $client->fullAddress }} </p>
        <p class="mb-2 text-black"><i class="icofont-phone-circle text-primary mr-2"></i> {{ $client->phone }} </p>
        <p class="mb-2 text-black"><i class="icofont-email text-primary mr-2"></i> {{ $client->email }} </p>
-       <p class="mb-2 text-black"><i class="icofont-clock-time text-primary mr-2"></i> Today  11am – 5pm, 6pm – 11pm
-         <span class="badge badge-success"> OPEN NOW </span>
+       <p class="mb-2 text-black"><i class="icofont-clock-time text-primary mr-2"></i> Hôm nay 11h – 17h, 18h – 23h
+         <span class="badge badge-success"> ĐANG MỞ CỬA </span>
        </p>
        <hr class="clearfix">
-       <p class="text-black mb-0">You can also check the 3D view by using our menu map clicking here &nbsp;&nbsp;&nbsp; 
-         <a class="text-info font-weight-bold" href="#">Venue Map</a>
+       <p class="text-black mb-0">Bạn cũng có thể xem bản đồ 3D bằng cách nhấn vào &nbsp;&nbsp;&nbsp; 
+         <a class="text-info font-weight-bold" href="#">Bản đồ địa điểm</a>
        </p>
        <hr class="clearfix">
-       <h5 class="mt-4 mb-4">Menu Types</h5>
+       <h5 class="mt-4 mb-4">Loại thực đơn</h5>
        <p class="mb-3">
          {{ $menus->pluck('menu_name')->implode(', ') }}
        </p>
@@ -355,12 +355,12 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
          <a href="#"><i class="icofont-ui-rating icofont-2x {{ $i <= round($roundedAverageRating) ? 'active' : ''}}"></i></a>
          @endfor
                        </span>
-                       <h5 class="mb-0 pt-1">Rate this Place</h5>
+                       <h5 class="mb-0 pt-1">Đánh giá địa điểm này</h5>
                     </div>
 
 
 <div class="bg-white rounded shadow-sm p-4 mb-4 clearfix graph-star-rating">
-   <h5 class="mb-4">Ratings and Reviews</h5>
+   <h5 class="mb-4">Xếp hạng và đánh giá</h5>
    <div class="graph-star-rating-header">
       <div class="star-rating">
          @for ($i = 1; $i <= 5; $i++)
@@ -368,7 +368,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
          @endfor
             <b class="text-black ml-2">{{ $totalReviews }}</b>
       </div>
-      <p class="text-black mb-4 mt-2">Rated {{$roundedAverageRating}} out of 5</p>
+      <p class="text-black mb-4 mt-2">Được đánh giá {{$roundedAverageRating}} trên 5</p>
    </div>
 
    <div class="graph-star-rating-body">
@@ -376,12 +376,12 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
       @foreach ($ratingCounts as $star => $count) 
       <div class="rating-list">
          <div class="rating-list-left text-black">
-            {{ $star }} Star
+            {{ $star }} sao
          </div>
          <div class="rating-list-center">
             <div class="progress">
                <div style="width: {{ $ratingPercentages[$star] }}%" aria-valuemax="5" aria-valuemin="0" aria-valuenow="5" role="progressbar" class="progress-bar bg-primary">
-                  <span class="sr-only">{{ $ratingPercentages[$star] }}% Complete (danger)</span>
+                  <span class="sr-only">{{ $ratingPercentages[$star] }}% Hoàn thành (danger)</span>
                </div>
             </div>
          </div>
@@ -395,13 +395,13 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 
    
    <div class="graph-star-rating-footer text-center mt-3 mb-3">
-      <button type="button" class="btn btn-outline-primary btn-sm">Rate and Review</button>
+      <button type="button" class="btn btn-outline-primary btn-sm">Xếp hạng và đánh giá</button>
    </div>
 </div>
                     
 <div class="bg-white rounded shadow-sm p-4 mb-4 restaurant-detailed-ratings-and-reviews">
-   <a href="#" class="btn btn-outline-primary btn-sm float-right">Top Rated</a>
-      <h5 class="mb-1">All Ratings and Reviews</h5>
+   <a href="#" class="btn btn-outline-primary btn-sm float-right">Đánh Giá Cao Nhất</a>
+      <h5 class="mb-1">Tất Cả Đánh Giá Và Nhận Xét</h5>
 
       <style>
          .icofont-ui-rating {
@@ -451,12 +451,12 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
       @endforeach
       <hr>
       <hr>
-   <a class="text-center w-100 d-block mt-4 font-weight-bold" href="#">See All Reviews</a>
+   <a class="text-center w-100 d-block mt-4 font-weight-bold" href="#">Xem Tất Cả Nhận Xét</a>
 </div>
 
                     <div class="bg-white rounded shadow-sm p-4 mb-5 rating-review-select-page">
                      @guest
-                     <p><b>For Add Market Review. You need to login first <a href="{{ route('login') }}"> Login Here </a> </b></p>
+                     <p><b>Để thêm đánh giá cho địa điểm, bạn cần đăng nhập trước <a href="{{ route('login') }}"> Đăng nhập tại đây </a> </b></p>
                      @else 
                 
                   <style>
@@ -473,8 +473,8 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                    }
                   </style> 
                 
-                      <h5 class="mb-4">Leave Comment</h5>
-                      <p class="mb-2">Rate the Place</p>
+                      <h5 class="mb-4">Để Lại Nhận Xét</h5>
+                      <p class="mb-2">Đánh Giá Địa Điểm</p>
                       <form method="post" action="{{ route('store.review') }}">
                          @csrf
                          
@@ -500,11 +500,11 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                       </div>
                       
                          <div class="form-group">
-                            <label>Your Comment</label>
+                            <label>Nhận Xét Của Bạn</label>
                             <textarea class="form-control" name="comment" id="comment"></textarea>
                          </div>
                          <div class="form-group">
-                            <button class="btn btn-primary btn-sm" type="submit"> Submit Comment </button>
+                            <button class="btn btn-primary btn-sm" type="submit"> Gửi Nhận Xét </button>
                          </div>
                       </form>
                 
@@ -528,16 +528,16 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
             <div class="pb-2">
                <div class="bg-white rounded shadow-sm text-white mb-4 p-4 clearfix restaurant-detailed-earn-pts card-icon-overlap">
                <img class="img-fluid float-left mr-3" src="{{ asset('frontend/img/earn-score-icon.png') }}">
-               <h6 class="pt-0 text-primary mb-1 font-weight-bold">OFFER</h6>
+               <h6 class="pt-0 text-primary mb-1 font-weight-bold">ƯU ĐÃI</h6>
                
                {{-- <pre>{{ print_r(Session::get('coupon'), true) }}</pre> --}}
 
                @if ($coupon == NULL)
-                  <p class="mb-0">No coupon 
+                  <p class="mb-0">Không có mã giảm giá
                   </p>
                @else
                   <p class="mb-0">
-                     <span class="text-danger font-weight-bold">{{ $coupon->discount }}</span>% off on orders | Use coupon 
+                     <span class="text-danger font-weight-bold">{{ $coupon->discount }}</span>% cho đơn hàng | Sử dụng mã 
                      <span class="text-danger font-weight-bold">{{ $coupon->coupon_name }}</span>
                   </p>
                @endif
@@ -548,8 +548,8 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
             </div>
             </div>
            <div class="generator-bg rounded shadow-sm mb-4 p-4 osahan-cart-item">
-              <h5 class="mb-1 text-white">Your Order</h5>
-              <p class="mb-4 text-white">{{ count((array) session('cart')) }} Items</p>
+              <h5 class="mb-1 text-white">Đơn Hàng Của Bạn</h5>
+              <p class="mb-4 text-white">{{ count((array) session('cart')) }} Sản phẩm</p>
 
 <div class="bg-white rounded shadow-sm mb-2">
 
@@ -612,12 +612,12 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 
 @if (Session::has('coupon'))
    <div class="mb-2 bg-white rounded p-2 clearfix">
-      <p class="mb-1">Item Total 
+      <p class="mb-1">Tổng số sản phẩm
          <span class="float-right text-dark">
             {{ count((array) session('cart')) }}
          </span>
       </p>
-      <p class="mb-1">Coupon Name 
+      <p class="mb-1">Mã giảm giá
          <span class="float-right text-dark">
             {{ (session()->get('coupon')['coupon_name']) }}
             ({{ (session()->get('coupon')['discount']) }}%)
@@ -627,7 +627,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
             </a>
          </span>
       </p>
-      <p class="mb-1 text-success">Total Discount 
+      <p class="mb-1 text-success">Tổng tiền sau giảm giá
          <span class="float-right text-success">
             @if (Session::has('coupon'))
                {{ number_format($total - Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
@@ -637,7 +637,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
          </span>
       </p>
       <hr />
-      <h6 class="font-weight-bold mb-0">TO PAY  
+      <h6 class="font-weight-bold mb-0">SỐ TIỀN CẦN THANH TOÁN  
          <span class="float-right">
             @if (Session::has('coupon'))
                {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
@@ -654,7 +654,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
          <div class="input-group-append">
             <button class="btn btn-primary" type="submit" id="button-addon2" onclick="ApplyCoupon()">
                <i class="icofont-sale-discount"></i> 
-               APPLY
+               ÁP DỤNG
             </button>
          </div>
       </div>
@@ -664,7 +664,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 
 <div class="mb-2 bg-white rounded p-2 clearfix">
    <img class="img-fluid float-left" src="{{ asset('frontend/img/wallet-icon.png') }}">
-   <h6 class="font-weight-bold text-right mb-2">Subtotal : 
+   <h6 class="font-weight-bold text-right mb-2">Tạm tính : 
       <span class="text-danger">
          @if (Session::has('coupon'))
             {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
@@ -673,9 +673,9 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
          @endif
       </span>
    </h6>
-   <p class="seven-color mb-1 text-right">Extra charges may apply</p>
+   <p class="seven-color mb-1 text-right">Phụ phí có thể được áp dụng</p>
 </div>
-              <a href="{{ route('checkout') }}" class="btn btn-success btn-block btn-lg">Checkout <i class="icofont-long-arrow-right"></i></a>
+              <a href="{{ route('checkout') }}" class="btn btn-success btn-block btn-lg">Thanh toán <i class="icofont-long-arrow-right"></i></a>
            </div>
    
    <div class="text-center pt-2 mb-4">

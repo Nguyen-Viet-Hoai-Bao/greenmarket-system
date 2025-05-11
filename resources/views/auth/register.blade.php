@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       <meta name="description" content="Askbootstrap">
       <meta name="author" content="Askbootstrap">
-      <title>User Register</title>
+      <title>Đăng ký người dùng</title>
       <!-- Favicon Icon -->
       <link rel="icon" type="image/png" href="img/favicon.png">
       <!-- Bootstrap core CSS-->
@@ -29,7 +29,7 @@
                   <div class="container">
                      <div class="row">
                         <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">
-                           <h3 class="login-heading mb-4">Welcome back!</h3>
+                           <h3 class="login-heading mb-4">Chào mừng bạn trở lại!</h3>
     @if ($errors->any())
         @foreach ($errors->all() as $error)
         <li>{{ $error }}</li>
@@ -47,7 +47,7 @@
         @csrf
         <div class="form-label-group">
             <input type="text" name="name" id="ptext" class="form-control" placeholder="Name">
-            <label for="ptext">Name</label>
+            <label for="ptext">Họ tên</label>
         </div>
         <div class="form-label-group">
             <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email Address">
@@ -55,23 +55,23 @@
         </div>
         <div class="form-label-group">
             <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password">
-            <label for="inputPassword">Password</label>
+            <label for="inputPassword">Mật khẩu</label>
         </div>
         <div class="form-label-group">
             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Confirm Password">
-            <label for="password_confirmation">Confirm Password</label>
+            <label for="password_confirmation">Xác nhận mật khẩu</label>
         </div>
         <div class="custom-control custom-checkbox mb-3">
             <input type="checkbox" class="custom-control-input" id="customCheck1">
-            <label class="custom-control-label" for="customCheck1">Remember password</label>
+            <label class="custom-control-label" for="customCheck1">Ghi nhớ mật khẩu</label>
         </div>
-        <button type="submit" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Sign Up</button>
+        <button type="submit" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Đăng nhập</button>
         <div class="text-center pt-3">
-            Do have an account? <a class="font-weight-bold" href="{{ route('login') }}">Sign In</a>
+         Đã có tài khoản? <a class="font-weight-bold" href="{{ route('login') }}">Đăng nhập</a>
         </div>
     </form>
                            <hr class="my-4">
-                           <p class="text-center">LOGIN WITH</p>
+                           <p class="text-center">ĐĂNG NHẬP BẰNG</p>
                            <div class="row">
                               <div class="col pr-2">
                                  <button class="btn pl-1 pr-1 btn-lg btn-google font-weight-normal text-white btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Google</button>

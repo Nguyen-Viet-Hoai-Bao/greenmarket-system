@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VnpayController;
+use App\Http\Controllers\InfoController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\DistrictController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\FilterController;
+
+use App\Http\Controllers\ChatController;
 
 use App\Models\City;
 use App\Models\Menu;
@@ -412,3 +415,16 @@ Route::controller(FilterController::class)->group(function(){
 ///////////////// VNPAY ///////////////
 Route::post('/create-payment', [VnpayController::class, 'create']);
 Route::get('/return-vnpay', [VnpayController::class, 'return'])->name('return-vnpay');
+
+Route::controller(InfoController::class)->group(function(){
+    Route::get('/about', 'AboutUs')->name('about.us');
+    Route::get('/list/markets', 'ListMarkets')->name('list.markets');
+    Route::get('/quality/manage', 'QualityManage')->name('quality.manage');
+    Route::get('/privacy-policy', 'PrivacyPolicy')->name('privacy.policy');
+    Route::get('/transaction-policy', 'TransactionPolicy')->name('transaction.policy');
+    Route::get('/customer-support', 'CustomerSupport')->name('customer.support');
+    Route::get('/delivery-policy', 'DeliveryPolicy')->name('delivery.policy');
+    Route::get('/payment-policy', 'PaymentPolicy')->name('payment.policy');
+    Route::get('/return-and-exchange-policy', 'ReturnAndExchangePolicy')->name('return.and.exchange.policy');
+
+});

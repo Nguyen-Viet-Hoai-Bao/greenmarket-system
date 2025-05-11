@@ -17,7 +17,7 @@
                       <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24">
                   </span>
                   <span class="logo-lg">
-                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Admin</span>
+                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Quản trị</span>
                   </span>
               </a>
 
@@ -26,7 +26,7 @@
                       <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24">
                   </span>
                   <span class="logo-lg">
-                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Admin</span>
+                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Quản trị</span>
                   </span>
               </a>
           </div>
@@ -87,10 +87,10 @@
                   <div class="p-3">
                       <div class="row align-items-center">
                           <div class="col">
-                              <h6 class="m-0"> Notifications </h6>
+                              <h6 class="m-0"> Thông báo </h6>
                           </div>
                           <div class="col-auto">
-                              <a href="#!" class="small text-reset text-decoration-underline"> Unread ({{$ncount}})</a>
+                              <a href="#!" class="small text-reset text-decoration-underline"> Chưa đọc ({{$ncount}})</a>
                           </div>
                       </div>
                   </div>
@@ -122,7 +122,7 @@
                   </div>
                   <div class="p-2 border-top d-grid">
                       <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
-                          <i class="mdi mdi-arrow-right-circle me-1"></i> <span>View More..</span> 
+                          <i class="mdi mdi-arrow-right-circle me-1"></i> <span>Xem thêm...</span> 
                       </a>
                   </div>
               </div>
@@ -152,10 +152,10 @@
               </button>
               <div class="dropdown-menu dropdown-menu-end">
                   <!-- item-->
-                  <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="mdi mdi mdi-face-man font-size-16 align-middle me-1"></i> Profile</a>
-                  <a class="dropdown-item" href="{{ route('admin.change.password') }}"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Change Password</a>
+                  <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="mdi mdi mdi-face-man font-size-16 align-middle me-1"></i> Hồ sơ</a>
+                  <a class="dropdown-item" href="{{ route('admin.change.password') }}"><i class="mdi mdi-lock font-size-16 align-middle me-1"></i> Thay đổi mật khẩu</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{{ route('admin.logout') }}"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
+                  <a class="dropdown-item" href="{{ route('admin.logout') }}"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Đăng xuất</a>
               </div>
           </div>
 

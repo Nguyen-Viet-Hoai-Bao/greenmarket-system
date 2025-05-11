@@ -9,12 +9,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">All Gallery</h4>
+                  <h4 class="mb-sm-0 font-size-18">Tất Cả Thư Viện Ảnh</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
                         <a href="{{ route('add.gallery') }}" 
-                            class="btn btn-info waves-effect waves-light">Add Gallery</a>
+                            class="btn btn-info waves-effect waves-light">Thêm Thư Viện Ảnh</a>
                       </ol>
                   </div>
 
@@ -31,9 +31,9 @@
 <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
     <thead>
     <tr>
-        <th>Sl</th>
-        <th>Gallery Image</th>
-        <th>Action</th>
+        <th>STT</th>
+        <th>Ảnh Thư Viện</th>
+        <th>Hành Động</th>
     </tr>
     </thead>
 
@@ -48,9 +48,9 @@
                     style="width: 70px; heigh:40px;"></td>
             <td>
               <a href="{{ route('edit.gallery', $item->id) }}"
-                  class="btn btn-info waves-effect waves-light">Edit</a>
+                  class="btn btn-info waves-effect waves-light">Chỉnh Sửa</a>
               <a href="{{ route('delete.gallery', $item->id) }}" 
-                  class="btn btn-danger waves-effect waves-light" id="delete">Delete</a>
+                  class="btn btn-danger waves-effect waves-light" id="delete">Xóa</a>
             </td>
         </tr>
       @endforeach

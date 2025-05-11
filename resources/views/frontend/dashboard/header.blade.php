@@ -8,7 +8,7 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                <ul class="navbar-nav ml-auto">
                   <li class="nav-item active">
-                     <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                     <a class="nav-link" href="index.html">Trang Chủ <span class="sr-only">(current)</span></a>
                   </li>
                   
            <li class="nav-item">
@@ -31,7 +31,7 @@
          </li>       
                   <li class="nav-item dropdown">
                      <a class="nav-link" href="{{ route('list.market') }}" role="button" aria-haspopup="true" aria-expanded="false">
-                     Markets
+                     Cửa hàng
                      </a>
                   </li>
 
@@ -47,22 +47,22 @@
       src="{{ (!empty($profileData->photo)) 
       ? url('upload/user_images/'.$profileData->photo)
       : url('upload/no_image.jpg')}}"    
-      class="nav-osahan-pic rounded-pill"> My Account
+      class="nav-osahan-pic rounded-pill"> Tài Khoản Của Tôi
    </a>
    <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
-      <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Dashboard</a>
-      <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Logout</a>
+      <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Bảng Điều Khiển</a>
+      <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Đăng Xuất</a>
    </div>
 </li>
 @else
 <li class="nav-item dropdown">
    <a class="nav-link" href="{{ route('login') }}" role="button" aria-haspopup="true" aria-expanded="false">
-   Login
+      Đăng Nhập
    </a>
 </li>
 <li class="nav-item dropdown">
    <a class="nav-link" href="{{ route('register') }}" role="button" aria-haspopup="true" aria-expanded="false">
-   Register
+      Đăng Ký
    </a>
 </li>
 @endauth
@@ -85,7 +85,7 @@
 
 <li class="nav-item dropdown dropdown-cart">
    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-   <i class="fas fa-shopping-basket"></i> Cart
+   <i class="fas fa-shopping-basket"></i> Giỏ Hàng
    <span class="badge badge-success">{{ count((array) session('cart')) }}</span>
    </a>
    <div class="dropdown-menu dropdown-cart-top p-0 dropdown-menu-right shadow-sm border-0">
@@ -100,7 +100,7 @@
                      src="{{ asset('upload/client_images/' . $client->photo) }}">
                <h6 class="mb-0">{{ $client->name }}</h6>
                <p class="text-secondary mb-0">{{ $client->address }}</p>
-               <small><a class="text-primary font-weight-bold" href="#">View Full Menu</a></small>
+               <small><a class="text-primary font-weight-bold" href="#">Xem Menu Chi Tiết</a></small>
             </div>
          @else
 
@@ -130,7 +130,7 @@
       </div>
       <div class="dropdown-cart-top-footer border-top p-4">
          <p class="mb-0 font-weight-bold text-secondary">
-            Sub Total 
+            Tổng Tiền 
             <span class="float-right text-dark">
                @if (Session::has('coupon'))
                   {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ

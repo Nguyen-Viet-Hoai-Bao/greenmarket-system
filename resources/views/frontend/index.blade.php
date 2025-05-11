@@ -6,8 +6,8 @@
 <section class="section pt-5 pb-5 products-section">
   <div class="container">
      <div class="section-header text-center">
-        <h2>Popular Market</h2>
-        <p>Top markets, vegetables, milks, and ...</p>
+        <h2>Cửa hàng phổ biến</h2>
+        <p>Các cửa hàng hàng đầu, rau củ, sữa và nhiều hơn nữa...</p>
         <span class="line"></span>
      </div>
      <div class="row">
@@ -56,7 +56,7 @@
                </a>
            </div>
             @if ($coupons)
-               <div class="member-plan position-absolute"><span class="badge badge-dark">Promoted</span></div>
+               <div class="member-plan position-absolute"><span class="badge badge-dark">Được quảng cáo</span></div>
             @else
 
             @endif
@@ -69,13 +69,13 @@
             <div class="list-card-body">
                <h6 class="mb-1"><a href="detail.html" class="text-black">{{ $client->name }}</a></h6>
                <p class="text-gray mb-3">{{ $menuNamesString }}</p>
-               <p class="text-gray mb-3 time"><span class="bg-light text-dark rounded-sm pl-2 pb-1 pt-1 pr-2"><i class="icofont-wall-clock"></i> 20–25 min</span> <span class="float-right text-black-50"> $250 FOR TWO</span></p>
+               <p class="text-gray mb-3 time"><span class="bg-light text-dark rounded-sm pl-2 pb-1 pt-1 pr-2"><i class="icofont-wall-clock"></i> 20–25 phút</span> <span class="float-right text-black-50"> 250.000 VNĐ cho 2 người</span></p>
             </div>
             <div class="list-card-badge">
                @if ($coupons)
-                  <span class="badge badge-success">OFFER</span> <small>{{ $coupons->discount }}% off | Use Coupon {{ $coupons->coupon_name }}</small>
+                  <span class="badge badge-success">KHUYẾN MÃI</span> <small>{{ $coupons->discount }}% giảm | Dùng mã {{ $coupons->coupon_name }}</small>
                @else
-                  <span class="badge badge-success">OFFER</span> <small>Have Not Coupon</small>
+                  <span class="badge badge-success">KHUYẾN MÃI</span> <small>Chưa có mã giảm giá</small>
                @endif
             </div>
          </div>
@@ -88,8 +88,8 @@
 
 
      <div class="section-header text-center">
-      <h2>List sản phẩm</h2>
-      <p>Top markets, vegetables, milks, and ...</p>
+      <h2>Danh sách sản phẩm</h2>
+      <p>Các cửa hàng hàng đầu, rau củ, sữa và nhiều hơn nữa...</p>
       <span class="line"></span>
    </div>
    
@@ -98,17 +98,19 @@
          @foreach ($products_list as $product)
             <div class="custom-col mb-4">
                <div class="card h-100 shadow-sm rounded border-0 d-flex flex-column">
-                  <a href="{{ route('market.details', $product->client_id) }}" class="text-decoration-none">
+                  {{-- <a href="{{ route('market.details', $product->client_id) }}" class="text-decoration-none"> --}}
+                  <div class="text-decoration-none">
                      <img src="{{ asset(optional($product->productTemplate)->image ?? 'upload/no_image.jpg') }}"
                         class="card-img-top"
                         alt="{{ optional($product->productTemplate)->name }}"
                         style="height:200px; object-fit:cover;">
-                  </a>
+                  </div>
                   <div class="card-body d-flex flex-column">
                      <h5 class="card-title mb-2" style="min-height: 48px;">
-                        <a href="{{ route('market.details', $product->client_id) }}" class="text-dark">
+                        {{-- <a href="{{ route('market.details', $product->client_id) }}" class="text-dark"> --}}
+                        <div class="text-dark">
                            {{ optional($product->productTemplate)->name ?? 'No Name' }}
-                        </a>
+                        </div>
                      </h5>
                      <p class="card-text text-muted mb-2" style="font-size:14px; min-height: 20px;">
                         {{ $product->productTemplate->category->category_name ?? 'No Category' }}
@@ -122,30 +124,37 @@
                            }
                         @endphp
                         @if ($discountPercent)
-                           <span class="badge badge-danger">{{ $discountPercent }}% OFF</span>
+                           <span class="badge badge-danger">{{ $discountPercent }}% GIẢM</span>
                         @else
-                           <span class="badge badge-secondary">No Discount</span>
+                           <span class="badge badge-secondary">Không có giảm giá</span>
                         @endif
                      </div>
             
                      <div class="mt-auto">
-                        {{-- <form action="{{ route('cart.add', $product->id) }}" method="POST"> --}}
-                        <form action="#" method="POST">
-                           @csrf
-                           {{-- <button type="submit" class="btn btn-sm btn-primary w-100">
-                              <i class="icofont-cart"></i> Thêm vào giỏ
-                           </button> --}}
-                           
-                           <button type="button"
-                              class="btn btn-sm btn-primary w-100"
-                              data-bs-toggle="modal"
-                              data-bs-target="#chooseMarketModal"
-                              data-product-id="{{ $product->id }}">
-                              <i class="icofont-cart"></i> Thêm vào giỏ
-                           </button>
-
-                        </form>
+                        <button type="button"
+                           class="btn btn-sm btn-primary w-100"
+                           data-bs-toggle="modal"
+                           data-bs-target="#chooseMarketModal"
+                           data-product-id="{{ $product->id }}">
+                           <i class="icofont-cart"></i> Thêm vào giỏ
+                        </button>
                      </div>
+                     {{-- <div class="mt-auto">
+                        @if(session()->has('selected_market_id'))
+                           <a href="{{ route('add_to_cart', $product->id) }}" 
+                              class="btn btn-sm btn-primary w-100">
+                                 <i class="icofont-cart"></i> Thêm vào giỏ
+                           </a>
+                        @else
+                           <button type="button"
+                                    class="btn btn-sm btn-primary w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#chooseMarketModal">
+                                 <i class="icofont-cart"></i> Thêm vào giỏ
+                           </button>
+                        @endif
+                     </div> --}}
+
                   </div>
                </div>
             </div>

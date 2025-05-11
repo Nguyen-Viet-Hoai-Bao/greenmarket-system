@@ -15,12 +15,12 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0 font-size-18">Edit Role In Permission</h4>
+                    <h4 class="mb-sm-0 font-size-18">Chỉnh Sửa Vai Trò Trong Quyền Hạn</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Edit Add Role In Permission  </li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Bảng Điều Khiển</a></li>
+                            <li class="breadcrumb-item active">Chỉnh Sửa Vai Trò Trong Quyền Hạn</li>
                         </ol>
                     </div>
 
@@ -42,14 +42,14 @@
         <div>
             
             <div class="form-group mb-3">
-                <label for="example-text-input" class="form-label">Roles Name </label>
+                <label for="example-text-input" class="form-label">Tên Vai Trò </label>
                 <h4>{{ $role->name }}</h4>
             </div>
 
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="formCheck1">
                 <label class="form-check-label" for="formCheck1">
-                  Permission All 
+                    Tất Cả Quyền Hạn
                 </label>
             </div>  
       <hr>
@@ -88,7 +88,7 @@
       @endforeach      
 
             <div class="mt-4">
-                <button type="submit" class="btn btn-primary waves-effect waves-light">Save Changes</button>
+                <button type="submit" class="btn btn-primary waves-effect waves-light">Lưu Thay Đổi</button>
             </div>
 
         </div>

@@ -5,22 +5,21 @@
        <div class="col-md-3 col-sm-6 mb-4 px-4">
          <h6 class="mb-3">Về GreenFood</h6>
          <ul class="list-unstyled">
-           <li><a href="#">Giới thiệu về GreenFood</a></li>
-           <li><a href="#">Danh sách cửa hàng</a></li>
-           <li><a href="#">Quản lý chất lượng</a></li>
-           <li><a href="#">Chính sách bảo mật</a></li>
-           <li><a href="#">Điều khoản & Điều kiện giao dịch</a></li>
+           <li><a href="{{ route('about.us') }}">Giới thiệu về GreenFood</a></li>
+           <li><a href="{{ route('list.markets') }}">Danh sách cửa hàng</a></li>
+           <li><a href="{{ route('quality.manage') }}">Quản lý chất lượng</a></li>
+           <li><a href="{{ route('privacy.policy') }}">Chính sách bảo mật</a></li>
+           <li><a href="{{ route('transaction.policy') }}">Điều khoản & Điều kiện giao dịch</a></li>
          </ul>
        </div>
  
        <div class="col-md-3 col-sm-6 mb-4 px-4">
          <h6 class="mb-3">Hỗ Trợ Khách Hàng</h6>
          <ul class="list-unstyled">
-           <li><a href="#">Trung tâm hỗ trợ</a></li>
-           <li><a href="#">Chính sách giao hàng</a></li>
-           <li><a href="#">Chính sách thanh toán</a></li>
-           <li><a href="#">Chính sách đổi trả</a></li>
-           <li><a href="#">Đánh giá & góp ý</a></li>
+           <li><a href="{{ route('customer.support') }}">Trung tâm hỗ trợ</a></li>
+           <li><a href="{{ route('delivery.policy') }}">Chính sách giao hàng</a></li>
+           <li><a href="{{ route('payment.policy') }}">Chính sách thanh toán</a></li>
+           <li><a href="{{ route('return.and.exchange.policy') }}">Chính sách đổi trả</a></li>
          </ul>
        </div>
  
@@ -51,14 +50,14 @@
    <div class="container">
       <div class="row">
          <div class="col-xl-12">
-            <p class="text-black">POPULAR MENUS</p>
+            <p class="text-black">DANH MỤC PHỔ BIẾN</p>
             <div class="search-links">
                @foreach ($menus as $menu)
                  <a href="#">{{ $menu->menu_name }}</a>@if (!$loop->last) | @endif
                @endforeach
             </div>
  
-            <p class="mt-4 text-black">POPULAR PRODUCTS</p>
+            <p class="mt-4 text-black">SẢN PHẨM PHỔ BIẾN</p>
             <div class="search-links">
                @foreach ($products_list as $product)
                  <a href="#">{{ $product->productTemplate->name ?? 'Unnamed Product' }}</a>@if (!$loop->last) | @endif
