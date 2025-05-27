@@ -217,13 +217,23 @@ Route::middleware('admin')->group(function () {
     
     // ALL ADMIN Manage Order
     Route::controller(ManageOrderController::class)->group(function(){
-        Route::get('/pending/order', 'PendingOrder')->name('pending.order');
-        Route::get('/confirm/order', 'ConfirmOrder')->name('confirm.order');
-        Route::get('/processing/order', 'ProcessingOrder')->name('processing.order');
-        Route::get('/delivered/order', 'DeliveredOrder')->name('delivered.order');
-
-        Route::get('/admin/order/details/{id}', 'AdminOrderDetails')->name('admin.order_details');
+        Route::get('/all/orders', 'AllOrders')->name('all.orders');
+        Route::get('/order/details/{id}', 'AdminOrderDetails')->name('order.details');
     });
+
+    // Route::controller(ManageOrderController::class)->group(function(){
+    //     Route::get('/pending/order', 'PendingOrder')->name('pending.order');
+    //     Route::get('/confirm/order', 'ConfirmOrder')->name('confirm.order');
+    //     Route::get('/processing/order', 'ProcessingOrder')->name('processing.order');
+    //     Route::get('/delivered/order', 'DeliveredOrder')->name('delivered.order');
+    //     Route::get('/cancel/pending/order', 'CancelPendingOrder')->name('cancel.pending.order');
+    //     Route::get('/cancelled/order', 'CancelledOrder')->name('cancelled.order');
+
+    //     Route::post('/admin/order/cancel/{id}', 'CancelOrderByAdmin')->name('admin.order.cancel');
+    //     Route::post('/admin/order/cancel/pending/{id}', 'CancelPendingOrderByAdmin')->name('admin.order.cancel.pending');
+
+    //     Route::get('/admin/order/details/{id}', 'AdminOrderDetails')->name('admin.order_details');
+    // });
     
     // ALL ADMIN REPORT 
     Route::controller(ReportController::class)->group(function(){
@@ -331,9 +341,24 @@ Route::middleware(['client', 'status'])->group(function () {
         Route::get('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon');
     });
     
+    // Route::controller(ManageOrderController::class)->group(function(){
+    //     Route::get('/all/clients/orders', 'AllClientsOrders')->name('all.clients.orders');
+    //     Route::get('/client/order/details/{id}', 'ClientOrderDetails')->name('client.order.details');
+    // });
+    
+    // ALL Client Manage Order
     Route::controller(ManageOrderController::class)->group(function(){
-        Route::get('/all/clients/orders', 'AllClientsOrders')->name('all.clients.orders');
-        Route::get('/client/order/details/{id}', 'ClientOrderDetails')->name('client.order.details');
+        Route::get('/pending/order', 'PendingOrder')->name('pending.order');
+        Route::get('/confirm/order', 'ConfirmOrder')->name('confirm.order');
+        Route::get('/processing/order', 'ProcessingOrder')->name('processing.order');
+        Route::get('/delivered/order', 'DeliveredOrder')->name('delivered.order');
+        Route::get('/cancel/pending/order', 'CancelPendingOrder')->name('cancel.pending.order');
+        Route::get('/cancelled/order', 'CancelledOrder')->name('cancelled.order');
+
+        Route::post('/client/order/cancel/{id}', 'CancelOrderByClient')->name('client.order.cancel');
+        Route::post('/client/order/cancel/pending/{id}', 'CancelPendingOrderByClient')->name('client.order.cancel.pending');
+
+        Route::get('/client/order/details/{id}', 'ClientOrderDetails')->name('client.order_details');
     });
     
     // ALL CLIENT REPORT 
@@ -347,7 +372,6 @@ Route::middleware(['client', 'status'])->group(function () {
     // ALL CLIENT REVIEW 
     Route::controller(ReviewController::class)->group(function(){
         Route::get('/client/all/reviews', 'ClientAllReviews')->name('client.all.reviews'); 
-        
     });
 
 }); // End Client Middleware
@@ -374,6 +398,12 @@ Route::controller(CartController::class)->group(function(){
     Route::post('/cart/remove', 'CartRemove')->name('cart.remove');
     Route::post('/apply-coupon', 'ApplyCoupon');
     Route::get('/remove-coupon', 'RemoveCoupon');
+    
+    Route::get('/ajax/add-to-cart/{id}', 'AjaxAddToCart')->name('ajax.add_to_cart');
+    Route::post('/ajax/update-cart/{id}', 'AjaxUpdateCart')->name('ajax.update_cart');
+    Route::post('/ajax/remove-from-cart/{id}', 'AjaxRemoveFromCart')->name('ajax.remove_from_cart');
+    Route::get('/ajax/cart/reload', 'AjaxReloadCart')->name('ajax.cart.reload');
+    Route::get('/ajax/cart/header/reload', 'AjaxReloadCartHeader')->name('ajax.cart.header.reload');
 
     Route::get('/checkout', 'MarketCheckout')->name('checkout');
 
@@ -388,6 +418,7 @@ Route::controller(OrderController::class)->group(function(){
 
     Route::post('/mark-notification-as-read/{notification}', 'MarkAsRead');
 
+    Route::post('/user/order/cancel/{id}', 'CancelOrder')->name('user.order.cancel');
 });
 
 Route::controller(ManageOrderController::class)->group(function(){
@@ -398,16 +429,20 @@ Route::controller(ManageOrderController::class)->group(function(){
 
 Route::controller(ReviewController::class)->group(function(){
     Route::post('/store/review', 'StoreReview')->name('store.review');  
+    Route::post('/verify-order-for-review', 'VerifyOrderForReview')
+            ->name('verify.order.for.review');
     
 });
 
 Route::controller(FilterController::class)->group(function(){
     Route::get('/list/market', 'ListMarket')->name('list.market');  
-    Route::get('/filter/products', 'FilterProducts')->name('filter.products');
+    // Route::get('/filter/products', 'FilterProducts')->name('filter.products');
+    Route::post('/filter/products', 'FilterProducts')->name('filter.products');
 
     Route::get('/product/detail/{id}', 'ProductDetail')->name('product.detail');
 
-    
+    Route::get('/search/products', 'SearchProducts')->name('search.products');
+
 });
 
 

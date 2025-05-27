@@ -1,6 +1,22 @@
 @extends('frontend.dashboard.dashboard')
 @section('dashboard')
 
+<style>
+   .star-rating label {
+      cursor: pointer;
+      color: #ccc; /* màu mặc định của sao */
+   }
+
+   .star-rating input[type="radio"]:checked ~ label i,
+   .star-rating label:hover ~ label i {
+      color: #ccc; /* các sao sau sao được chọn hoặc hover không màu */
+   }
+
+   .star-rating input[type="radio"]:checked + label i,
+   .star-rating label:hover i {
+      color: #f39c12; /* màu vàng cho sao được chọn hoặc đang hover */
+   }
+</style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 @php
@@ -78,8 +94,6 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                </button>
             @endauth
         
-           <button class="btn btn-light btn-sm border-light-btn" type="button"><i class="icofont-cauli-flower text-success"></i>  Chay Thuần</button>
-           <button class="btn btn-outline-danger btn-sm" type="button"><i class="icofont-sale-discount"></i>  Ưu đãi</button>
            </span>
            <ul class="nav" id="pills-tab" role="tablist">
               <li class="nav-item">
@@ -109,151 +123,166 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
            <div class="offer-dedicated-body-left">
               <div class="tab-content" id="pills-tabContent">
                  <div class="tab-pane fade show active" id="pills-order-online" role="tabpanel" aria-labelledby="pills-order-online-tab">
-  
-{{-- Most Popular --}}
-  @php
-    $populers = App\Models\ProductNew::with('productTemplate')
-                ->where('status', 1)
-                ->where('client_id', $client->id)
-                ->where('most_popular', 1)
-                ->orderBy('id', 'desc')
-                ->limit(5)
-                ->get();
-  @endphp
-  <div id="menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
-   <h6 class="mb-3">Sản Phẩm Phổ Biến Nhất <span class="badge badge-success"><i class="icofont-tags"></i> Giảm 15% Cho Tất Cả Sản Phẩm </span></h6>
-   <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
-       @foreach ($populers as $populer)
-           <div class="item">
-               <div class="mall-category-item">
-                   <a href="#">
-                       <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
-                       <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
+                     {{-- Most Popular --}}
+                     @php
+                        $populers = App\Models\ProductNew::with('productTemplate')
+                                    ->where('status', 1)
+                                    ->where('client_id', $client->id)
+                                    ->where('most_popular', 1)
+                                    ->orderBy('id', 'desc')
+                                    ->limit(5)
+                                    ->get();
+                     @endphp
+                     <div id="menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
+                        <h6 class="mb-3">Sản Phẩm Phổ Biến Nhất <span class="badge badge-success"><i class="icofont-tags"></i> Giảm 15% Cho Tất Cả Sản Phẩm </span></h6>
+                        <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
+                           @foreach ($populers as $populer)
+                              <div class="item">
+                                    <div class="mall-category-item">
+                                       <a href="{{ route('product.detail', $populer->id) }}">
+                                          <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
+                                          <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
 
-                       @if ($populer->discount_price == NULL)
-                           {{ number_format($populer->price, 0, ',', '.') }}
-                       @else
-                           <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
-                           {{ number_format($populer->discount_price, 0, ',', '.') }}
-                       @endif
+                                          @if ($populer->discount_price == NULL)
+                                                {{ number_format($populer->price, 0, ',', '.') }}
+                                          @else
+                                                <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
+                                                {{ number_format($populer->discount_price, 0, ',', '.') }}
+                                          @endif
+                                       </a>
 
-                       <span class="float-right">
-                           <a class="btn btn-outline-secondary btn-sm" href="{{ route('add_to_cart', $populer->id) }}">
-                              THÊM VÀO GIỎ
-                           </a>
-                       </span>
-                   </a>
-               </div>
-           </div>
-       @endforeach
-   </div>
-</div>
+                                       
+                                       @php
+                                          $cart = session('cart', []);
+                                          $cartItem = $cart[$populer->id] ?? null;
+                                       @endphp
 
+                                       <div class="cart-actions-1">
+                                          @if ($cartItem)
+                                             <div class="d-flex justify-content-center align-items-center mt-2">
+                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                   data-id="{{ $populer->id }}"
+                                                   data-qty="{{ $cartItem['quantity'] - 1 }}">
+                                                   <i class="icofont-minus"></i>
+                                                </button>
 
-{{-- Best Sellers --}}
-   @php
-   $bestsellers = App\Models\ProductNew::with('productTemplate')
-               ->where('status', 1)
-               ->where('client_id', $client->id)
-               ->where('best_seller', 1)
-               ->orderBy('id', 'desc')
-               ->limit(3)
-               ->get();
-   @endphp
+                                                {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
+                                                   id="qty-display-{{ $populer->id }}">
+                                                   {{ $cartItem['quantity'] }}
+                                                </span> --}}
 
-<div class="row">
-   <h5 class="mb-4 mt-3 col-md-12">Bán Chạy Nhất</h5>
-   @foreach ($bestsellers as $bestseller)
-     <div class="col-md-4 col-sm-6 mb-4">
-       <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
-           <div class="list-card-image">
-             <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
-             <div class="favourite-heart text-danger position-absolute"><a href="#"><i class="icofont-heart"></i></a></div>
-             <div class="member-plan position-absolute"><span class="badge badge-dark">Được Quảng Bá</span></div>
-             <a href="#">
-               <img src="{{ asset($bestseller->productTemplate->image ?? $bestseller->image) }}" class="img-fluid item-img" alt="">
-             </a>
-           </div>
-           <div class="p-3 position-relative">
-             <div class="list-card-body">
-                 <h6 class="mb-1">
-                   <a href="#" class="text-black">
-                     {{ $bestseller->productTemplate->name ?? $bestseller->name }}
-                   </a>
-                 </h6>
-                 <p class="text-gray mb-2">
-                   {{ $bestseller->productTemplate->category->category_name ?? '-' }}
-                 </p>
-                 <p class="text-gray time mb-0">
-                   @if ($bestseller->discount_price == NULL)
-                     <a class="btn btn-link btn-sm text-black" href="#">
-                       {{ number_format($bestseller->price, 0, ',', '.') }}
-                     </a>  
-                   @else
-                     <del>{{ number_format($bestseller->price, 0, ',', '.') }}</del>
-                     <a class="btn btn-link btn-sm text-black" href="#">
-                       {{ number_format($bestseller->discount_price, 0, ',', '.') }}
-                     </a>  
-                   @endif
-                   <span class="float-right"> 
-                     <a class="btn btn-outline-secondary btn-sm" href="{{ route('add_to_cart', $bestseller->id) }}">
-                        THÊM VÀO GIỎ
-                     </a>
-                   </span>
-                 </p>
-             </div>
-           </div>
-       </div>
-     </div>
-   @endforeach
- </div>
- 
- @foreach ($menus as $menu)
- <div class="row">
-   <h5 class="mb-4 mt-3 col-md-12">
-       {{ $menu->menu_name }}
-       <small class="h6 text-black-50">{{ $menu->products->sum(fn($p) => $p->productNews->count()) }} MÓN</small>
-   </h5>
-   <div class="col-md-12">
-     <div class="bg-white rounded border shadow-sm mb-4">
-       @foreach ($menu->products as $productTemplate)
-         @foreach ($productTemplate->productNews as $product)
-           <div class="menu-list p-3 border-bottom">
-             <a class="btn btn-outline-secondary btn-sm float-right" 
-                href="{{ route('add_to_cart', $product->id) }}">
-                THÊM VÀO GIỎ
-             </a>
-             <div class="media">
-                 <img class="mr-3 rounded-pill" src="{{ asset($productTemplate->image ?? 'upload/no_image.jpg') }} " alt="{{ $product->name }}">
-                 <div class="media-body">
-                   <h6 class="mb-1">{{ $productTemplate->name }}</h6>
-                   <p class="text-gray mb-0">
-                     @if ($product->discount_price == NULL)
-                       {{ number_format($product->price, 0, ',', '.') }} VNĐ 
-                     @else
-                       <del>{{ number_format($product->price, 0, ',', '.') }}</del> 
-                       {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ 
-                     @endif
-                     ({{ $productTemplate->size ?? '' }} {{ $productTemplate->unit }})
-                   </p>
-                 </div>
-             </div>
-           </div>
-         @endforeach
-       @endforeach
+                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $populer->id }}">
+                                                   {{ $cartItem['quantity'] }}
+                                                </span>
 
-       
-     </div>
-     
-     <div class="text-center my-3">
-      <a href="{{ route('list.market') }}" class="btn btn-success px-4 py-2">Xem thêm <i class="icofont-long-arrow-right"></i></a>
-    </div>
-   </div>
- </div>
-@endforeach
+                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                   data-id="{{ $populer->id }}"
+                                                   data-qty="{{ $cartItem['quantity'] + 1 }}">
+                                                   <i class="icofont-plus"></i>
+                                                </button>
+                                             </div>
+                                          @else
+                                             <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $populer->id }}">
+                                                <i class="icofont-cart"></i> Thêm vào giỏ
+                                             </button>
+                                          @endif
+                                       </div>
+                                    </div>
+                              </div>
+                           @endforeach
+                        </div>
+                     </div>
 
-                    
-</div>
+                     {{-- Best Sellers --}}
+                        @php
+                        $bestsellers = App\Models\ProductNew::with('productTemplate')
+                                    ->where('status', 1)
+                                    ->where('client_id', $client->id)
+                                    ->where('best_seller', 1)
+                                    ->orderBy('id', 'desc')
+                                    ->limit(3)
+                                    ->get();
+                        @endphp
+
+                     <div class="row">
+                        <h5 class="mb-4 mt-3 col-md-12">Bán Chạy Nhất</h5>
+                        @foreach ($bestsellers as $bestseller)
+                        <div class="col-md-4 col-sm-6 mb-4">
+                           <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
+                              <div class="list-card-image">
+                                 <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
+                                 <div class="favourite-heart text-danger position-absolute"><a href="#"><i class="icofont-heart"></i></a></div>
+                                 <div class="member-plan position-absolute"><span class="badge badge-dark">Được Quảng Bá</span></div>
+                                 {{-- <a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a> --}}
+                                 <a href="{{ route('product.detail', $bestseller->id) }}">
+                                    <img src="{{ asset($bestseller->productTemplate->image ?? $bestseller->image) }}" class="img-fluid item-img" alt="">
+                                 </a>
+                              </div>
+                              <div class="p-3 position-relative">
+                                 <div class="list-card-body">
+                                    <h6 class="mb-1">
+                                       <a href="#" class="text-black">
+                                          {{ $bestseller->productTemplate->name ?? $bestseller->name }}
+                                       </a>
+                                    </h6>
+                                    <p class="text-gray mb-2">
+                                       {{ $bestseller->productTemplate->category->category_name ?? '-' }}
+                                    </p>
+                                    <p class="text-gray time mb-0">
+                                       @if ($bestseller->discount_price == NULL)
+                                          <a class="btn btn-link btn-sm text-black" href="#">
+                                          {{ number_format($bestseller->price, 0, ',', '.') }}
+                                          </a>  
+                                       @else
+                                          <del>{{ number_format($bestseller->price, 0, ',', '.') }}</del>
+                                          <a class="btn btn-link btn-sm text-black" href="#">
+                                          {{ number_format($bestseller->discount_price, 0, ',', '.') }}
+                                          </a>  
+                                       @endif
+                                       
+                                       @php
+                                          $cart = session('cart', []);
+                                          $cartItem = $cart[$bestseller->id] ?? null;
+                                       @endphp
+
+                                       <div class="cart-actions-2">
+                                          @if ($cartItem)
+                                             <div class="d-flex justify-content-center align-items-center mt-2">
+                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                   data-id="{{ $bestseller->id }}"
+                                                   data-qty="{{ $cartItem['quantity'] - 1 }}">
+                                                   <i class="icofont-minus"></i>
+                                                </button>
+
+                                                {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
+                                                   id="qty-display-{{ $bestseller->id }}">
+                                                   {{ $cartItem['quantity'] }}
+                                                </span> --}}
+                                                
+                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $bestseller->id }}">
+                                                   {{ $cartItem['quantity'] }}
+                                                </span>
+
+                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                   data-id="{{ $bestseller->id }}"
+                                                   data-qty="{{ $cartItem['quantity'] + 1 }}">
+                                                   <i class="icofont-plus"></i>
+                                                </button>
+                                             </div>
+                                          @else
+                                             <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $bestseller->id }}">
+                                                <i class="icofont-cart"></i> Thêm vào giỏ
+                                             </button>
+                                          @endif
+                                       </div>
+                                    </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        @endforeach
+                     </div>
+                  </div>
 
 {{-- pills-gallery --}}
 <div class="tab-pane fade" id="pills-gallery" role="tabpanel" aria-labelledby="pills-gallery-tab">
@@ -284,7 +313,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
              </div>
          </div>
        </div>
-       <h5 class="mb-4">Thông tin thị trường</h5>
+       <h5 class="mb-4">Thông tin cửa hàng</h5>
        <p class="mb-3">{{ $client->fullAddress }} </p>
        <p class="mb-2 text-black"><i class="icofont-phone-circle text-primary mr-2"></i> {{ $client->phone }} </p>
        <p class="mb-2 text-black"><i class="icofont-email text-primary mr-2"></i> {{ $client->email }} </p>
@@ -309,45 +338,6 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
        </div>
    </div>
  </div>
- 
-                 {{-- <div class="tab-pane fade" id="pills-book" role="tabpanel" aria-labelledby="pills-book-tab">
-                    <div id="book-a-table" class="bg-white rounded shadow-sm p-4 mb-5 rating-review-select-page">
-                       <h5 class="mb-4">Book A Table</h5>
-                       <form>
-                          <div class="row">
-                             <div class="col-sm-6">
-                                <div class="form-group">
-                                   <label>Full Name</label>
-                                   <input class="form-control" type="text" placeholder="Enter Full Name">
-                                </div>
-                             </div>
-                             <div class="col-sm-6">
-                                <div class="form-group">
-                                   <label>Email Address</label>
-                                   <input class="form-control" type="text" placeholder="Enter Email address">
-                                </div>
-                             </div>
-                          </div>
-                          <div class="row">
-                             <div class="col-sm-6">
-                                <div class="form-group">
-                                   <label>Mobile number</label>
-                                   <input class="form-control" type="text" placeholder="Enter Mobile number">
-                                </div>
-                             </div>
-                             <div class="col-sm-6">
-                                <div class="form-group">
-                                   <label>Date And Time</label>
-                                   <input class="form-control" type="text" placeholder="Enter Date And Time">
-                                </div>
-                             </div>
-                          </div>
-                          <div class="form-group text-right">
-                             <button class="btn btn-primary" type="button"> Submit </button>
-                          </div>
-                       </form>
-                    </div>
-                 </div> --}}
                  <div class="tab-pane fade" id="pills-reviews" role="tabpanel" aria-labelledby="pills-reviews-tab">
                     <div id="ratings-and-reviews" class="bg-white rounded shadow-sm p-4 mb-4 clearfix restaurant-detailed-star-rating">
                        <span class="star-rating float-right">
@@ -473,40 +463,75 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                    }
                   </style> 
                 
-                      <h5 class="mb-4">Để Lại Nhận Xét</h5>
-                      <p class="mb-2">Đánh Giá Địa Điểm</p>
-                      <form method="post" action="{{ route('store.review') }}">
-                         @csrf
-                         
-                         <input type="hidden" name="client_id" value="{{ $client->id }}">
-                      <div class="mb-4">
-                         <span class="star-rating">
-                            <label for="rating-1">
-                            <input type="radio" name="rating" id="rating-1" value="1" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
-                
-                            <label for="rating-2">
-                            <input type="radio" name="rating" id="rating-2" value="2" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
-                            <label for="rating-3">
-                            <input type="radio" name="rating" id="rating-3" value="3" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
-                
-                            <label for="rating-4">
-                            <input type="radio" name="rating" id="rating-4" value="4" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
-                
-                            <label for="rating-5">
-                            <input type="radio" name="rating" id="rating-5" value="5" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label> 
-                        
-                        
-                         </span>
-                      </div>
-                      
-                         <div class="form-group">
-                            <label>Nhận Xét Của Bạn</label>
-                            <textarea class="form-control" name="comment" id="comment"></textarea>
-                         </div>
-                         <div class="form-group">
-                            <button class="btn btn-primary btn-sm" type="submit"> Gửi Nhận Xét </button>
-                         </div>
-                      </form>
+                  <h5 class="mb-4">Để Lại Nhận Xét</h5>
+                     <p class="mb-2">Đánh Giá Địa Điểm</p>
+
+                     <button type="button" class="btn btn-success mb-3" id="leaveReviewButton">
+                        Để lại đánh giá của bạn
+                     </button>
+
+                     {{-- Form đánh giá ban đầu (sẽ được ẩn/hiện bởi JS) --}}
+                     <form method="post" action="{{ route('store.review') }}" id="reviewForm" style="display: none;">
+                        @csrf
+                        <input type="hidden" name="client_id" value="{{ $client->id }}">
+                        <div class="mb-4">
+                           <span class="star-rating">
+                                 <label for="rating-1">
+                                    <input type="radio" name="rating" id="rating-1" value="1" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
+                                 <label for="rating-2">
+                                    <input type="radio" name="rating" id="rating-2" value="2" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
+                                 <label for="rating-3">
+                                    <input type="radio" name="rating" id="rating-3" value="3" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
+                                 <label for="rating-4">
+                                    <input type="radio" name="rating" id="rating-4" value="4" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label>
+                                 <label for="rating-5">
+                                    <input type="radio" name="rating" id="rating-5" value="5" hidden><i class="icofont-ui-rating icofont-2x star-icon"></i></label> 
+                           </span>
+                        </div>
+                        <div class="form-group">
+                           <label>Nhận Xét Của Bạn</label>
+                           <textarea class="form-control" name="comment" id="comment"></textarea>
+                        </div>
+                        <div class="form-group">
+                           {{-- Thêm hidden input cho order_id sau khi xác thực --}}
+                           <input type="hidden" name="order_id" id="orderIdForReview">
+                           <button class="btn btn-primary btn-sm" type="submit"> Gửi Nhận Xét </button>
+                        </div>
+                     </form>
+
+                     <div class="modal fade" id="orderVerificationModal" tabindex="-1" role="dialog" aria-labelledby="orderVerificationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                           <div class="modal-content">
+                                 <div class="modal-header">
+                                    <h5 class="modal-title" id="orderVerificationModalLabel">Nhập chi tiết đơn hàng của bạn</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                       <span aria-hidden="true">&times;</span>
+                                    </button>
+                                 </div>
+                                 <div class="modal-body">
+                                    <p>Vui lòng kiểm tra đơn hàng đã đặt để tìm mã số đơn hàng và email đặt hàng:</p>
+                                    <form id="orderVerificationForm">
+                                       <div class="form-group">
+                                             <label for="orderCodeInput">Mã số đơn hàng</label>
+                                             <input type="text" class="form-control" id="orderCodeInput" required>
+                                       </div>
+                                       <div class="form-group">
+                                             <label for="orderEmailInput">Email đặt hàng</label>
+                                             <input type="email" class="form-control" id="orderEmailInput" required>
+                                       </div>
+                                       <div class="alert alert-info mt-3" role="alert">
+                                             Chỉ khách đặt hàng thành công qua website chúng tôi mới có thể viết đánh giá. Điều này giúp chúng tôi thu thập các đánh giá từ khách thực, như bạn vậy.
+                                       </div>
+                                       <div id="verificationMessage" class="mt-3"></div>
+                                    </form>
+                                 </div>
+                                 <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                    <button type="button" class="btn btn-primary" id="verifyOrderButton">Đánh giá trải nghiệm đặt hàng của bạn</button>
+                                 </div>
+                           </div>
+                        </div>
+                     </div>
                 
                    @endguest
                    </div>
@@ -518,173 +543,237 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
         </div>
 
 @php
-    $coupon = App\Models\Coupon::where('client_id', $client->id)
-                                 ->where('validity', '>=', Carbon\Carbon::now()->format('Y-m-d'))
-                                 ->latest()
-                                 ->first();
-@endphp        
+    use App\Models\Coupon;
+    use Carbon\Carbon;
 
-         <div class="col-md-4">
-            <div class="pb-2">
-               <div class="bg-white rounded shadow-sm text-white mb-4 p-4 clearfix restaurant-detailed-earn-pts card-icon-overlap">
-               <img class="img-fluid float-left mr-3" src="{{ asset('frontend/img/earn-score-icon.png') }}">
-               <h6 class="pt-0 text-primary mb-1 font-weight-bold">ƯU ĐÃI</h6>
-               
-               {{-- <pre>{{ print_r(Session::get('coupon'), true) }}</pre> --}}
-
-               @if ($coupon == NULL)
-                  <p class="mb-0">Không có mã giảm giá
-                  </p>
-               @else
-                  <p class="mb-0">
-                     <span class="text-danger font-weight-bold">{{ $coupon->discount }}</span>% cho đơn hàng | Sử dụng mã 
-                     <span class="text-danger font-weight-bold">{{ $coupon->coupon_name }}</span>
-                  </p>
-               @endif
-
-               <div class="icon-overlap">
-                  <i class="icofont-sale-discount"></i>
-               </div>
-            </div>
-            </div>
-           <div class="generator-bg rounded shadow-sm mb-4 p-4 osahan-cart-item">
-              <h5 class="mb-1 text-white">Đơn Hàng Của Bạn</h5>
-              <p class="mb-4 text-white">{{ count((array) session('cart')) }} Sản phẩm</p>
-
-<div class="bg-white rounded shadow-sm mb-2">
-
-@php
-    $total = 0;
+    $coupon_tmp = Coupon::where('client_id', $client->id)
+                        ->where('validity', '>=', Carbon::now()->format('Y-m-d'))
+                        ->latest()
+                        ->first();
 @endphp
 
- @if (session('cart'))
-    @foreach (session('cart') as $id=>$details)
+<div class="col-md-4">
+    <div class="pb-2">
+        <div class="bg-white rounded shadow-sm text-white mb-4 p-4 clearfix restaurant-detailed-earn-pts card-icon-overlap">
+            <img class="img-fluid float-left mr-3" src="{{ asset('frontend/img/earn-score-icon.png') }}">
+            <h6 class="pt-0 text-primary mb-1 font-weight-bold">ƯU ĐÃI</h6>
 
-    @php
-      //   $total += $details['price'] * $details['quantity']
-      $total += (float) $details['price'] * (int) $details['quantity'];
-        
-    @endphp
-        
-      <div class="gold-members p-2 border-bottom">
-         <p class="text-gray mb-0 float-right ml-2 item-total" id="item-total-{{ $id }}">
-            {{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }}
-         </p>
-         <span class="count-number float-right">
-
-         <button class="btn btn-outline-secondary  btn-sm left dec" 
-                  data-id="{{ $id }}">
-            <i class="icofont-minus"></i> 
-         </button>
-
-         <input class="count-number-input" type="text" 
-                  value="{{ $details['quantity'] }}" 
-                  id="qty-{{ $id }}"
-                  readonly="">
-
-         <button class="btn btn-outline-secondary btn-sm right inc" 
-                  data-id="{{ $id }}"> 
-            <i class="icofont-plus"></i> 
-         </button>
-
-         <button class="btn btn-outline-danger btn-sm right remove"
-                  data-id="{{ $id }}"> 
-            <i class="icofont-trash"></i> 
-         </button>
-
-         </span>
-         <div class="media">
-            <div class="mr-2">
-               <img src="{{ asset($details['image']) }}" alt="" width="25px"></img>
-            </div>
-            <div class="media-body">
-               <p class="mt-1 mb-0 text-black">{{ $details['name'] }}</p>
-            </div>
-         </div>
-      </div>
-
-      @endforeach
-  @else
-      
-  @endif
-
-</div>
-
-@if (Session::has('coupon'))
-   <div class="mb-2 bg-white rounded p-2 clearfix">
-      <p class="mb-1">Tổng số sản phẩm
-         <span class="float-right text-dark">
-            {{ count((array) session('cart')) }}
-         </span>
-      </p>
-      <p class="mb-1">Mã giảm giá
-         <span class="float-right text-dark">
-            {{ (session()->get('coupon')['coupon_name']) }}
-            ({{ (session()->get('coupon')['discount']) }}%)
-            
-            <a type="submit" onclick="CouponRemove()">
-               <i class="icofont-ui-delete float-right" style="color: red;"></i>
-            </a>
-         </span>
-      </p>
-      <p class="mb-1 text-success">Tổng tiền sau giảm giá
-         <span class="float-right text-success">
-            @if (Session::has('coupon'))
-               {{ number_format($total - Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
+            @if ($coupon_tmp === null)
+                <p class="mb-0">Không có mã giảm giá</p>
             @else
-               {{ number_format(0, 0, ',', '.') }} VNĐ
+                <p class="mb-0">
+                    <span class="text-danger font-weight-bold">{{ $coupon_tmp->discount }}</span>% cho đơn hàng | Sử dụng mã 
+                    <span class="text-danger font-weight-bold">{{ $coupon_tmp->coupon_name }}</span>
+                </p>
             @endif
-         </span>
-      </p>
-      <hr />
-      <h6 class="font-weight-bold mb-0">SỐ TIỀN CẦN THANH TOÁN  
-         <span class="float-right">
-            @if (Session::has('coupon'))
-               {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
-            @else
-               {{ number_format($total, 0, ',', '.') }} VNĐ
-            @endif
-         </span>
-      </h6>
-   </div>
-@else
-   <div class="mb-2 bg-white rounded p-2 clearfix">
-      <div class="input-group input-group-sm mb-2">
-         <input type="text" class="form-control" placeholder="Enter promo code" id="coupon_name">
-         <div class="input-group-append">
-            <button class="btn btn-primary" type="submit" id="button-addon2" onclick="ApplyCoupon()">
-               <i class="icofont-sale-discount"></i> 
-               ÁP DỤNG
-            </button>
-         </div>
-      </div>
-   </div>
-@endif
 
-
-<div class="mb-2 bg-white rounded p-2 clearfix">
-   <img class="img-fluid float-left" src="{{ asset('frontend/img/wallet-icon.png') }}">
-   <h6 class="font-weight-bold text-right mb-2">Tạm tính : 
-      <span class="text-danger">
-         @if (Session::has('coupon'))
-            {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
-         @else
-            {{ number_format($total, 0, ',', '.') }} VNĐ
-         @endif
-      </span>
-   </h6>
-   <p class="seven-color mb-1 text-right">Phụ phí có thể được áp dụng</p>
-</div>
-              <a href="{{ route('checkout') }}" class="btn btn-success btn-block btn-lg">Thanh toán <i class="icofont-long-arrow-right"></i></a>
-           </div>
-   
-   <div class="text-center pt-2 mb-4">
-   </div>
-   <div class="text-center pt-2">
-   </div>
+            <div class="icon-overlap">
+                <i class="icofont-sale-discount"></i>
+            </div>
         </div>
+    </div>
+
+    <div class="generator-bg rounded shadow-sm mb-4 p-4 osahan-cart-item">
+         <div id="cart-container">
+            @include('frontend.cart.partial')
+         </div>
+    </div>
+</div>
+
+
      </div>
   </div>
+
+  
+{{-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+
+<div class="container" id="product-search">
+   <div class="row d-none-m">
+         <div class="col-md-12">
+            <div class="dropdown float-right">
+               <a class="btn btn-outline-info dropdown-toggle btn-sm border-white-btn" href="#" role="button"
+                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     Sắp xếp theo: <span class="text-theme">Khoảng cách</span> &nbsp;&nbsp;
+               </a>
+               <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
+                     <a class="dropdown-item" href="#">Khoảng cách</a>
+                     <a class="dropdown-item" href="#">Số Lượng Ưu Đãi</a>
+                     <a class="dropdown-item" href="#">Đánh Giá</a>
+               </div>
+            </div>
+            <h4 class="font-weight-bold mt-0 mb-3">ƯU ĐÃI
+            </h4>
+         </div>
+   </div>
+
+   <div class="row">
+         <!-- Sidebar -->
+         <div class="col-md-3">
+            <div class="filters-body">
+               <div id="accordion">
+                  <div class="filters-card-body card-shop-filters">
+                     @foreach ($menusWithCategories as $index => $menu)
+                        @php
+                           $totalProductsInMenu = 0;
+                           foreach ($menu->categories as $category) {
+                                 $totalProductsInMenu += $products_all->filter(function ($product) use ($category) {
+                                    return $product->productTemplate->category_id == $category->id;
+                                 })->count();
+                           }
+                        @endphp
+                        <div class="card mb-2 border-0">
+                           <div id="headingMenu{{ $index }}">
+                                 <h6 class="mb-0">
+                                    <a class="btn btn-link text-left w-100 d-flex align-items-center justify-content-between"
+                                       data-toggle="collapse"
+                                       href="#collapseMenu{{ $index }}"
+                                       aria-expanded="false"
+                                       aria-controls="collapseMenu{{ $index }}">
+                                       <span>
+                                             <img src="{{ asset($menu->image ?? 'default.jpg') }}"
+                                                alt="{{ $menu->menu_name }}" width="20" class="mr-2">
+                                             {{ $menu->menu_name }}
+                                             <small class="text-black-50">({{ $totalProductsInMenu }})</small>
+                                       </span>
+                                       <i class="icofont-arrow-down"></i>
+                                    </a>
+                                 </h6>
+                           </div>
+
+                           <div id="collapseMenu{{ $index }}" class="collapse"
+                                 aria-labelledby="headingMenu{{ $index }}"
+                                 data-parent="#accordion">
+                                 <div class="card-body py-2 px-3">
+                                    @foreach ($menu->categories as $category)
+                                       @php
+                                             $categoryProductCount = $products_all->filter(function ($product) use ($category) {
+                                                return $product->productTemplate->category_id == $category->id;
+                                             })->count();
+                                       @endphp
+                                       <div class="custom-control custom-checkbox ml-3">
+                                             <input type="checkbox"
+                                                   class="custom-control-input filter-checkbox"
+                                                   id="category-{{ $category->id }}"
+                                                   data-type="category"
+                                                   data-id="{{ $category->id }}">
+                                             <label class="custom-control-label"
+                                                   for="category-{{ $category->id }}">
+                                                {{ $category->category_name }}
+                                                <small class="text-black-50">({{ $categoryProductCount }})</small>
+                                             </label>
+                                       </div>
+                                    @endforeach
+                                 </div>
+                           </div>
+                        </div>
+                     @endforeach
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <!-- Product Listing -->
+         <div class="col-md-9">
+            <div class="row" id="product-list">
+               @foreach ($products_all as $product)
+                     <div class="col-md-3 col-sm-6 mb-4 pb-2">
+                        <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm d-flex flex-column">
+                           <div class="list-card-image">
+                                 <div class="star position-absolute">
+                                    @if ($product->best_seller == 1)
+                                       <span class="badge badge-success"><i class="icofont-star"></i></span>
+                                    @endif
+                                 </div>
+                                 <div class="favourite-heart text-danger position-absolute">
+                                    @if ($product->most_popular == 1)
+                                       <a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a>
+                                    @endif
+                                 </div>
+                                 <a href="{{ route('product.detail', $product->id) }}">
+                                    <img src="{{ asset($product->productTemplate->image) }}"
+                                          class="img-fluid item-img">
+                                 </a>
+                           </div>
+
+                           <div class="p-3 d-flex flex-column h-100">
+                                 <div class="list-card-body mb-2">
+                                    <h6 class="mb-2 font-weight-bold">
+                                       <a href="{{ route('product.detail', $product->id) }}" class="text-dark">
+                                             {{ $product->productTemplate->name }}
+                                       </a>
+                                    </h6>
+                                    <p class="text-danger mb-2 d-flex justify-content-between align-items-center small">
+                                       <span class="bg-light rounded px-2 py-1">
+                                             {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ
+                                       </span>
+                                       <span class="text-muted font-weight-bold">
+                                             <i class="icofont-wall-clock"></i> 20–25 m
+                                       </span>
+                                    </p>
+                                 </div>
+
+                                 @php
+                                    $discount = $product->price - $product->discount_price;
+                                    $percent = round(($discount / $product->price) * 100);
+                                 @endphp
+
+                                 <div class="list-card-badge mb-2 text-center">
+                                    <span class="badge badge-success">GIẢM GIÁ</span>
+                                    <small class="text-success ml-1 font-weight-bold">{{ $percent }}% OFF</small>
+                                 </div>
+
+                                 @php
+                                    $cart = session('cart', []);
+                                    $cartItem = $cart[$product->id] ?? null;
+                                 @endphp
+
+                                 <div class="cart-actions mt-auto">
+                                    @if ($cartItem)
+                                       <div class="d-flex justify-content-center align-items-center">
+                                             <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                data-id="{{ $product->id }}"
+                                                data-qty="{{ $cartItem['quantity'] - 1 }}">
+                                                <i class="icofont-minus"></i>
+                                             </button>
+
+                                             {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
+                                                id="qty-display-{{ $product->id }}">
+                                                {{ $cartItem['quantity'] }}
+                                             </span> --}}
+                                             
+                                             <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $product->id }}">
+                                                {{ $cartItem['quantity'] }}
+                                             </span>
+
+                                             <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                data-id="{{ $product->id }}"
+                                                data-qty="{{ $cartItem['quantity'] + 1 }}">
+                                                <i class="icofont-plus"></i>
+                                             </button>
+                                       </div>
+                                    @else
+                                       {{-- <form action="{{ route('add_to_cart', $product->id) }}" method="GET"
+                                             class="w-100">
+                                             @csrf
+                                             <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                <i class="icofont-cart"></i> Thêm vào giỏ hàng
+                                             </button>
+                                       </form> --}}
+                                       <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart" data-id="{{ $product->id }}">
+                                          <i class="icofont-cart"></i> Thêm vào giỏ hàng
+                                       </button>
+
+                                    @endif
+                                 </div>
+                           </div>
+                        </div>
+                     </div>
+               @endforeach
+            </div> <!-- End of product-list -->
+         </div> <!-- End of col-md-9 -->
+   </div> <!-- End of row -->
+</div> <!-- End of container -->
+
 </section>
 
 <script>
@@ -766,5 +855,89 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 
 </script>
 
+<script>
+   document.querySelectorAll('.star-rating input[type="radio"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+         const ratingValue = parseInt(radio.value);
+         const stars = document.querySelectorAll('.star-rating label i');
+         
+         stars.forEach((star, index) => {
+               if (index < ratingValue) {
+                  star.style.color = '#f39c12'; // màu vàng cho sao được chọn và các sao trước đó
+               } else {
+                  star.style.color = '#ccc'; // màu xám cho sao chưa chọn
+               }
+         });
+      });
+   });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const leaveReviewButton = document.getElementById('leaveReviewButton');
+        const orderVerificationModal = new bootstrap.Modal(document.getElementById('orderVerificationModal')); // Sử dụng Bootstrap 5
+        const orderVerificationForm = document.getElementById('orderVerificationForm');
+        const orderCodeInput = document.getElementById('orderCodeInput');
+        const orderEmailInput = document.getElementById('orderEmailInput');
+        const verifyOrderButton = document.getElementById('verifyOrderButton');
+        const reviewForm = document.getElementById('reviewForm');
+        const orderIdForReview = document.getElementById('orderIdForReview');
+        const verificationMessage = document.getElementById('verificationMessage');
+
+        // Khi nút "Để lại đánh giá của bạn" được click
+        leaveReviewButton.addEventListener('click', function() {
+            // Reset form và thông báo
+            orderVerificationForm.reset();
+            verificationMessage.innerHTML = '';
+            verificationMessage.className = 'mt-3'; // Reset class
+            orderVerificationModal.show(); // Hiển thị modal xác thực đơn hàng
+        });
+
+        // Khi nút "Đánh giá trải nghiệm đặt hàng của bạn" trong modal được click
+        verifyOrderButton.addEventListener('click', async function() {
+            const orderCode = orderCodeInput.value.trim();
+            const orderEmail = orderEmailInput.value.trim();
+
+            if (!orderCode || !orderEmail) {
+                verificationMessage.innerHTML = '<div class="alert alert-danger">Vui lòng điền đầy đủ Mã số đơn hàng và Email.</div>';
+                return;
+            }
+
+            verificationMessage.innerHTML = '<div class="alert alert-info">Đang kiểm tra đơn hàng...</div>';
+            verificationMessage.className = 'mt-3'; // Reset class
+
+            try {
+                const response = await fetch('/verify-order-for-review', { // Endpoint để xác thực đơn hàng (sẽ tạo ở Laravel)
+                    method: 'POST',
+                    headers: {
+                     'Content-Type': 'application/json',
+                     'Accept': 'application/json',
+                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                     },
+                    body: JSON.stringify({
+                        order_code: orderCode,
+                        order_email: orderEmail,
+                        client_id: document.querySelector('input[name="client_id"]').value // Lấy client_id từ hidden input
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    verificationMessage.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    orderIdForReview.value = data.order_id; // Đặt order_id vào hidden input của form đánh giá
+                    orderVerificationModal.hide(); // Ẩn modal
+                    reviewForm.style.display = 'block'; // Hiển thị form đánh giá
+                    leaveReviewButton.style.display = 'none'; // Ẩn nút "Để lại đánh giá"
+                    // Cuộn tới form đánh giá
+                    reviewForm.scrollIntoView({ behavior: 'smooth' });
+
+                } else {
+                    verificationMessage.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                }
+            } catch (error) {
+                verificationMessage.innerHTML = '<div class="alert alert-danger">Đã xảy ra lỗi khi kiểm tra đơn hàng. Vui lòng thử lại sau.</div>';
+            }
+        });
+    });
+</script>
 
 @endsection

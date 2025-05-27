@@ -45,7 +45,7 @@ class ManageController extends Controller
     public function AdminStoreProduct(Request $request) {
 
         $pcode = IdGenerator::generate([
-            'table' => 'products', 
+            'table' => 'product_templates', 
             'field' => 'code',
             'length' => 5,
             'prefix' => 'PC']);

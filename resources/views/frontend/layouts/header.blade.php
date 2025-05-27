@@ -1,4 +1,3 @@
-
 <nav class="navbar navbar-expand-lg navbar-dark osahan-nav">
   <div class="container">
      <a class="navbar-brand" href="{{ route('index') }}"><img alt="logo" src="{{ asset('frontend/img/logo.png') }}"></a>
@@ -8,7 +7,7 @@
      <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav ml-auto">
            <li class="nav-item active">
-              <a class="nav-link" href="index.html">Trang Chủ <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="{{ route('index') }}">Trang Chủ <span class="sr-only">(current)</span></a>
            </li>
            <li class="nav-item">
                @if (session()->has('selected_market_id') && isset($fullAddress))
@@ -29,11 +28,19 @@
                @endif
             </li>        
         
-           <li class="nav-item dropdown">
-               <a class="nav-link" href="{{ route('list.market') }}" role="button" aria-haspopup="true" aria-expanded="false">
-               Cửa hàng
-               </a>
-           </li>
+           
+            @php
+               $selectedMarketId = session('selected_market_id');
+            @endphp
+
+            @if ($selectedMarketId)
+               <li class="nav-item dropdown">
+                  <a class="nav-link" href="{{ route('market.details', ['id' => $selectedMarketId]) }}" role="button" aria-haspopup="true" aria-expanded="false">
+                        Cửa hàng của bạn
+                  </a>
+               </li>
+            @endif
+            
            <li class="nav-item dropdown">
               <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
                  <a class="dropdown-item" href="track-order.html">Theo Dõi Đơn Hàng</a>
@@ -148,7 +155,8 @@
 <div id="chooseMarketModal" class="modal fade" tabindex="-1" aria-labelledby="chooseMarketLabel" aria-hidden="true" data-bs-scroll="true">
    <div class="modal-dialog">
        <div class="modal-content">
-           <form id="marketSelectorForm" method="GET" action="{{ route('market.details.redirect') }}">
+           {{-- <form id="marketSelectorForm" method="GET" action="{{ route('market.details.redirect') }}"> --}}
+           <form id="marketSelectorForm" method="GET">
                @csrf
                <input type="hidden" name="product_id" id="selectedProductId">
                
@@ -262,4 +270,17 @@
            };
        });
    });
+   document.getElementById('marketSelectorForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const marketId = document.getElementById('marketDropdown').value;
+      if (!marketId) {
+         alert('Vui lòng chọn cửa hàng');
+         return;
+      }
+
+      // Chuyển hướng đến route Laravel có dạng /market/details/{id}
+      window.location.href = `/market/details/${marketId}`;
+   });
+
 </script>

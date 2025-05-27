@@ -57,20 +57,26 @@ class UserController extends Controller
     }
     // End Method
     
-    public function ProfileStore(Request $request) {
+    public function ProfileStore(Request $request)
+    {
         $id = Auth::user()->id;
         $data = User::find($id);
+
+        // Nếu email thay đổi, reset xác minh
+        if ($data->email !== $request->email) {
+            $data->email_verified_at = null;
+        }
 
         $data->name = $request->name;
         $data->email = $request->email;
         $data->phone = $request->phone;
         $data->address = $request->address;
-        
+
         $oldPhotoPath = $data->photo;
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = time().'.'.$file->getClientOriginalExtension();
+            $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('upload/user_images'), $filename);
             $data->photo = $filename;
 
@@ -78,11 +84,14 @@ class UserController extends Controller
                 $this->deleteOldImage($oldPhotoPath);
             }
         }
+
         $data->save();
-        $notification = array(
+
+        $notification = [
             'message' => 'Profile Update Successfully',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
+
         return redirect()->back()->with($notification);
     }
     //End Method
@@ -129,7 +138,7 @@ class UserController extends Controller
 
         if (!Hash::check($request->old_password, $user->password)) {
             $notification = array(
-                'message' => 'Old Password Does Not Match!',
+                'message' => 'Mật khẩu cũ không khớp!',
                 'alert-type' => 'error'
             );
             return back()->with($notification);
@@ -140,7 +149,7 @@ class UserController extends Controller
             'password' => Hash::make($request->new_password)
         ]);
         $notification = array(
-            'message' => 'Password Change Successfully!',
+            'message' => 'Thay đổi mật khẩu thành công!',
             'alert-type' => 'success'
         );
         return back()->with($notification);

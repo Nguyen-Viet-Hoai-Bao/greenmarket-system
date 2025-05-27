@@ -17,7 +17,7 @@
               <li>
                   <a href="{{ route('client.dashboard') }}">
                       <i data-feather="home"></i>
-                      <span data-key="t-dashboard">Bảng điều khiển</span>
+                      <span data-key="t-dashboard">Bảng thống kê</span>
                   </a>
               </li>
               @if ($status === '1')
@@ -49,8 +49,28 @@
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
                             <li>
-                                <a href="{{ route('all.clients.orders') }}">
-                                    <span data-key="t-calendar">Tất cả đơn hàng</span>
+                                <a href="{{ route('confirm.order') }}">
+                                    <span data-key="t-chat">Đơn hàng đã xác nhận</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('processing.order') }}">
+                                    <span data-key="t-chat">Đơn hàng đang xử lý</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('delivered.order') }}">
+                                    <span data-key="t-chat">Đơn hàng đã giao</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('cancel.pending.order') }}">
+                                    <span data-key="t-chat">Đơn hàng đăng ký HỦY</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('cancelled.order') }}">
+                                    <span data-key="t-chat">Đơn hàng đã hủy</span>
                                 </a>
                             </li>
                         </ul>
@@ -126,16 +146,6 @@
                 @endif  
 
           </ul>
-
-          <div class="card sidebar-alert border-0 text-center mx-4 mb-0 mt-5">
-              <div class="card-body">
-                  <img src="assets/images/giftbox.png" alt="">
-                  <div class="mt-4">
-                      <h5 class="alertcard-title font-size-16">Truy cập không giới hạn</h5>
-                      <p class="font-size-13">Nâng cấp gói của bạn từ bản dùng thử miễn phí sang ‘Gói doanh nghiệp’.</p>
-                  </div>
-              </div>
-          </div>
       </div>
       <!-- Sidebar -->
   </div>

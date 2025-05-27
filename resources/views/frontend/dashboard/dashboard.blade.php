@@ -26,12 +26,19 @@
 
       <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" >
      
+      <style>
+        .content-wrapper {
+            margin-top: 90px;
+        }
+      </style>
    </head>
    <body>
 
     @include('frontend.dashboard.header')
-
-    @yield('dashboard')
+    
+    <main class="content-wrapper">
+        @yield('dashboard')
+    </main>
 
     @include('frontend.dashboard.footer')
 
@@ -48,6 +55,7 @@
 
 <!-- Custom scripts for all pages-->
 <script src="{{ asset('frontend/js/custom.js') }}"></script>
+<script src="{{ asset('frontend/js/cart.js') }}"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -160,6 +168,272 @@
       })
    }
 </script>
+
+
+{{-- ////////////////////////////////////////////////////////////// --}}
+{{-- CART CONTROL --}}
+<script>
+function reloadCartHeader() {
+    $.ajax({
+        url: "{{ route('ajax.cart.header.reload') }}",
+        method: 'GET',
+        dataType: "json",
+        success: function(response) {
+            if (response.html) {
+                $('#cart-header-container').html(response.html);
+            }
+        },
+        error: function() {
+            console.error('Lỗi khi tải lại giỏ hàng.');
+        }
+    });
+}
+
+function reloadCart() {
+    $.ajax({
+        url: "{{ route('ajax.cart.reload') }}",
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+        if (response.html) {
+            $('#cart-container').html(response.html);
+        }
+        },
+        error: function(xhr) {
+        }
+    });
+}
+
+$(document).ready(function () {
+    $(document).on('click', '.btn-add-to-cart', function () {
+        const id = $(this).data('id');
+        $.ajax({
+        url: `/ajax/add-to-cart/${id}`,
+        method: 'GET',
+        success: function (res) {
+                if (res.status === 'success') {
+                    Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: res.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                    });
+
+                    reloadCart();
+                    reloadCartHeader();
+
+                    // Cập nhật tất cả các cart-actions liên quan đến sản phẩm này
+                    $('.btn-add-to-cart[data-id="' + id + '"], .qty-display[data-id="' + id + '"]').each(function () {
+                    const container = $(this).closest('.cart-actions-1, .cart-actions-2, .cart-actions');
+
+                    if (container.length > 0) {
+                        container.html(`
+                                <div class="d-flex justify-content-center align-items-center mt-2">
+                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty" data-id="${id}" data-qty="${res.cartItem.quantity - 1}">
+                                    <i class="icofont-minus"></i>
+                                </button>
+                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="${id}">
+                                    ${res.cartItem.quantity}
+                                </span>
+                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty" data-id="${id}" data-qty="${res.cartItem.quantity + 1}">
+                                    <i class="icofont-plus"></i>
+                                </button>
+                                </div>
+                        `);
+                    }
+                    });
+
+                }
+        },
+        error: function (xhr) {
+                const res = xhr.responseJSON;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: res.message ?? 'Không thể thêm sản phẩm.'
+                });
+        }
+        });
+    });
+});
+
+$(document).on('click', '.btn-change-qty', function () {
+    const id = $(this).data('id');
+    const newQty = $(this).data('qty');
+
+    if (newQty <= 0) {
+        return;
+    }
+
+    $.ajax({
+        url: `/ajax/update-cart/${id}`,
+        method: 'POST',
+        data: {
+            quantity: newQty,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function (res) {
+            if (res.status === 'success') {
+                // Cập nhật tất cả các nơi có cùng data-id
+                $(`.qty-display[data-id="${id}"]`).text(res.cartItem.quantity);
+
+                reloadCart();
+                reloadCartHeader();
+
+                // Cập nhật lại data-qty cho các nút
+                $(`.btn-change-qty[data-id="${id}"]`).each(function () {
+                    const isMinus = $(this).find('i').hasClass('icofont-minus');
+                    const isPlus = $(this).find('i').hasClass('icofont-plus');
+
+                    if (isMinus) {
+                        $(this).data('qty', res.cartItem.quantity - 1);
+                    }
+
+                    if (isPlus) {
+                        $(this).data('qty', res.cartItem.quantity + 1);
+                    }
+                });
+            }
+        },
+        error: function (xhr) {
+            const res = xhr.responseJSON;
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: res.message ?? 'Không thể cập nhật số lượng.'
+            });
+        }
+    });
+});
+
+$(document).on('click', '.btn-remove', function () {
+    const id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/ajax/remove-from-cart/${id}`,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (res) {
+                    if (res.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đã xóa',
+                            text: 'Sản phẩm đã được xóa khỏi giỏ hàng.'
+                        }).then(() => {
+                            reloadCartHeader();
+                            reloadCart();
+                            // Cập nhật UI: chuyển tất cả các khu vực chứa sản phẩm này về nút "Thêm vào giỏ"
+                            $(`.btn-remove[data-id="${id}"], .qty-display[data-id="${id}"], .btn-change-qty[data-id="${id}"]`).each(function () {
+                                const container = $(this).closest('.cart-actions-1, .cart-actions-2, .cart-actions');
+
+                                if (container.length > 0) {
+                                container.html(`
+                                    <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="${id}">
+                                        <i class="icofont-cart"></i> Thêm vào giỏ
+                                    </button>
+                                `);
+                                }
+                            });
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Không thể xóa sản phẩm.'
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Đã xảy ra lỗi khi gửi yêu cầu.'
+                    });
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+
+{{-- ////////////////////////////////////////////////////////////// --}}
+{{-- SEARCH PRODUCT --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Lấy form
+    const searchForm = document.getElementById('search-form');
+
+    searchForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // Ngăn reload
+
+        const query = searchForm.query.value;
+
+        // Gửi request tới server
+        fetch(`{{ route('search.products') }}?query=${encodeURIComponent(query)}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('product-search').innerHTML = html;
+        })
+        .catch(error => console.error('Search error:', error));
+    });
+});
+</script>
+
+<script>
+   document.addEventListener('change', function (e) {
+      if (e.target.classList.contains('filter-checkbox')) {
+         let categoryIds = [];
+         let menuIds = [];
+
+         document.querySelectorAll('.filter-checkbox:checked').forEach(cb => {
+            const type = cb.getAttribute('data-type');
+            const id = cb.getAttribute('data-id');
+            if (type === 'category') categoryIds.push(id);
+            if (type === 'menu') menuIds.push(id);
+         });
+
+         fetch(`{{ route('filter.products') }}`, {
+            method: 'POST',
+            headers: {
+               'X-CSRF-TOKEN': '{{ csrf_token() }}',
+               'Content-Type': 'application/json',
+               'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+               categories: categoryIds,
+               menus: menuIds
+            })
+         })
+         .then(response => response.text())
+         .then(html => {
+            document.getElementById('product-list').innerHTML = html;
+         })
+         .catch(error => console.error('Error:', error));
+      }
+   });
+</script>
+
 
 </body>
 </html>

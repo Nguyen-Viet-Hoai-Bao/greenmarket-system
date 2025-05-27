@@ -11,6 +11,7 @@ use Carbon\Carbon;
 
 use App\Models\ProductNew;
 use App\Models\Coupon;
+use App\Models\Client;
 use App\Models\Menu;
 use App\Models\City;
 use Illuminate\Support\Facades\DB;
@@ -67,8 +68,124 @@ class CartController extends Controller
             'alert-type' => 'success'
         ]);
     }
-
     // End Method
+
+    public function AjaxAddToCart($id)
+    {
+        $product = ProductNew::with('productTemplate')->find($id);
+
+        if (!$product) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found.'
+            ], 404);
+        }
+
+        $selectedMarketId = session('selected_market_id');
+        if ($product->client_id != $selectedMarketId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Sản phẩm không thuộc cửa hàng hiện tại.'
+            ], 403);
+        }
+
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+        } else {
+            $priceToShow = $product->discount_price ?? $product->price;
+            $cart[$id] = [
+                'id' => $id,
+                'name' => $product->productTemplate->name,
+                'image' => $product->productTemplate->image,
+                'price' => $priceToShow,
+                'client_id' => $product->client_id,
+                'quantity' => 1,
+                'menu_name' => optional($product->productTemplate->menu)->name ?? null,
+            ];
+        }
+
+        session()->put('cart', $cart);
+
+        $this->recalculateCoupon();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Đã thêm sản phẩm vào giỏ hàng.',
+            'cartItem' => $cart[$id]
+        ]);
+    }
+
+    public function AjaxUpdateCart(Request $request, $id)
+    {
+        $cart = session('cart', []);
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity'] = (int) $request->quantity;
+            session(['cart' => $cart]);
+            return response()->json(['status' => 'success', 'cartItem' => $cart[$id]]);
+        }
+        return response()->json(['status' => 'error']);
+    }
+
+        public function AjaxRemoveFromCart(Request $request, $id)
+        {
+            $cart = session('cart', []);
+            if (isset($cart[$id])) {
+                unset($cart[$id]);
+                session(['cart' => $cart]);
+                return response()->json(['status' => 'success']);
+            }
+            return response()->json(['status' => 'error']);
+        }
+
+    public function AjaxReloadCart()
+    {
+        $cart = session()->get('cart', []);
+        $total = 0;
+        $coupon = session('coupon');
+
+        foreach ($cart as $item) {
+            $total += (float) $item['price'] * (int) $item['quantity'];
+        }
+
+        $discountAmount = $coupon ? $total * ($coupon['discount'] / 100) : 0;
+        $finalAmount = $total - $discountAmount;
+
+        return response()->json([
+            'html' => view('frontend.cart.partial', compact('cart', 'total', 'coupon', 'discountAmount', 'finalAmount'))->render()
+        ]);
+    }
+
+    public function AjaxReloadCartHeader()
+    {
+        $cart = session()->get('cart', []);
+        $groupedCart = [];
+        $total = 0;
+
+        foreach ($cart as $item) {
+            $groupedCart[$item['client_id']][] = $item;
+        }
+
+        $selectedMarketId = session('selected_market_id');
+
+        if (!$selectedMarketId) {
+            return response()->json(['error' => 'No selected_market_id in session'], 500);
+        }
+
+        $clients = Client::where('id', $selectedMarketId)->get()->keyBy('id');
+
+        try {
+            $html = view('frontend.cart.header_partial', compact('cart', 'groupedCart', 'clients', 'total'))->render();
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return response()->json([
+            'html' => $html,
+        ]);
+    }
+
 
     public function UpdateCartQuantity(Request $request) {
         $cart = session()->get('cart', []);

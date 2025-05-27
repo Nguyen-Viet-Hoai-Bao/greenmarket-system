@@ -47,8 +47,12 @@
             <td>{{ $item->invoice_no }}</td>
             <td>{{ $item->amount }}</td>
             <td>{{ $item->payment_method }}</td>
-            <td><span class="badge bg-primary">
-                {{ $item->status }}</span>
+            <td>
+                @if ($item->status == 'processing')      
+                <span class="badge bg-warning">Đang xử lý</span>
+                @else
+                <span class="badge bg-danger">Không xác định</span>
+                @endif
             </td>
 
             <td class="d-flex align-items-center gap-1">

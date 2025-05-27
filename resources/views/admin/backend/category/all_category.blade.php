@@ -32,6 +32,7 @@
     <tr>
         <th>STT</th>
         <th>Tên Danh Mục</th>
+        <th>Tên Menu</th>
         <th>Hình Ảnh</th>
         <th>Hành Động</th>
     </tr>
@@ -42,6 +43,7 @@
         <tr>
             <td>{{ $key+1 }}</td>
             <td>{{ $item->category_name }}</td>
+            <td>{{ $item->menu?->menu_name ?? 'Chưa có menu' }}</td> 
             <td>
               <img src="{{ asset($item->image) }}" 
                     alt=""

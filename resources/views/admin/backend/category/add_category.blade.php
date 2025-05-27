@@ -40,7 +40,17 @@
                   </div>
               </div>
           </div>
-
+            <div class="col-lg-12">
+                <div class="form-group mb-6">
+                    <label for="menu_id" class="form-label">Chọn Menu</label>
+                    <select name="menu_id" id="menu_id" class="form-control" required>
+                        <option value="" disabled selected>-- Chọn Menu --</option>
+                        @foreach($menus as $menu)
+                            <option value="{{ $menu->id }}">{{ $menu->menu_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
           <div class="col-lg-12">
             <div class="form-group mb-6">
               <label for="example-text-input" class="form-label">Ảnh Danh Mục</label>

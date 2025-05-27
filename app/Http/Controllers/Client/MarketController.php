@@ -140,32 +140,73 @@ class MarketController extends Controller
 
     public function AddProduct(){
         $menus = Menu::latest()->get();
+        $categories = Category::latest()->get();
         $productTemplates = ProductTemplate::with(['category', 'menu'])
                                         ->latest()
                                         ->get()
                                         ->groupBy('menu_id');
-
-        return view('client.backend.product.add_product', compact('productTemplates', 'menus'));
+        return view('client.backend.product.add_product', compact('productTemplates', 'menus', 'categories'));
     } 
     //End Method
 
     public function StoreProduct(Request $request) {
-        ProductNew::create([
-            'client_id' => Auth::guard('client')->id(),
-            'product_template_id' => $request->product_template_id,
-            'qty' => $request->qty,
-            'price' => $request->price,
-            'discount_price' => $request->discount_price,
-            'most_popular' => $request->most_popular,
-            'best_seller' => $request->best_seller,
-            'status' => 1,
-            'created_at' => Carbon::now(),
+        $validated = $request->validate([
+            'product_template_id' => 'required|exists:product_templates,id',
+            'qty' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:1000',
+            'discount_price' => 'nullable|numeric|min:1000',
+            'most_popular' => 'nullable|boolean',
+            'best_seller' => 'nullable|boolean',
         ]);
 
-        $notification = array(
-            'message' => 'Create Product New Successfully',
-            'alert-type' => 'success'
-        );
+        // Kiểm tra discount_price < price
+        if ($request->filled('discount_price') && $request->discount_price >= $request->price) {
+            return back()->withErrors([
+                'discount_price' => 'Giá giảm phải nhỏ hơn giá bán.',
+            ])->withInput();
+        }
+
+        $clientId = Auth::guard('client')->id();
+
+        // Tìm sản phẩm đã tồn tại
+        $existingProduct = ProductNew::where('client_id', $clientId)
+            ->where('product_template_id', $request->product_template_id)
+            ->first();
+
+        if ($existingProduct) {
+            // Cập nhật: cộng qty và cập nhật giá
+            $existingProduct->update([
+                'qty' => $existingProduct->qty + $request->qty,
+                'price' => $request->price,
+                'discount_price' => $request->discount_price,
+                'most_popular' => $request->most_popular ?? $existingProduct->most_popular,
+                'best_seller' => $request->best_seller ?? $existingProduct->best_seller,
+                'updated_at' => Carbon::now(),
+            ]);
+
+            $notification = [
+                'message' => 'Updated existing product successfully.',
+                'alert-type' => 'success'
+            ];
+        } else {
+            // Thêm mới
+            ProductNew::create([
+                'client_id' => $clientId,
+                'product_template_id' => $request->product_template_id,
+                'qty' => $request->qty,
+                'price' => $request->price,
+                'discount_price' => $request->discount_price,
+                'most_popular' => $request->most_popular ?? 0,
+                'best_seller' => $request->best_seller ?? 0,
+                'status' => 1,
+                'created_at' => Carbon::now(),
+            ]);
+
+            $notification = [
+                'message' => 'Create new product successfully.',
+                'alert-type' => 'success'
+            ];
+        }
 
         return redirect()->route('all.product')->with($notification);
     }
@@ -188,6 +229,15 @@ class MarketController extends Controller
     // End Method
     
     public function UpdateProduct(Request $request) {
+        $validated = $request->validate([
+            'product_template_id' => 'required|exists:product_templates,id',
+            'qty' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:1000',
+            'discount_price' => 'nullable|numeric|min:1000',
+            'most_popular' => 'nullable|boolean',
+            'best_seller' => 'nullable|boolean',
+        ]);
+
         $pro_id = $request->id;
     
         $data = [
@@ -195,8 +245,8 @@ class MarketController extends Controller
             'qty' => $request->qty,
             'price' => $request->price,
             'discount_price' => $request->discount_price,
-            'most_popular' => $request->most_popular,
-            'best_seller' => $request->best_seller,
+            'most_popular' => $request->most_popular ?? 0,
+            'best_seller' => $request->best_seller ?? 0,
             'client_id' => Auth::guard('client')->id(),
             'updated_at' => Carbon::now(),
         ];

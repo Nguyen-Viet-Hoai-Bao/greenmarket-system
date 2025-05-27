@@ -30,7 +30,8 @@
             <tr>
                 <th>STT</th>
                 <th>Người Dùng</th>
-                <th>Nhà Hàng</th>
+                <th>Mã đơn hàng</th>
+                <th>Cửa Hàng</th>
                 <th>Bình Luận</th>
                 <th>Đánh Giá</th>                
                 <th>Trạng Thái</th>   
@@ -43,6 +44,7 @@
             <tr>
                 <td>{{ $key+1 }}</td>
                 <td>{{ $item['user']['name'] }}</td>
+                <td>{{ $item['order']['invoice_no'] }}</td>
                 <td>{{ $item['client']['name'] }}</td>
                 <td>{{ Str::limit($item->comment, 50, '...')  }}</td>
                 <td>

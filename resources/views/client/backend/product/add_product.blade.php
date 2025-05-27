@@ -29,16 +29,25 @@
                     @csrf
 
                     <div class="row">
-
                         <!-- Menu -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Tên Menu</label>
-                                <select class="form-select" name="menu_id">
+                                <select class="form-select" id="menuSelect" name="menu_id">
                                     <option selected="" disabled>Chọn</option>
                                     @foreach ($menus as $men)
                                         <option value="{{ $men->id }}">{{ $men->menu_name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-xl-4 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Danh Mục</label>
+                                <select class="form-select" name="category_id" id="categorySelect">
+                                    <option selected="" disabled>Chọn danh mục</option>
                                 </select>
                             </div>
                         </div>
@@ -48,17 +57,15 @@
                             <div class="form-group mb-3">
                                 <label class="form-label">Mẫu Sản Phẩm</label>
                                 <select class="form-select" name="product_template_id" id="productTemplateSelect">
-                                    <option selected disabled>SChọn mẫu sản phẩm</option>
+                                    <option selected disabled>Chọn mẫu sản phẩm</option>
                                 </select>
                             </div>
                         </div>
-                        
-                        <!-- Additional Field 2 -->
+
+                        <!-- Image Preview -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <img id="showImage"
-                                    src="{{ url('upload/no_image.jpg') }}" 
-                                    alt="" class="rounded p-1 bg-primary" width="110">
+                                <img id="showImage" src="{{ url('upload/no_image.jpg') }}" alt="" class="rounded p-1 bg-primary" width="110">
                             </div>
                         </div>
 
@@ -91,6 +98,9 @@
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá</label>
                                 <input class="form-control" type="text" name="price" placeholder="Enter price">
+                                @error('price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -99,6 +109,9 @@
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá Giảm</label>
                                 <input class="form-control" type="text" name="discount_price" placeholder="Enter discount price">
+                                @error('discount_price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -107,6 +120,9 @@
                             <div class="form-group mb-3">
                                 <label class="form-label">Số Lượng</label>
                                 <input class="form-control" type="number" name="qty" placeholder="Enter quantity">
+                                @error('qty')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -134,31 +150,58 @@
 
     </div>
 </div>
-
 <script>
-    const productTemplatesByMenu = @json($productTemplates);
+    const productTemplatesByMenu = @json($productTemplates); // Sản phẩm nhóm theo menu_id
 
-    const menuSelect = document.querySelector('select[name="menu_id"]');
+    const menuSelect = document.getElementById('menuSelect');
+    const categorySelect = document.getElementById('categorySelect');
     const productTemplateSelect = document.getElementById('productTemplateSelect');
     const imagePreview = document.getElementById('showImage');
 
     let currentTemplates = []; // lưu tạm các template theo menu đang chọn
 
+    // Lắng nghe sự kiện thay đổi Menu
     menuSelect.addEventListener('change', function () {
         const selectedMenuId = this.value;
+        console.log("Menu Selected: ", selectedMenuId);
 
-        // Xóa options cũ
-        productTemplateSelect.innerHTML = '<option selected disabled>Select product template</option>';
-        currentTemplates = productTemplatesByMenu[selectedMenuId] || [];
+        // Làm mới danh sách Category
+        categorySelect.innerHTML = '<option selected disabled>Chọn danh mục</option>';
 
-        currentTemplates.forEach(template => {
+        const categories = @json($categories);
+        const filteredCategories = categories.filter(category => category.menu_id == selectedMenuId);
+
+        console.log("Filtered Categories: ", filteredCategories);
+
+        filteredCategories.forEach(category => {
             const option = document.createElement('option');
-            option.value = template.id;
-            option.textContent = template.name; // đổi theo tên cột bạn muốn
+            option.value = category.id;
+            option.textContent = category.category_name;
+            categorySelect.appendChild(option);
+        });
+    });
+
+    categorySelect.addEventListener('change', function () {
+        const selectedCategoryId = this.value;
+        console.log("Category Selected: ", selectedCategoryId);
+
+        // Làm mới dropdown sản phẩm
+        productTemplateSelect.innerHTML = '<option selected disabled>Chọn mẫu sản phẩm</option>';
+
+        // Lọc sản phẩm theo category_id và menu_id
+        const selectedMenuId = menuSelect.value; // Lấy menu_id đã chọn
+        const filteredProducts = (productTemplatesByMenu[selectedMenuId] || []).filter(product => product.category_id == selectedCategoryId);
+
+        currentTemplates = filteredProducts;
+
+        console.log("Filtered Products: ", filteredProducts);  // Kiểm tra các sản phẩm sau khi lọc
+
+        filteredProducts.forEach(product => {
+            const option = document.createElement('option');
+            option.value = product.id;
+            option.textContent = product.name; // Đổi theo tên sản phẩm
             productTemplateSelect.appendChild(option);
         });
-
-        imagePreview.src = '{{ url('upload/no_image.jpg') }}'; // reset ảnh nếu đổi menu
     });
 
     productTemplateSelect.addEventListener('change', function () {

@@ -17,32 +17,68 @@
       <link href="{{ asset('frontend/vendor/icofont/icofont.min.css') }}" rel="stylesheet">
       <!-- Select2 CSS-->
       <link href="{{ asset('frontend/vendor/select2/css/select2.min.css') }}" rel="stylesheet">
+
+      <link href="{{ asset('frontend/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+
       <!-- Custom styles for this template-->
       <link href="{{ asset('frontend/css/osahan.css') }}" rel="stylesheet">
+
+      <style>
+         .error-message {
+            color: red;
+            font-size: 14px;
+            list-style-type: none;
+         }
+         .success-message {
+            color: green;
+            font-size: 14px;
+            list-style-type: none;
+         }
+         li {
+            margin-bottom: 10px;
+         }
+      </style>
    </head>
    <body class="bg-white">
       <div class="container-fluid">
          <div class="row no-gutter">
             <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+               <ul class="bg-bubbles">
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+               </ul>
             <div class="col-md-8 col-lg-6">
                <div class="login d-flex align-items-center py-5">
                   <div class="container">
                      <div class="row">
                         <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">
                            <h3 class="login-heading mb-4">Chào mừng quay trở lại!</h3>
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    @endif
+      @if ($errors->any())
+         <ul class="error-message">
+            @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+            @endforeach
+         </ul>
+      @endif
+      @if (Session::has('error'))
+         <ul class="error-message">
+            <li>{{ Session::get('error') }}</li>
+         </ul>
+      @endif
+      @if (Session::has('success'))
+         <ul class="success-message">
+            <li>{{ Session::get('success') }}</li>
+         </ul>
+      @endif
 
-    @if (Session::has('error'))
-        <li>{{ Session::get('error') }}</li>
-    @endif
-    
-    @if (Session::has('success'))
-        <li>{{ Session::get('success') }}</li>
-    @endif
     <form method="POST" action="{{ route('login') }}">
         @csrf
         <div class="form-label-group">

@@ -4,8 +4,16 @@
 <div class="col-md-3 col-sm-6 mb-4 pb-2">
     <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm d-flex flex-column">
         <div class="list-card-image position-relative">
-            <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> </span></div>
-            <div class="favourite-heart text-danger position-absolute"><a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a></div>
+            <div class="star position-absolute">
+                @if ($product->best_seller == 1)
+                    <span class="badge badge-success"><i class="icofont-star"></i></span>
+                @endif
+            </div>
+            <div class="favourite-heart text-danger position-absolute">
+                @if ($product->most_popular == 1)
+                    <a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a>
+                @endif
+            </div>
             <a href="{{ route('product.detail', $product->id) }}">
                 <img src="{{ asset($product->productTemplate->image) }}" class="img-fluid item-img">
             </a>
@@ -13,7 +21,7 @@
         <div class="p-3 position-relative flex-grow-1">
             <div class="list-card-body">
                 <h6 class="mb-1 text-truncate"><a href="{{ route('product.detail', $product->id) }}" class="text-black"> {{ $product->productTemplate->name}}</a></h6>
-                <p class="text-gray mb-3 time"><span class="bg-light text-dark rounded-sm pl-2 pb-1 pt-1 pr-2"><i class="icofont-wall-clock"></i> 20–25 phút</span> <span class="float-right text-black-50"> {{ number_format($product->price, 0, ',', '.') }} VNĐ</span></p>
+                <p class="text-gray mb-3 time"><span class="bg-light text-dark rounded-sm pl-2 pb-1 pt-1 pr-2"><i class="icofont-wall-clock"></i> 20–25 phút</span> <span class="float-right text-black-50"> {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ</span></p>
             </div>
             @php
                 $discount = $product->price - $product->discount_price;

@@ -25,6 +25,47 @@ class HomeController extends Controller
             $id = session('selected_market_id');
         }
         $client = Client::find($id);
+
+        $oldMarketId = session('selected_market_id');
+
+        if ($oldMarketId && $oldMarketId != $id) {
+            $oldCart = session()->get('cart', []);
+            $newCart = [];
+            $removed = false;
+
+            foreach ($oldCart as $item) {
+                $oldProduct = ProductNew::find($item['id']);
+
+                if (!$oldProduct) {
+                    $removed = true;
+                    continue;
+                }
+
+                $newProducts = ProductNew::where('product_template_id', $oldProduct->product_template_id)
+                                        ->where('client_id', $id)
+                                        ->get();
+
+                if ($newProducts->count() > 0) {
+                    foreach ($newProducts as $newProduct) {
+                        $newItem = $item;
+                        $newItem['id'] = $newProduct->id;
+                        $newItem['client_id'] = $id;
+                        $newItem['price'] = $newProduct->discount_price;
+                        $newCart[$newProduct->id] = $newItem;
+                    }
+                } else {
+                    $removed = true;
+                }
+            }
+
+
+            session()->put('cart', $newCart);
+
+            if ($removed) {
+                session()->flash('cart_item_removed', true);
+            }
+        }
+
         // Chỉ cập nhật session nếu khác
         if (!session()->has('selected_market_id') || session('selected_market_id') != $id) {
             session([
@@ -100,8 +141,19 @@ class HomeController extends Controller
                     ->orderBy('id', 'desc')
                     ->get();
 
+        // dd(session()->all());
+
+        $menusWithCategories = Menu::with(['categories'])->get();
+        $products_all = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', session('selected_market_id'))
+                    ->orderBy('id', 'desc')
+                    ->get();
+
         return view('frontend.details_page',
-                        compact('client','menus','gallerys','reviews','roundedAverageRating',
+                        compact('client','menus','gallerys','reviews','roundedAverageRating', 'menusWithCategories', 'products_all',
                                 'totalReviews','ratingCounts','ratingPercentages', 'fullAddress', 'cities', 'menus_footer', 'products_list'));
     }
     // end method
@@ -158,19 +210,33 @@ class HomeController extends Controller
     }
     // end method
 
+    // public function RedirectToDetails(Request $request)
+    // {
+    //     $marketId = $request->market_id;
+    //     $market = Client::findOrFail($marketId);
+
+    //     session([
+    //         'selected_market_id' => $market->id,
+    //         'selected_market_name' => $market->name,
+    //         'selected_market_ward_id' => $market->ward_id,
+    //     ]);
+
+    //     $marketId = $request->market_id;
+    //     return redirect()->route('market.details', $marketId);
+    // }
     public function RedirectToDetails(Request $request)
     {
-        $marketId = $request->market_id;
-        $market = Client::findOrFail($marketId);
+        $newMarketId = $request->market_id;
+        $newMarket = Client::findOrFail($newMarketId);
+        
 
+        // Cập nhật session thị trường mới
         session([
-            'selected_market_id' => $market->id,
-            'selected_market_name' => $market->name,
-            'selected_market_ward_id' => $market->ward_id,
+            'selected_market_id' => $newMarket->id,
+            'selected_market_name' => $newMarket->name,
+            'selected_market_ward_id' => $newMarket->ward_id,
         ]);
-
-        $marketId = $request->market_id;
-        return redirect()->route('market.details', $marketId);
+        return redirect()->route('market.details', $newMarketId);
     }
 
     public function GetDistricts($city_id)

@@ -105,7 +105,21 @@
                          </tr> 
                          <tr> 
                              <th width="50%">Trạng thái: </th>
-                             <td><span class="badge bg-success">{{ $order->status }}</span></td> 
+                             <td>
+                                @if ($order->status == 'pending')
+                                <span class="badge bg-info">Chờ xử lý</span>
+                                @elseif ($order->status == 'confirm')
+                                <span class="badge bg-primary">Đã xác nhận</span>
+                                @elseif ($order->status == 'processing')
+                                <span class="badge bg-warning">Đang xử lý</span>
+                                @elseif ($order->status == 'deliverd')
+                                <span class="badge bg-success">Đã giao hàng</span>
+                                @elseif ($order->status == 'cancel_pending')
+                                <span class="badge" style="background-color: #f66; color: white;">Đăng ký huỷ</span> {{-- Đỏ nhạt --}}
+                                @elseif ($order->status == 'cancelled')
+                                <span class="badge bg-danger">Hủy thành công</span>
+                                @endif
+                            </td> 
                          </tr>
               
                      </tbody>
@@ -119,93 +133,82 @@
              </div> <!-- end row --> 
              
              
-             
              <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-1">
-                 <div class="col">
-                     <div class="card">
-                     <div class="table-responsive">
-                         <table class="table">
-                             <tbody>
-                                 <tr>
-                                     <td class="col-md-1">
-                                         <label>Hình ảnh</label>
-                                     </td>
-                                     <td class="col-md-1">
-                                         <label>Tên sản phẩm</label>
-                                     </td>
-                                     <td class="col-md-1">
-                                         <label>Nhà hàng</label>
-                                     </td>
-                                     <td class="col-md-1">
-                                         <label>Mã sản phẩm</label>
-                                     </td>
-                                     <td class="col-md-1">
-                                         <label>Số lượng</label>
-                                     </td>
-                                     <td class="col-md-1">
-                                         <label>Giá</label>
-                                     </td> 
-                                 </tr>
-                 @foreach ($orderItem as $item)
-                 <tr>
-                     <td class="col-md-1">
-                         <label>
-                             <img src="{{ asset($item->product->image) }}" style="width:50px; height:50px">
-                         </label>
-                     </td>
-                     <td class="col-md-2">
-                         <label>
-                             {{ $item->product->name }}
-                         </label>
-                     </td>
-                     @if ($item->client_id == NULL)
-                     <td class="col-md-2">
-                         <label>
-                            Chính chủ
-                         </label>
-                     </td>
-                     @else
-                     <td class="col-md-2">
-                         <label>
-                             {{ $item->product->client->name }}
-                         </label>
-                     </td>
-                     @endif
-                     <td class="col-md-2">
-                         <label>
-                             {{ $item->product->code }}
-                         </label>
-                     </td>
-                     <td class="col-md-2">
-                         <label>
-                             {{ $item->qty }}
-                         </label>
-                     </td>
-                     <td class="col-md-2">
-                         <label>
-                            {{ number_format($item->price, 0, ',', '.') }}
-                         </label>
-                         <label class="text-danger">
-                            Tổng: {{ number_format($item->price * $item->qty, 0, ',', '.') }} VNĐ
-                         </label>
-                     </td> 
-                 </tr> 
-                 @endforeach 
-                             </tbody>
-                         </table>
-                <div>
-                    <h6>Tổng cộng: {{ number_format($totalPrice, 0, ',', '.') }} VNĐ</h6>
+                <div class="col">
+                    <div class="card p-3">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Hình ảnh</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Nhà hàng</th>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Giá</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($orderItem as $item)
+                                    <tr>
+                                        <td>
+                                            <img src="{{ asset($item->product->productTemplate->image) }}" style="width:50px; height:50px" alt="Product Image">
+                                        </td>
+                                        <td>
+                                            {{ $item->product->productTemplate->name }}
+                                        </td>
+                                        <td>
+                                            {{ $item->client_id == NULL ? 'Chính chủ' : $item->product->client->name }}
+                                        </td>
+                                        <td>
+                                            {{ $item->product->productTemplate->code }}
+                                        </td>
+                                        <td>
+                                            {{ $item->qty }}
+                                        </td>
+                                        <td>
+                                            {{ number_format($item->price, 0, ',', '.') }}
+                                            <br>
+                                            <small class="text-danger">
+                                                Tổng: {{ number_format($item->price * $item->qty, 0, ',', '.') }} VNĐ
+                                            </small>
+                                        </td>
+                                    </tr>
+                                    @endforeach 
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-3">
+                            <h6>Tổng cộng: {{ number_format($totalPrice, 0, ',', '.') }} VNĐ</h6>
+                            <h4 class="text-success">Tổng thanh toán: {{ number_format($totalAmount, 0, ',', '.') }} VNĐ</h4>
+                        </div>
+
+                        @if (in_array($order->status, ['pending', 'confirm']))
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="button" class="btn btn-danger" id="showCancelForm">
+                                    <i class="bi bi-x-circle"></i> Huỷ đơn
+                                </button>
+                            </div>
+
+                            <form id="cancelForm" action="{{ route('user.order.cancel', $order->id) }}" method="POST" style="display: none;" class="mt-3">
+                                @csrf
+                                <div class="form-group">
+                                    <label for="cancel_reason">Lý do huỷ đơn <span class="text-danger">*</span></label>
+                                    <textarea name="cancel_reason" id="cancel_reason" class="form-control" rows="3" required placeholder="Nhập lý do huỷ đơn..."></textarea>
+                                </div>
+                                <div class="text-end mt-2">
+                                    <button type="submit" class="btn btn-danger">
+                                        Xác nhận huỷ đơn
+                                    </button>
+                                </div>
+                            </form>
+                        @endif
+
+                    </div>
                 </div>
-                <div>
-                    <h4  class="text-success">Tổng thanh toán: {{ number_format($totalAmount, 0, ',', '.') }} VNĐ</h4>
-                </div>
-             
-                     </div>
-             
-                     </div>
-                 </div>
-             </div>
-                 
+            </div>
+
       
  
          
@@ -218,4 +221,17 @@
      </div>
   </section> 
  
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cancelBtn = document.getElementById('showCancelForm');
+        const cancelForm = document.getElementById('cancelForm');
+
+        cancelBtn.addEventListener('click', function () {
+            cancelForm.style.display = 'block';
+            cancelBtn.style.display = 'none';
+            document.getElementById('cancel_reason').focus();
+        });
+    });
+</script>
+
  @endsection
