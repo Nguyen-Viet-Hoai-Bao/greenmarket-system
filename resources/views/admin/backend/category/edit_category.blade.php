@@ -40,7 +40,19 @@
                   </div>
               </div>
           </div>
-
+            <div class="col-lg-12">
+                <div class="form-group mb-6">
+                    <label for="menu_id" class="form-label">Chọn Menu</label>
+                    <select name="menu_id" id="menu_id" class="form-control" required>
+                        <option value="" disabled>-- Chọn Menu --</option>
+                        @foreach($menus as $menu)
+                            <option value="{{ $menu->id }}" {{ $menu->id == $category->menu_id ? 'selected' : '' }}>
+                                {{ $menu->menu_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
           <div class="col-lg-12">
             <div class="form-group mb-6">
               <label for="example-text-input" class="form-label">Hình Ảnh Danh Mục</label>
@@ -86,20 +98,11 @@
               category_name: {
                     required : true,
                 }, 
-              image: {
-                    required : true,
-                }, 
-                
             },
             messages :{
               category_name: {
                   required : 'Please Enter Category Name',
               }, 
-              image: {
-                  required : 'Please Select New Image',
-              }, 
-                 
-  
             },
             errorElement : 'span', 
             errorPlacement: function (error,element) {

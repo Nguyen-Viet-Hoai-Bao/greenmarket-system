@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\Websitemail;
 use App\Models\Admin;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -16,7 +17,21 @@ class AdminController extends Controller
     //End Method
 
     public function AdminDashboard() {
-        return view('admin.index');
+        $walletBalance = DB::table('orders')->sum('total_amount');
+        $numberOfOrders = DB::table('orders')->count();
+        $investedAmount = DB::table('order_items')
+            ->select(DB::raw('SUM(qty * price) as total'))
+            ->value('total');
+        
+        $profit = $walletBalance - $investedAmount;
+        $profitRatio = $investedAmount > 0 ? round(($profit / $investedAmount) * 100, 2) : 0;
+
+        return view('admin.index', compact(
+            'walletBalance',
+            'numberOfOrders',
+            'investedAmount',
+            'profitRatio'
+        ));
     }
     //End Method
     
@@ -31,9 +46,9 @@ class AdminController extends Controller
             'password' => $check['password'],
         ];
         if (Auth::guard('admin')->attempt($data)) {
-            return redirect()->route('admin.dashboard')->with('success', 'Login Successfully');
+            return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập thành công');
         }else{
-            return redirect()->route('admin.login')->with('error', 'Invalid Creadentials');
+            return redirect()->route('admin.login')->with('error', 'Thông tin đăng nhập không hợp lệ');
         }
     }
     //End Method

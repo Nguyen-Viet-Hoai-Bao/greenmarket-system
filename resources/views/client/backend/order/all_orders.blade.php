@@ -62,6 +62,10 @@
                   <span class="badge bg-warning">Đang Xử Lý</span>
                   @elseif ($order->status == 'delivered')
                   <span class="badge bg-success">Đã Giao</span>
+                  @elseif ($order->status == 'cancel_pending')
+                  <span class="badge" style="background-color: #f66; color: white;">Đăng ký huỷ</span> {{-- Đỏ nhạt --}}
+                  @elseif ($order->status == 'cancelled')
+                  <span class="badge bg-danger">Hủy thành công</span>
                   @endif
                  </td>                
              

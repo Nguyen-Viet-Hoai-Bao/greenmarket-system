@@ -69,7 +69,7 @@ class OrderController extends Controller
             'order_month' => Carbon::now()->format('F'),
             'order_year' => Carbon::now()->format('Y'),
 
-            'status' => 'pending',
+            'status' => 'confirm',
             'created_at' => Carbon::now(),
         ]);
 
@@ -171,7 +171,7 @@ class OrderController extends Controller
             'order_month' => Carbon::now()->format('F'),
             'order_year' => Carbon::now()->format('Y'),
 
-            'status' => 'pending',
+            'status' => 'confirm',
             'created_at' => Carbon::now(),
         ]);
 
@@ -221,6 +221,29 @@ class OrderController extends Controller
         
     }
     // End Method
+
+    public function CancelOrder(Request $request, $id)
+    {
+        $order = Order::where('id', $id)
+                        ->where('user_id', Auth::id())
+                        ->first();
+
+        if (!$order) {
+            return redirect()->back()->with('error', 'Không tìm thấy đơn hàng.');
+        }
+
+        if (!in_array($order->status, ['confirm'])) {
+            return redirect()->back()->with('error', 'Đơn hàng không thể huỷ ở trạng thái hiện tại.');
+        }
+
+        $order->update([
+            'status' => 'cancel_pending',
+            'cancel_reason' => $request->cancel_reason ?? 'Người dùng huỷ',
+        ]);
+
+        return redirect()->route('user.order.list')->with('success', 'Huỷ đơn hàng thành công.');
+    }
+
 
     public function CheckoutThanks(){
         $notification = array(

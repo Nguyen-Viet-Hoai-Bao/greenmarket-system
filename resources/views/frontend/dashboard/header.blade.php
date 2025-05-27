@@ -1,71 +1,108 @@
+<style>
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 
-      <nav class="navbar navbar-expand-lg navbar-light bg-light osahan-nav shadow-sm">
+/* Tăng độ rộng modal dialog */
+.modal-dialog {
+    max-width: 600px;
+    width: 90%;
+}
+
+/* Input tìm kiếm chuyển động rộng */
+.search-input {
+    width: 250px;
+    transition: width 0.4s ease-in-out;
+}
+.search-input:focus {
+    width: 350px;
+}
+</style>
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light osahan-nav shadow-sm fixed-header">
          <div class="container">
             <a class="navbar-brand" href="{{ route('index') }}"><img alt="logo" src="{{ asset('frontend/img/logo.png') }}"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
+            <form id="search-form" class="d-flex mx-auto">
+               <input
+                  class="form-control me-2 search-input"
+                  type="search"
+                  name="query"
+                  placeholder="Bạn cần tìm gì nhỉ?"
+                  aria-label="Search"
+                  onfocus="this.placeholder='Nhập tên sản phẩm bạn cần tìm'"
+                  onblur="this.placeholder='Bạn cần tìm gì nhỉ?'"
+               >
+               <button class="btn btn-outline-success" type="submit">Tìm</button>
+            </form>
+
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                <ul class="navbar-nav ml-auto">
-                  <li class="nav-item active">
-                     <a class="nav-link" href="index.html">Trang Chủ <span class="sr-only">(current)</span></a>
-                  </li>
-                  
-           <li class="nav-item">
-            @if (session()->has('selected_market_id') && isset($fullAddress))
-               <a class="nav-link text-success"
-                  href="#"
-                  data-bs-toggle="modal"
-                  data-bs-target="#chooseMarketModal">
-                  <i class="icofont-location-pin"></i>
-                  {{ session('selected_market_name') }} - {{ $fullAddress }}
-               </a>
-            @else
-               <a class="nav-link"
-                  href="#"
-                  data-bs-toggle="modal"
-                  data-bs-target="#chooseMarketModal">
-                  <i class="icofont-cart"></i> Chọn cửa hàng
-               </a>
-            @endif
-         </li>       
+                  <li class="nav-item">
+                     @if (session()->has('selected_market_id') && isset($fullAddress))
+                        <a class="nav-link text-success"
+                           href="#"
+                           data-bs-toggle="modal"
+                           data-bs-target="#chooseMarketModal">
+                           <i class="icofont-location-pin"></i>
+                           {{ session('selected_market_name') }} - {{ $fullAddress }}
+                        </a>
+                     @else
+                        <a class="nav-link"
+                           href="#"
+                           data-bs-toggle="modal"
+                           data-bs-target="#chooseMarketModal">
+                           <i class="icofont-cart"></i> Chọn cửa hàng
+                        </a>
+                     @endif
+                  </li>       
+                  @php
+                     $selectedMarketId = session('selected_market_id');
+                  @endphp
+
+                  @if ($selectedMarketId)
+                     <li class="nav-item dropdown">
+                        <a class="nav-link" href="{{ route('market.details', ['id' => $selectedMarketId]) }}" role="button" aria-haspopup="true" aria-expanded="false">
+                              Cửa hàng của bạn
+                        </a>
+                     </li>
+                  @endif
+
+
+
+                  @auth
+                  @php
+                     $id = Auth::user()->id;
+                     $profileData = App\Models\User::find($id);
+                  @endphp
                   <li class="nav-item dropdown">
-                     <a class="nav-link" href="{{ route('list.market') }}" role="button" aria-haspopup="true" aria-expanded="false">
-                     Cửa hàng
+                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     <img alt="Generic placeholder image" 
+                        src="{{ (!empty($profileData->photo)) 
+                        ? url('upload/user_images/'.$profileData->photo)
+                        : url('upload/no_image.jpg')}}"    
+                        class="nav-osahan-pic rounded-pill"> Tài Khoản Của Tôi
+                     </a>
+                     <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
+                        <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Thông tin cá nhân</a>
+                        <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Đăng Xuất</a>
+                     </div>
+                  </li>
+                  @else
+                  <li class="nav-item dropdown">
+                     <a class="nav-link" href="{{ route('login') }}" role="button" aria-haspopup="true" aria-expanded="false">
+                        Đăng Nhập
                      </a>
                   </li>
-
-
-@auth
-@php
-   $id = Auth::user()->id;
-   $profileData = App\Models\User::find($id);
-@endphp
-<li class="nav-item dropdown">
-   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-   <img alt="Generic placeholder image" 
-      src="{{ (!empty($profileData->photo)) 
-      ? url('upload/user_images/'.$profileData->photo)
-      : url('upload/no_image.jpg')}}"    
-      class="nav-osahan-pic rounded-pill"> Tài Khoản Của Tôi
-   </a>
-   <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
-      <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Bảng Điều Khiển</a>
-      <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Đăng Xuất</a>
-   </div>
-</li>
-@else
-<li class="nav-item dropdown">
-   <a class="nav-link" href="{{ route('login') }}" role="button" aria-haspopup="true" aria-expanded="false">
-      Đăng Nhập
-   </a>
-</li>
-<li class="nav-item dropdown">
-   <a class="nav-link" href="{{ route('register') }}" role="button" aria-haspopup="true" aria-expanded="false">
-      Đăng Ký
-   </a>
-</li>
-@endauth
+                  @endauth
 
 
 @php
@@ -84,65 +121,8 @@
 @endphp
 
 <li class="nav-item dropdown dropdown-cart">
-   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-   <i class="fas fa-shopping-basket"></i> Giỏ Hàng
-   <span class="badge badge-success">{{ count((array) session('cart')) }}</span>
-   </a>
-   <div class="dropdown-menu dropdown-cart-top p-0 dropdown-menu-right shadow-sm border-0">
-
-      @foreach ($groupedCart as $clientId => $items)
-         @if (isset($clients[$clientId]))
-            @php
-                $client = $clients[$clientId];
-            @endphp
-            <div class="dropdown-cart-top-header p-4">
-               <img class="img-fluid mr-3" alt="osahan" 
-                     src="{{ asset('upload/client_images/' . $client->photo) }}">
-               <h6 class="mb-0">{{ $client->name }}</h6>
-               <p class="text-secondary mb-0">{{ $client->address }}</p>
-               <small><a class="text-primary font-weight-bold" href="#">Xem Menu Chi Tiết</a></small>
-            </div>
-         @else
-
-         @endif
-      @endforeach
-
-      <div class="dropdown-cart-top-body border-top p-4">
-         @if (session('cart'))
-            @foreach (session('cart') as $id=>$details)
-
-               @php
-                  //   $total += $details['price'] * $details['quantity']
-                  $total += (float) $details['price'] * (int) $details['quantity'];
-                  
-               @endphp
-               
-               <p class="mb-2">
-                  <i class="icofont-ui-press text-danger food-item"></i> 
-                  {{ $details['name'] }} x {{ $details['quantity'] }}   
-                  <span class="float-right text-secondary">
-                     {{ number_format($details['price'] * $details['quantity'], 0, ',', '.') }} 
-                  </span>
-               </p>
-         
-            @endforeach   
-         @endif
-      </div>
-      <div class="dropdown-cart-top-footer border-top p-4">
-         <p class="mb-0 font-weight-bold text-secondary">
-            Tổng Tiền 
-            <span class="float-right text-dark">
-               @if (Session::has('coupon'))
-                  {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
-               @else
-                  {{ number_format($total, 0, ',', '.') }} VNĐ
-               @endif
-            </span>
-         </p>
-      </div>
-      <div class="dropdown-cart-top-footer border-top p-2">
-         <a class="btn btn-success btn-block btn-lg" href="{{ route('checkout') }}"> Checkout</a>
-      </div>
+   <div id="cart-header-container">
+      @include('frontend.cart.header_partial')
    </div>
 </li>
                </ul>
@@ -156,7 +136,8 @@
 <div id="chooseMarketModal" class="modal fade" tabindex="-1" aria-labelledby="chooseMarketLabel" aria-hidden="true" data-bs-scroll="true">
    <div class="modal-dialog">
        <div class="modal-content">
-           <form id="marketSelectorForm" method="GET" action="{{ route('market.details.redirect') }}">
+           {{-- <form id="marketSelectorForm" method="GET" action="{{ route('market.details.redirect') }}"> --}}
+           <form id="marketSelectorForm" method="GET">
                @csrf
                <input type="hidden" name="product_id" id="selectedProductId">
                
@@ -270,4 +251,19 @@
            };
        });
    });
+   
+   document.getElementById('marketSelectorForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const marketId = document.getElementById('marketDropdown').value;
+      if (!marketId) {
+         alert('Vui lòng chọn cửa hàng');
+         return;
+      }
+
+      // Chuyển hướng đến route Laravel có dạng /market/details/{id}
+      window.location.href = `/market/details/${marketId}`;
+   });
+
 </script>
+

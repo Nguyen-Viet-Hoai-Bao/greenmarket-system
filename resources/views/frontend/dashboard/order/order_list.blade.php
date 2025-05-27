@@ -52,8 +52,12 @@
                      <span class="badge bg-primary">Đã xác nhận</span>
                      @elseif ($item->status == 'processing')
                      <span class="badge bg-warning">Đang xử lý</span>
-                     @elseif ($item->status == 'deliverd')
+                     @elseif ($item->status == 'delivered')
                      <span class="badge bg-success">Đã giao hàng</span>
+                     @elseif ($item->status == 'cancel_pending')
+                     <span class="badge" style="background-color: #f66; color: white;">Đăng ký huỷ</span> {{-- Đỏ nhạt --}}
+                     @elseif ($item->status == 'cancelled')
+                     <span class="badge bg-danger">Hủy thành công</span>
                      @endif
                      </td>                
                     

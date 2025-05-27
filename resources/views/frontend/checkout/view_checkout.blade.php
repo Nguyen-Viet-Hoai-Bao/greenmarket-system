@@ -32,25 +32,7 @@
                       <h6 class="mb-1 text-black">Nhà riêng</h6>
                       <p class="text-black">{{ $profileData->address }}
                       </p>
-                      <p class="mb-0 text-black font-weight-bold"><a class="btn btn-sm btn-success mr-2" href="#"> DELIVER HERE</a> 
-                        <span>30 PHÚT</span>
-                      </p>
-                  </div>
-                </div>
-            </div>
-          </div>
-      </div>
-      <div class="col-md-6">
-          <div class="bg-white card addresses-item mb-4">
-            <div class="gold-members p-4">
-                <div class="media">
-                  <div class="mr-3"><i class="icofont-briefcase icofont-3x"></i></div>
-                  <div class="media-body">
-                      <h6 class="mb-1 text-secondary">Nơi làm việc</h6>
-                      <p>Đà Nẵng
-                      </p>
-                      <p class="mb-0 text-black font-weight-bold"><a class="btn btn-sm btn-secondary mr-2" href="#"> DELIVER HERE</a> 
-                        <span>40 PHÚT</span>
+                      <p class="mb-0 text-black font-weight-bold"><a class="btn btn-sm btn-success mr-2" href="#"> 30 PHÚT - 2 GIỜ</a> 
                       </p>
                   </div>
                 </div>
@@ -172,7 +154,7 @@
         <input type="hidden" name="address" id="" value="{{ Auth::user()->address }}">  
         <div class="form-group">
             <label for="amount">Số tiền (VNĐ)</label>
-            <input type="number" name="amount" class="form-control" value="{{ $total_1 }}" placeholder="Nhập số tiền">
+            <input type="number" name="amount" class="form-control" value="{{ $total_1 }}" placeholder="Nhập số tiền" readonly>
         </div>
         <button type="submit" class="btn btn-success btn-block btn-lg">Thanh toán qua VNPay
             <i class="icofont-long-arrow-right"></i>
@@ -308,7 +290,7 @@
         @else
         <div class="mb-2 bg-white rounded p-2 clearfix">
           <div class="input-group input-group-sm mb-2">
-              <input type="text" class="form-control" placeholder="Enter promo code" id="coupon_name">
+              <input type="text" class="form-control" placeholder="Nhập mã khuyến mãi" id="coupon_name">
               <div class="input-group-append">
                 <button class="btn btn-primary" type="submit" id="button-addon2" onclick="ApplyCoupon()">
                     <i class="icofont-sale-discount"></i> 

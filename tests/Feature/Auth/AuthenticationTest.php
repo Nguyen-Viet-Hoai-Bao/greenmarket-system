@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 test('login screen can be rendered', function () {
     $response = $this->get('/login');
@@ -9,15 +10,18 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
-
-    $response = $this->post('/login', [
-        'email' => $user->email,
-        'password' => 'password',
+    $user = User::factory()->create([
+        'email' => 'user1@gmail.com',
+        'password' => Hash::make('user'), // mật khẩu hash phù hợp với password plain text
     ]);
 
-    $this->assertAuthenticated();
+    $response = $this->post('/login', [
+        'email' => 'user1@gmail.com',
+        'password' => 'user', // gửi mật khẩu plain text
+    ]);
+
     $response->assertRedirect(route('dashboard', absolute: false));
+    $this->assertAuthenticatedAs($user);
 });
 
 test('users can not authenticate with invalid password', function () {

@@ -29,15 +29,10 @@
    </head>
    <body>
       <div class="homepage-header">
-      <div class="overlay"></div>
-
-      @include('frontend.layouts.header')
-
-      @include('frontend.layouts.banner')
-
+         <div class="overlay"></div>
+         @include('frontend.layouts.header')
+         @include('frontend.layouts.banner')
       </div>
-      @include('frontend.layouts.ads')
-
       @yield('content')
       
       @include('frontend.layouts.member')
@@ -58,6 +53,8 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
       <script>
       @if(Session::has('message'))
@@ -134,29 +131,6 @@
          }
 
       </script>
-
-
-
-
-      
-<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7501326586944323601',
-    },
-    componentProps: {
-      title: 'Coze',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_********',
-      onRefreshToken: function () {
-        return 'pat_********'
-      }
-    }
-  });
-</script>
 
    </body>
 </html>

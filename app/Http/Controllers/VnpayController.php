@@ -146,7 +146,7 @@ class VnpayController extends Controller
             'total_amount' => $tt,
             'invoice_no' => $invoice,
             'order_date' => Carbon::now()->format('d F Y'),
-            'status' => 'pending',
+            'status' => 'confirm',
             'created_at' => Carbon::now(),
         ]);
 

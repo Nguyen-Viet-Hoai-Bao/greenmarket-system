@@ -48,7 +48,7 @@
             
             <div class="col-xl-6 col-md-6">
                 <div class="form-group mb-6">
-                    <label for="example-text-input" class="form-label">Giảm Giá</label>
+                    <label for="example-text-input" class="form-label">Giảm Giá (%)</label>
                     <input class="form-control" type="text" name="discount" value="" id="example-text-input">
                 </div>
             </div>

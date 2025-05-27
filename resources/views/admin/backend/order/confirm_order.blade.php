@@ -47,8 +47,12 @@
             <td>{{ $item->invoice_no }}</td>
             <td>{{ $item->amount }}</td>
             <td>{{ $item->payment_method }}</td>
-            <td><span class="badge bg-primary">
-                {{ $item->status }}</span>
+            <td>
+                @if ($item->status == 'confirm')
+                <span class="badge bg-primary">Đã xác nhận</span>
+                @else
+                <span class="badge bg-danger">Không xác định</span>
+                @endif
             </td>
 
             <td class="d-flex align-items-center gap-1">

@@ -13,4 +13,8 @@ class Menu extends Model
     public function products() {
         return $this->hasMany(ProductTemplate::class, 'menu_id', 'id');
     }
+
+    public function categories() {
+        return $this->hasMany(Category::class, 'menu_id', 'id');
+    }
 }

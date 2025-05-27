@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
 use App\Models\Category;
 use App\Models\City;
+use App\Models\Menu;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\GD\Driver;
 use Illuminate\Support\Str;
@@ -15,18 +16,24 @@ use Illuminate\Support\Str;
 class CategoryController extends Controller
 {
     public function AllCategory() {
-        $category = Category::latest()->get();
+        $category = Category::with('menu')->latest()->get();
         return view('admin.backend.category.all_category', compact('category'));
     }
     // End Method
 
     public function AddCategory() {
-        return view('admin.backend.category.add_category');
+        $menus = Menu::all();
+        return view('admin.backend.category.add_category', compact('menus'));
         
     }
     // End Method
 
     public function StoreCategory(Request $request) {
+        $request->validate([
+            'category_name' => 'required|string|max:255',
+            'menu_id' => 'required|exists:menus,id',
+            'image' => 'nullable|image'
+        ]);
         if($request->file('image')){
             $image = $request->file('image');
             $manage = new ImageManager(new Driver());
@@ -39,9 +46,14 @@ class CategoryController extends Controller
 
             Category::create([
                 'category_name' => $request->category_name,
+                'menu_id' => $request->menu_id,
                 'image' => $save_url,
             ]);
-
+        } else {
+            Category::create([
+                'category_name' => $request->category_name,
+                'menu_id' => $request->menu_id,
+            ]);
         }
         
         $notification = array(
@@ -55,7 +67,8 @@ class CategoryController extends Controller
 
     public function EditCategory($id) {
         $category = Category::find($id);
-        return view('admin.backend.category.edit_category', compact('category'));
+        $menus = Menu::all();
+        return view('admin.backend.category.edit_category', compact('category', 'menus'));
 
     }
     // End Method
@@ -75,6 +88,7 @@ class CategoryController extends Controller
 
             Category::find($cat_id)->update([
                 'category_name' => $request->category_name,
+                'menu_id' => $request->menu_id,
                 'image' => $save_url,
             ]);
 
@@ -85,6 +99,7 @@ class CategoryController extends Controller
         } else {
             Category::find($cat_id)->update([
                 'category_name' => $request->category_name,
+                'menu_id' => $request->menu_id,
             ]);
             $notification = array(
                 'message' => 'Update Category Successfully',

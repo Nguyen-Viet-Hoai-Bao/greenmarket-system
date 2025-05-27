@@ -107,17 +107,17 @@
                 <li>
                     <a href="javascript: void(0);" class="has-arrow">
                         <i data-feather="grid"></i>
-                        <span data-key="t-apps">Quản lý thị trường</span>
+                        <span data-key="t-apps">Quản lý cửa hàng</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li>
                             <a href="{{ route('pending.market') }}">
-                                <span data-key="t-calendar">Thị trường chờ duyệt</span>
+                                <span data-key="t-calendar">Cửa hàng chờ duyệt</span>
                             </a>
                         </li>
                         <li>
                             <a href="{{ route('approve.market') }}">
-                                <span data-key="t-chat">Thị trường đã duyệt</span>
+                                <span data-key="t-chat">Cửa hàng đã duyệt</span>
                             </a>
                         </li>
                     </ul>
@@ -130,37 +130,8 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li>
-                            <a href="{{ route('pending.order') }}">
-                                <span data-key="t-calendar">Đơn hàng đang chờ</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('confirm.order') }}">
-                                <span data-key="t-chat">Đơn hàng đã xác nhận</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('processing.order') }}">
-                                <span data-key="t-chat">Đơn hàng đang xử lý</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('delivered.order') }}">
-                                <span data-key="t-chat">Đơn hàng đã giao</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow">
-                        <i data-feather="grid"></i>
-                        <span data-key="t-apps">Quản lý banner</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li>
-                            <a href="{{ route('all.banner') }}">
-                                <span data-key="t-calendar">Tất cả banner</span>
+                            <a href="{{ route('all.orders') }}">
+                                <span data-key="t-calendar">Tất cả đơn hàng</span>
                             </a>
                         </li>
                     </ul>

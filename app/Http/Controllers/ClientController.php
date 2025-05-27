@@ -60,9 +60,9 @@ class ClientController extends Controller
             'password' => $check['password'],
         ];
         if (Auth::guard('client')->attempt($data)) {
-            return redirect()->route('client.dashboard')->with('success', 'Login Successfully');
+            return redirect()->route('client.dashboard')->with('success', 'Đăng nhập thành công');
         }else{
-            return redirect()->route('client.login')->with('error', 'Invalid Creadentials');
+            return redirect()->route('client.login')->with('error', 'Thông tin đăng nhập không hợp lệ');
         }
     }
     //End Method
