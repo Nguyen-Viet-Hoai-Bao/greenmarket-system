@@ -92,16 +92,12 @@
                              <td>{{ $order->payment_method }}</td> 
                          </tr>
                          <tr> 
-                             <th width="50%">Mã giao dịch: </th>
-                             <td>{{ $order->transaction_id }}</td> 
-                         </tr> 
-                         <tr> 
                              <th width="50%">Mã hóa đơn: </th>
                              <td class="text-danger">{{ $order->invoice_no }}</td> 
                          </tr> 
                          <tr> 
                              <th width="50%">Tổng tiền: </th>
-                             <td>${{ $order->amount }}</td> 
+                             <td>{{ number_format($order->amount, 0, ',', '.') }} VNĐ</td> 
                          </tr> 
                          <tr> 
                              <th width="50%">Trạng thái: </th>

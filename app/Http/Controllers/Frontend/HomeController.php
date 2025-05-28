@@ -83,7 +83,7 @@ class HomeController extends Controller
                     $q->where('client_id', $id);
                 })
                 ->with(['productNews' => function ($q) use ($id) {
-                    $q->where('client_id', $id);
+                    $q->where('client_id', $id)->where('qty', '>', 0);
                 }]);
             }
         ])
@@ -138,6 +138,7 @@ class HomeController extends Controller
                         'productTemplate.category'
                     ])
                     ->where('client_id', $topClientId)
+                    ->where('qty', '>', 0)
                     ->orderBy('id', 'desc')
                     ->get();
 
@@ -149,6 +150,7 @@ class HomeController extends Controller
                         'productTemplate.category'
                     ])
                     ->where('client_id', session('selected_market_id'))
+                    ->where('qty', '>', 0)
                     ->orderBy('id', 'desc')
                     ->get();
 

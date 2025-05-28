@@ -13,7 +13,7 @@
                     <h4 class="mb-sm-0 font-size-18">Chỉnh sửa sản phẩm</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript:void(0);">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Bảng thống kê</a></li>
                             <li class="breadcrumb-item active">Chỉnh sửa sản phẩm</li>
                         </ol>
                     </div>

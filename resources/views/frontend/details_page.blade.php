@@ -14,7 +14,16 @@
 
    .star-rating input[type="radio"]:checked + label i,
    .star-rating label:hover i {
-      color: #f39c12; /* màu vàng cho sao được chọn hoặc đang hover */
+      color: #f39c12;
+   }
+
+   .mall-category-item h6 {
+      min-height: 3em; 
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3; 
+      -webkit-box-orient: vertical;
    }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -25,6 +34,7 @@
 //     ->limit(3)
 //     ->get();
 $products = \App\Models\ProductNew::with('productTemplate.menu')
+   ->where('qty', '>', 0)
    ->where('client_id', $client->id)
    ->get()
    ->groupBy(fn($product) => $product->productTemplate?->menu?->id)
@@ -33,7 +43,7 @@ $products = \App\Models\ProductNew::with('productTemplate.menu')
 
 $menuNames = $products->map(function($product) {
     return $product->productTemplate?->menu?->menu_name;
-})->filter()->unique()->toArray();
+})->filter()->unique()->take(5)->toArray();
 
 $menuNamesString = implode('. ', $menuNames);
 
@@ -89,7 +99,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                <button class="btn btn-light btn-sm border-light-btn" type="button" onclick="addWishlist({{ $client->id }})">
                   <i id="heart-icon-{{ $client->id }}" class="icofont-heart {{ $isFavourite ? 'text-danger' : 'text-muted' }}"></i>
                   <span id="favourite-label-{{ $client->id }}">
-                     {{ $isFavourite ? 'Unmark Favourite' : 'Mark as Favourite' }}
+                     {{ $isFavourite ? 'Mark as Favourite' : '' }}
                   </span>
                </button>
             @endauth
@@ -126,11 +136,11 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                      {{-- Most Popular --}}
                      @php
                         $populers = App\Models\ProductNew::with('productTemplate')
+                                    ->where('qty', '>', 0)
                                     ->where('status', 1)
                                     ->where('client_id', $client->id)
                                     ->where('most_popular', 1)
                                     ->orderBy('id', 'desc')
-                                    ->limit(5)
                                     ->get();
                      @endphp
                      <div id="menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
@@ -196,15 +206,75 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                      {{-- Best Sellers --}}
                         @php
                         $bestsellers = App\Models\ProductNew::with('productTemplate')
+                                    ->where('qty', '>', 0)
                                     ->where('status', 1)
                                     ->where('client_id', $client->id)
                                     ->where('best_seller', 1)
                                     ->orderBy('id', 'desc')
-                                    ->limit(3)
                                     ->get();
                         @endphp
 
-                     <div class="row">
+                     <div id="menu" class="bg-white rounded shadow-sm p-3 mb-4 explore-outlets">
+                        <h6 class="mb-3">Bán Chạy Nhất </h6>
+                        <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
+                           @foreach ($bestsellers as $populer)
+                              <div class="item">
+                                    <div class="mall-category-item">
+                                       <a href="{{ route('product.detail', $populer->id) }}">
+                                          <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
+                                          <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
+
+                                          @if ($populer->discount_price == NULL)
+                                                {{ number_format($populer->price, 0, ',', '.') }}
+                                          @else
+                                                <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
+                                                {{ number_format($populer->discount_price, 0, ',', '.') }}
+                                          @endif
+                                       </a>
+
+                                       
+                                       @php
+                                          $cart = session('cart', []);
+                                          $cartItem = $cart[$populer->id] ?? null;
+                                       @endphp
+
+                                       <div class="cart-actions-1">
+                                          @if ($cartItem)
+                                             <div class="d-flex justify-content-center align-items-center mt-2">
+                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                   data-id="{{ $populer->id }}"
+                                                   data-qty="{{ $cartItem['quantity'] - 1 }}">
+                                                   <i class="icofont-minus"></i>
+                                                </button>
+
+                                                {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
+                                                   id="qty-display-{{ $populer->id }}">
+                                                   {{ $cartItem['quantity'] }}
+                                                </span> --}}
+
+                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $populer->id }}">
+                                                   {{ $cartItem['quantity'] }}
+                                                </span>
+
+                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                                   data-id="{{ $populer->id }}"
+                                                   data-qty="{{ $cartItem['quantity'] + 1 }}">
+                                                   <i class="icofont-plus"></i>
+                                                </button>
+                                             </div>
+                                          @else
+                                             <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $populer->id }}">
+                                                <i class="icofont-cart"></i> Thêm vào giỏ
+                                             </button>
+                                          @endif
+                                       </div>
+                                    </div>
+                              </div>
+                           @endforeach
+                        </div>
+                     </div>
+                     
+                     {{-- <div class="row">
                         <h5 class="mb-4 mt-3 col-md-12">Bán Chạy Nhất</h5>
                         @foreach ($bestsellers as $bestseller)
                         <div class="col-md-4 col-sm-6 mb-4">
@@ -213,7 +283,6 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                                  <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
                                  <div class="favourite-heart text-danger position-absolute"><a href="#"><i class="icofont-heart"></i></a></div>
                                  <div class="member-plan position-absolute"><span class="badge badge-dark">Được Quảng Bá</span></div>
-                                 {{-- <a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a> --}}
                                  <a href="{{ route('product.detail', $bestseller->id) }}">
                                     <img src="{{ asset($bestseller->productTemplate->image ?? $bestseller->image) }}" class="img-fluid item-img" alt="">
                                  </a>
@@ -253,12 +322,6 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                                                    data-qty="{{ $cartItem['quantity'] - 1 }}">
                                                    <i class="icofont-minus"></i>
                                                 </button>
-
-                                                {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
-                                                   id="qty-display-{{ $bestseller->id }}">
-                                                   {{ $cartItem['quantity'] }}
-                                                </span> --}}
-                                                
                                                 <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $bestseller->id }}">
                                                    {{ $cartItem['quantity'] }}
                                                 </span>
@@ -281,7 +344,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                            </div>
                         </div>
                         @endforeach
-                     </div>
+                     </div> --}}
                   </div>
 
 {{-- pills-gallery --}}

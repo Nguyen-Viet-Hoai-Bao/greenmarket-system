@@ -225,7 +225,7 @@ class RoleController extends Controller
            $permissionNames = Permission::whereIn('id',$permissions)->pluck('name')->toArray();
            $role->syncPermissions($permissionNames);
         }else {
-            $role->$syncPermissions([]);
+            $role->syncPermissions([]);
         }
 
         $notification = array(

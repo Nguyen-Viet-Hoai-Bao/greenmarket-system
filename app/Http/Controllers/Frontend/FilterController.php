@@ -111,7 +111,7 @@ class FilterController extends Controller
         $productsQuery = ProductNew::with([
             'productTemplate.menu',
             'productTemplate.category'
-        ])->whereHas('productTemplate', function ($query) use ($categoryIds, $menuIds) {
+        ])->where('qty', '>', 0)->whereHas('productTemplate', function ($query) use ($categoryIds, $menuIds) {
             if (!empty($categoryIds)) {
                 $query->whereIn('category_id', $categoryIds);
             }

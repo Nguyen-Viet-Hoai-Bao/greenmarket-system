@@ -11,7 +11,7 @@
               <li>
                   <a href="{{ route('admin.dashboard') }}">
                       <i data-feather="home"></i>
-                      <span data-key="t-dashboard">Bảng điều khiển</span>
+                      <span data-key="t-dashboard">Bảng thống kê</span>
                   </a>
               </li>
 

@@ -38,7 +38,8 @@
         <th>Tên Sản Phẩm</th>
         <th>Danh Mục</th>
         <th>Số Lượng</th>
-        <th>Giá</th>
+        <th>Giá Nhập</th>
+        <th>Giá Bán</th>
         <th>Giá Giảm</th>
         <th>Giảm Giá</th>
         <th>Trạng Thái</th>
@@ -58,6 +59,7 @@
             <td>{{ $item['productTemplate']['name'] }}</td>
             <td>{{ $item['productTemplate']['menu']['menu_name'] }}</td>
             <td>{{ $item->qty }}</td>
+            <td>{{ $item->cost_price }}</td>
             <td>{{ $item->price }}</td>
             <td>{{ $item->discount_price }}</td>
             <td>

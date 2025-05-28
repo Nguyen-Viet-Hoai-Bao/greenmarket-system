@@ -15,6 +15,8 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Admin;
+use App\Models\Client;
+use App\Models\ProductNew;
 
 class VnpayController extends Controller
 {
@@ -22,7 +24,7 @@ class VnpayController extends Controller
     {
         // $this->vnpayOrder($request);
         session([
-            'checkout_data' => $request->only(['name', 'email', 'address', 'phone'])
+            'checkout_data' => $request->only(['name', 'email', 'address', 'phone', 'locality_code'])
         ]);
 
         $vnp_TmnCode = "MDAVGEKQ";
@@ -114,7 +116,10 @@ class VnpayController extends Controller
             'email' => 'required',
             'address' => 'required',
             'phone' => 'required',
+            'locality_code' => 'required',
         ]);
+
+        $clientIds = []; // các client_id của order items
 
         // Calculate total amount from cart
         $cart = session()->get('cart', []);
@@ -138,6 +143,7 @@ class VnpayController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+            'ward_id' => $request->locality_code,
             'address' => $request->address,
             'payment_type' => 'Đã thanh toán bằng VNPay',
             'payment_method' => 'Đã thanh toán bằng VNPay',
@@ -159,6 +165,10 @@ class VnpayController extends Controller
                 'price' => $cart_item['price'],
                 'created_at' => Carbon::now(),
             ]);
+
+            $clientIds[] = $cart_item['client_id'];
+            // Giảm số lượng sản phẩm tương ứng
+            ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
         }
 
         // Clear session data after order is created
@@ -166,7 +176,9 @@ class VnpayController extends Controller
 
         // Notify admin about the order
         Notification::send($user, new OrderComplete($request->name));
-
+        $clients = Client::whereIn('id', array_unique($clientIds))->get();
+        Notification::send($clients, new OrderComplete($request->name));
+        
         // Show confirmation message to the user
         $notification = [
             'message' => 'Đặt hàng thành công',

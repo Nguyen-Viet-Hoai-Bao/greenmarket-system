@@ -95,7 +95,15 @@
                         <!-- Price -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Giá</label>
+                                <label class="form-label">Giá nhập</label>
+                                <input class="form-control" type="text" name="cost_price" value="{{ $product->cost_price }}" placeholder="Enter cost price">
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="col-xl-4 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Giá bán</label>
                                 <input class="form-control" type="text" name="price" value="{{ $product->price }}" placeholder="Enter price">
                             </div>
                         </div>

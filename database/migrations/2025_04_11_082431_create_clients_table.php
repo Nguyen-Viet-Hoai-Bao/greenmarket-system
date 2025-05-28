@@ -25,6 +25,9 @@ return new class extends Migration
             $table->string('status')->default('1');
             $table->rememberToken();
             $table->timestamps();
+            $table->integer('city_id')->nullable();
+            $table->string('shop_info')->nullable();
+            $table->string('cover_photo')->nullable();
         });
     }
 

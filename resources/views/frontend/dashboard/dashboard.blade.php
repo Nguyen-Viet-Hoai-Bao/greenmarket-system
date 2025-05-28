@@ -295,6 +295,12 @@ $(document).on('click', '.btn-change-qty', function () {
                         $(this).data('qty', res.cartItem.quantity + 1);
                     }
                 });
+            } else if (res.status === 'error') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thông báo',
+                    text: res.message ?? 'Không thể cập nhật số lượng.'
+                });
             }
         },
         error: function (xhr) {

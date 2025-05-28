@@ -9,6 +9,10 @@ use App\Models\Client;
 use App\Models\City;
 use App\Models\District;
 use App\Models\Ward;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -67,8 +71,136 @@ class ClientController extends Controller
     }
     //End Method
 
-    public function ClientDashboard() {
-        return view('client.index');
+    public function ClientDashboard()
+    {
+        $clientId = Auth::guard('client')->id();
+
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $endOfThisWeek = Carbon::now()->endOfWeek();
+
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+
+        $calculateStats = function ($startDate, $endDate) use ($clientId) {
+            $orderItems = OrderItem::where('client_id', $clientId)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
+
+            $orderIds = $orderItems->pluck('order_id')->unique();
+
+            $orders = Order::whereIn('id', $orderIds)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
+
+            $totalRevenue = $orders->sum('total_amount');
+            $transactionCount = $orders->count();
+            $investment = $orderItems->sum(function ($item) {
+                return $item->qty * ($item->product->cost_price ?? 0);
+            });
+            $profit = $totalRevenue - $investment;
+            $profitRate = $investment > 0 ? ($profit / $investment) * 100 : 0;
+
+            return [
+                'revenue' => $totalRevenue,
+                'transactions' => $transactionCount,
+                'investment' => $investment,
+                'profit' => $profit,
+                'profitRate' => $profitRate,
+            ];
+        };
+
+        $calculateTotalStats = function () use ($clientId) {
+            $orderItems = OrderItem::where('client_id', $clientId)->get();
+
+            $orderIds = $orderItems->pluck('order_id')->unique();
+
+            $orders = Order::whereIn('id', $orderIds)->get();
+
+            $totalRevenue = $orders->sum('total_amount');
+            $transactionCount = $orders->count();
+            $investment = $orderItems->sum(function ($item) {
+                return $item->qty * ($item->product->cost_price ?? 0);
+            });
+            $profit = $totalRevenue - $investment;
+            $profitRate = $investment > 0 ? ($profit / $investment) * 100 : 0;
+
+            return [
+                'revenue' => $totalRevenue,
+                'transactions' => $transactionCount,
+                'investment' => $investment,
+                'profit' => $profit,
+                'profitRate' => $profitRate,
+            ];
+        };
+
+        $currentWeek = $calculateStats($startOfThisWeek, $endOfThisWeek);
+        $lastWeek = $calculateStats($startOfLastWeek, $endOfLastWeek);
+
+        $totalStats = $calculateTotalStats();
+
+        $diff = [
+            'revenueDiff'      => $currentWeek['revenue'] - $lastWeek['revenue'],
+            'transactionDiff'  => $currentWeek['transactions'] - $lastWeek['transactions'],
+            'investmentDiff'   => $currentWeek['investment'] - $lastWeek['investment'],
+            'profitDiff'       => $currentWeek['profit'] - $lastWeek['profit'],
+            'profitRateDiff'   => $currentWeek['profitRate'] - $lastWeek['profitRate'],
+        ];
+
+        $topProducts = OrderItem::where('client_id', $clientId)
+            ->select('product_id', DB::raw('SUM(qty) as total_qty'))
+            ->groupBy('product_id')
+            ->orderByDesc('total_qty')
+            ->with('product.productTemplate') // eager load liên kết sâu hơn
+            ->take(5)
+            ->get();
+
+        $topOrders = DB::table('orders')
+            ->join('order_items', 'order_items.order_id', '=', 'orders.id')
+            ->select(
+                'orders.id',
+                'orders.name',
+                'orders.email',
+                'orders.phone',
+                'orders.address',
+                'orders.payment_type',
+                'orders.order_date',
+                'orders.status',
+                DB::raw('SUM(order_items.qty * order_items.price) as total_amount')
+            )
+            ->where('order_items.client_id', $clientId)
+            ->groupBy(
+                'orders.id', 
+                'orders.name', 
+                'orders.email', 
+                'orders.phone', 
+                'orders.address', 
+                'orders.payment_type', 
+                'orders.order_date', 
+                'orders.status'
+            )
+            ->orderByDesc('total_amount')
+            ->take(5)
+            ->get();
+
+
+        // dd($topProducts);
+
+        return view('client.index', [
+            'totalRevenue'       => $totalStats['revenue'],
+            'transactionCount'   => $totalStats['transactions'],
+            'investment'         => $totalStats['investment'],
+            'profit'             => $totalStats['profit'],
+            'profitRate'         => $totalStats['profitRate'],
+
+            'revenueDiff'        => $diff['revenueDiff'],
+            'transactionDiff'    => $diff['transactionDiff'],
+            'investmentDiff'     => $diff['investmentDiff'],
+            'profitDiff'         => $diff['profitDiff'],
+            'profitRateDiff'     => $diff['profitRateDiff'],
+
+            'topProducts'        => $topProducts,
+            'topOrders'        => $topOrders,
+        ]);
     }
     //End Method
     

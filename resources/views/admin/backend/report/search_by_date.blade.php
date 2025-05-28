@@ -69,7 +69,7 @@
                   </td>
                 
                  
-         <td><a href="{{ route('admin.order_details',$item->id) }}" class="btn btn-info waves-effect waves-light"> <i class="fas fa-eye"></i> </a> 
+         <td><a href="#" class="btn btn-info waves-effect waves-light"> <i class="fas fa-eye"></i> </a> 
           {{--  --}}
                  </td> 
              </tr>

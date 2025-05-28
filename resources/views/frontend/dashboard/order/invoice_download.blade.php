@@ -100,10 +100,10 @@ Hòa Quý - Ngũ Hành Sơn - Đà Nẵng
             @foreach ($orderItem as $item)
                 <tr class="font">
                     <td align="center">
-                        <img src="{{ public_path($item->product->image) }}" height="60px;" width="60px;" alt="">
+                        <img src="{{ public_path($item->product->productTemplate->image) }}" height="60px;" width="60px;" alt="">
                     </td>
-                    <td align="center">{{ $item->product->name }}</td>
-                    <td align="center">{{ $item->product->code }}</td>
+                    <td align="center">{{ $item->product->productTemplate->name }}</td>
+                    <td align="center">{{ $item->product->productTemplate->code }}</td>
                     <td align="center">{{ $item->qty }}</td>
                     <td align="center">{{ $item->product->client->name }}</td>
                     <td align="center">{{ number_format($item->price, 0, ',', '.') }}</td>

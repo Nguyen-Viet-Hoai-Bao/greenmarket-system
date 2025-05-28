@@ -153,6 +153,7 @@ class MarketController extends Controller
         $validated = $request->validate([
             'product_template_id' => 'required|exists:product_templates,id',
             'qty' => 'required|integer|min:1',
+            'cost_price' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:1000',
             'discount_price' => 'nullable|numeric|min:1000',
             'most_popular' => 'nullable|boolean',
@@ -177,6 +178,7 @@ class MarketController extends Controller
             // Cập nhật: cộng qty và cập nhật giá
             $existingProduct->update([
                 'qty' => $existingProduct->qty + $request->qty,
+                'cost_price' => $request->cost_price,
                 'price' => $request->price,
                 'discount_price' => $request->discount_price,
                 'most_popular' => $request->most_popular ?? $existingProduct->most_popular,
@@ -194,6 +196,7 @@ class MarketController extends Controller
                 'client_id' => $clientId,
                 'product_template_id' => $request->product_template_id,
                 'qty' => $request->qty,
+                'cost_price' => $request->cost_price,
                 'price' => $request->price,
                 'discount_price' => $request->discount_price,
                 'most_popular' => $request->most_popular ?? 0,
@@ -232,6 +235,7 @@ class MarketController extends Controller
         $validated = $request->validate([
             'product_template_id' => 'required|exists:product_templates,id',
             'qty' => 'required|integer|min:1',
+            'cost_price' => 'required|numeric|min:0',
             'price' => 'required|numeric|min:1000',
             'discount_price' => 'nullable|numeric|min:1000',
             'most_popular' => 'nullable|boolean',
@@ -243,6 +247,7 @@ class MarketController extends Controller
         $data = [
             'product_template_id' => $request->product_template_id,
             'qty' => $request->qty,
+            'cost_price' => $request->cost_price,
             'price' => $request->price,
             'discount_price' => $request->discount_price,
             'most_popular' => $request->most_popular ?? 0,
