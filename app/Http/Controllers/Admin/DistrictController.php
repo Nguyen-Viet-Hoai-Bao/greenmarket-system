@@ -11,11 +11,11 @@ use Illuminate\Support\Str;
 class DistrictController extends Controller
 {
     // Tất cả quận/huyện
-    public function AllDistrict()
+    public function AllDistricts()
     {
         $district = District::with('city')->latest()->get();
-        $cities = City::all();
-        return view('admin.backend.district.all_district', compact('district', 'cities'));
+        $city = City::latest()->get();
+        return view('admin.backend.city.all_city', compact('district', 'city'));
     }
 
     // Thêm quận/huyện

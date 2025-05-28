@@ -65,7 +65,7 @@
             <input type="checkbox" class="custom-control-input" id="customCheck1">
             <label class="custom-control-label" for="customCheck1">Ghi nhớ mật khẩu</label>
         </div>
-        <button type="submit" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Đăng nhập</button>
+        <button type="submit" class="btn btn-lg btn-outline-primary btn-block btn-login text-uppercase font-weight-bold mb-2">Đăng ký</button>
         <div class="text-center pt-3">
          Đã có tài khoản? <a class="font-weight-bold" href="{{ route('login') }}">Đăng nhập</a>
         </div>

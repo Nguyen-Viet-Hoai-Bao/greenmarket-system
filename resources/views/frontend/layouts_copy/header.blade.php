@@ -85,7 +85,7 @@
                     <small class="text-info">Extra charges may apply</small>  
                  </div>
                  <div class="dropdown-cart-top-footer border-top p-2">
-                    <a class="btn btn-success btn-block btn-lg" href="checkout.html"> Checkout</a>
+                    <a class="btn btn-success btn-block btn-lg" href="checkout.html"> Thanh toán</a>
                  </div>
               </div>
            </li>

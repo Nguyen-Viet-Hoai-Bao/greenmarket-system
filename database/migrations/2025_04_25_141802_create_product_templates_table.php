@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('size')->nullable();
             $table->string('unit')->nullable();
             $table->string('image')->nullable();
+            $table->integer('status')->default(1)->nullable();
             $table->timestamps();
         });
     }

@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Mail\Websitemail;
 use App\Models\Admin;
 use Illuminate\Support\Facades\DB;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -16,22 +19,143 @@ class AdminController extends Controller
     }
     //End Method
 
-    public function AdminDashboard() {
-        $walletBalance = DB::table('orders')->sum('total_amount');
-        $numberOfOrders = DB::table('orders')->count();
-        $investedAmount = DB::table('order_items')
-            ->select(DB::raw('SUM(qty * price) as total'))
-            ->value('total');
-        
-        $profit = $walletBalance - $investedAmount;
-        $profitRatio = $investedAmount > 0 ? round(($profit / $investedAmount) * 100, 2) : 0;
+    public function AdminDashboard(Request $request)
+    {
+        $branchId = $request->input('branch_id'); // Nếu muốn lọc theo chi nhánh
 
-        return view('admin.index', compact(
-            'walletBalance',
-            'numberOfOrders',
-            'investedAmount',
-            'profitRatio'
-        ));
+        $startOfThisWeek = Carbon::now()->startOfWeek();
+        $endOfThisWeek = Carbon::now()->endOfWeek();
+
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
+
+        // Hàm tính toán số liệu theo thời gian và chi nhánh (nếu có)
+        $calculateStats = function ($startDate, $endDate) use ($branchId) {
+            $orderQuery = Order::whereBetween('created_at', [$startDate, $endDate]);
+
+            if ($branchId) {
+                $orderQuery->where('branch_id', $branchId);
+            }
+
+            $orders = $orderQuery->get();
+            $orderIds = $orders->pluck('id');
+
+            $orderItemsQuery = OrderItem::whereIn('order_id', $orderIds);
+
+            $orderItems = $orderItemsQuery->get();
+
+            $totalRevenue = $orders->sum('total_amount');
+            $transactionCount = $orders->count();
+            $investment = $orderItems->sum(function ($item) {
+                return $item->qty * ($item->product->cost_price ?? 0);
+            });
+            $profit = $totalRevenue - $investment;
+            $profitRate = $investment > 0 ? ($profit / $investment) * 100 : 0;
+
+            return [
+                'revenue' => $totalRevenue,
+                'transactions' => $transactionCount,
+                'investment' => $investment,
+                'profit' => $profit,
+                'profitRate' => $profitRate,
+            ];
+        };
+
+        $calculateTotalStats = function () use ($branchId) {
+            $orderQuery = Order::query();
+
+            if ($branchId) {
+                $orderQuery->where('branch_id', $branchId);
+            }
+
+            $orders = $orderQuery->get();
+            $orderIds = $orders->pluck('id');
+
+            $orderItems = OrderItem::whereIn('order_id', $orderIds)->get();
+
+            $totalRevenue = $orders->sum('total_amount');
+            $transactionCount = $orders->count();
+            $investment = $orderItems->sum(function ($item) {
+                return $item->qty * ($item->product->cost_price ?? 0);
+            });
+            $profit = $totalRevenue - $investment;
+            $profitRate = $investment > 0 ? ($profit / $investment) * 100 : 0;
+
+            return [
+                'revenue' => $totalRevenue,
+                'transactions' => $transactionCount,
+                'investment' => $investment,
+                'profit' => $profit,
+                'profitRate' => $profitRate,
+            ];
+        };
+
+        $currentWeek = $calculateStats($startOfThisWeek, $endOfThisWeek);
+        $lastWeek = $calculateStats($startOfLastWeek, $endOfLastWeek);
+
+        $totalStats = $calculateTotalStats();
+
+        $diff = [
+            'revenueDiff'      => $currentWeek['revenue'] - $lastWeek['revenue'],
+            'transactionDiff'  => $currentWeek['transactions'] - $lastWeek['transactions'],
+            'investmentDiff'   => $currentWeek['investment'] - $lastWeek['investment'],
+            'profitDiff'       => $currentWeek['profit'] - $lastWeek['profit'],
+            'profitRateDiff'   => $currentWeek['profitRate'] - $lastWeek['profitRate'],
+        ];
+
+        
+        $topProducts = OrderItem::select('product_id', DB::raw('SUM(qty) as total_qty'))
+            ->groupBy('product_id')
+            ->orderByDesc('total_qty')
+            ->with('product.productTemplate') // eager load liên kết sâu hơn
+            ->take(5)
+            ->get();
+
+        $topOrders = DB::table('orders')
+            ->join('order_items', 'order_items.order_id', '=', 'orders.id')
+            ->select(
+                'orders.id',
+                'orders.name',
+                'orders.email',
+                'orders.phone',
+                'orders.address',
+                'orders.payment_type',
+                'orders.order_date',
+                'orders.status',
+                DB::raw('SUM(order_items.qty * order_items.price) as total_amount')
+            )
+            ->groupBy(
+                'orders.id', 
+                'orders.name', 
+                'orders.email', 
+                'orders.phone', 
+                'orders.address', 
+                'orders.payment_type', 
+                'orders.order_date', 
+                'orders.status'
+            )
+            ->orderByDesc('total_amount')
+            ->take(5)
+            ->get();
+
+
+        return view('admin.index', [
+            'totalRevenue'       => $totalStats['revenue'],
+            'transactionCount'   => $totalStats['transactions'],
+            'investment'         => $totalStats['investment'],
+            'profit'             => $totalStats['profit'],
+            'profitRate'         => $totalStats['profitRate'],
+
+            'revenueDiff'        => $diff['revenueDiff'],
+            'transactionDiff'    => $diff['transactionDiff'],
+            'investmentDiff'     => $diff['investmentDiff'],
+            'profitDiff'         => $diff['profitDiff'],
+            'profitRateDiff'     => $diff['profitRateDiff'],
+
+            'branchId'           => $branchId, 
+            'topProducts'        => $topProducts, 
+            'topOrders'          => $topOrders, 
+        ]);
     }
     //End Method
     

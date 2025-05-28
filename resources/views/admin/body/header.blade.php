@@ -101,7 +101,7 @@
                     @endphp                   
                 
                     @foreach ($user->notifications as $notification) 
-                        <a href="{{ route('pending.order') }}" class="text-reset notification-item">
+                        <a href="{{ route('all.orders') }}" class="text-reset notification-item">
                             <div class="d-flex {{ $notification->read_at ? 'notification-read' : 'notification-unread' }}" onclick="markNotificationRead('{{ $notification->id }}')">
                                 <div class="flex-shrink-0 avatar-sm me-3">
                                     <span class="avatar-title bg-primary rounded-circle font-size-16">

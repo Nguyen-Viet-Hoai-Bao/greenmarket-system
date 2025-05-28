@@ -117,27 +117,56 @@ class CartController extends Controller
         ]);
     }
 
+    // public function AjaxUpdateCart(Request $request, $id)
+    // {
+    //     $cart = session('cart', []);
+    //     if (isset($cart[$id])) {
+    //         $cart[$id]['quantity'] = (int) $request->quantity;
+    //         session(['cart' => $cart]);
+    //         return response()->json(['status' => 'success', 'cartItem' => $cart[$id]]);
+    //     }
+    //     return response()->json(['status' => 'error']);
+    // }
+
     public function AjaxUpdateCart(Request $request, $id)
     {
         $cart = session('cart', []);
+        
         if (isset($cart[$id])) {
+            $product = ProductNew::find($id); 
+            
+            if (!$product) {
+                return response()->json(['status' => 'error', 'message' => 'Sản phẩm không tồn tại.']);
+            }
+
+            if ($product->qty < (int) $request->quantity) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Cửa hàng chỉ còn ' . $product->qty . ' sản phẩm.'
+                ]);
+            }
+
+            // Nếu đủ số lượng, thì cập nhật
             $cart[$id]['quantity'] = (int) $request->quantity;
             session(['cart' => $cart]);
+
             return response()->json(['status' => 'success', 'cartItem' => $cart[$id]]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Sản phẩm không có trong giỏ hàng.']);
+    }
+
+
+    public function AjaxRemoveFromCart(Request $request, $id)
+    {
+        $cart = session('cart', []);
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            session(['cart' => $cart]);
+            return response()->json(['status' => 'success']);
         }
         return response()->json(['status' => 'error']);
     }
-
-        public function AjaxRemoveFromCart(Request $request, $id)
-        {
-            $cart = session('cart', []);
-            if (isset($cart[$id])) {
-                unset($cart[$id]);
-                session(['cart' => $cart]);
-                return response()->json(['status' => 'success']);
-            }
-            return response()->json(['status' => 'error']);
-        }
 
     public function AjaxReloadCart()
     {

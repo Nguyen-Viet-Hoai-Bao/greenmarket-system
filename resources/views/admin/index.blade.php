@@ -8,12 +8,12 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Dashboard</h4>
+                  <h4 class="mb-sm-0 font-size-18">Bảng thống kê</h4>
 
                   <div class="page-title-right">
                       <ol class="breadcrumb m-0">
-                          <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
-                          <li class="breadcrumb-item active">Dashboard</li>
+                          <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
+                          <li class="breadcrumb-item active">Bảng thống kê</li>
                       </ol>
                   </div>
 
@@ -22,222 +22,167 @@
       </div>
       <!-- end page title -->
 
-      <div class="row">
-          <div class="col-xl-3 col-md-6">
-              <!-- card -->
-              <div class="card card-h-100">
-                  <!-- card body -->
-                  <div class="card-body">
-                      <div class="row align-items-center">
-                          <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">My Wallet</span>
-                              <h4 class="mb-3">
-                                  $<span class="counter-value" data-target="865.2">0</span>k
-                              </h4>
-                          </div>
+    <div class="row">
+        <!-- Ví của tôi -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <span class="text-muted mb-3 lh-1 d-block text-truncate"> Tiền kiếm được</span>
+                            <h4 class="mb-3">
+                                <span class="counter-value" data-target="{{ number_format($totalRevenue / 1000000, 2) }}">
+                                    {{ number_format($totalRevenue / 1000000, 2) }}
+                                </span> triệu
+                            </h4>
+                        </div>
+                        <div class="col-6">
+                            <div id="mini-chart1" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
+                        </div>
+                    </div>
+                    <div class="text-nowrap">
+                        <span class="badge bg-success-subtle text-success">
+                            {{ $revenueDiff >= 0 ? '+' : '' }}{{ number_format($revenueDiff / 1000000, 2) }} triệu
+                        </span>
+                        <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                          <div class="col-6">
-                              <div id="mini-chart1" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
-                          </div>
-                      </div>
-                      <div class="text-nowrap">
-                          <span class="badge bg-success-subtle text-success">+$20.9k</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
-                      </div>
-                  </div><!-- end card body -->
-              </div><!-- end card -->
-          </div><!-- end col -->
+        <!-- Số giao dịch -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <span class="text-muted mb-3 lh-1 d-block text-truncate">Số giao dịch</span>
+                            <h4 class="mb-3">
+                                <span class="counter-value" data-target="{{ $transactionCount }}">
+                                    {{ $transactionCount }}
+                                </span>
+                            </h4>
+                        </div>
+                        <div class="col-6">
+                            <div id="mini-chart2" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
+                        </div>
+                    </div>
+                    <div class="text-nowrap">
+                        <span class="badge bg-danger-subtle text-danger">
+                            {{ $transactionDiff >= 0 ? '+' : '' }}{{ $transactionDiff }} giao dịch
+                        </span>
+                        <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Số tiền đầu tư -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <span class="text-muted mb-3 lh-1 d-block text-truncate">Tổng số tiền vốn</span>
+                            <h4 class="mb-3">
+                                <span class="counter-value" data-target="{{ number_format($profit / 1000000, 2) }}">
+                                    {{ number_format($profit / 1000000, 2) }}
+                                </span> triệu
+                            </h4>
+                        </div>
+                        <div class="col-6">
+                            <div id="mini-chart4" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
+                        </div>
+                    </div>
+                    <div class="text-nowrap">
+                        <span class="badge bg-success-subtle text-success">
+                            {{ $investmentDiff >= 0 ? '+' : '' }}{{ number_format($investmentDiff / 1000000, 2) }} triệu
+                        </span>
+                        <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-          <div class="col-xl-3 col-md-6">
-              <!-- card -->
-              <div class="card card-h-100">
-                  <!-- card body -->
-                  <div class="card-body">
-                      <div class="row align-items-center">
-                          <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Number of Trades</span>
-                              <h4 class="mb-3">
-                                  <span class="counter-value" data-target="6258">0</span>
-                              </h4>
-                          </div>
-                          <div class="col-6">
-                              <div id="mini-chart2" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
-                          </div>
-                      </div>
-                      <div class="text-nowrap">
-                          <span class="badge bg-danger-subtle text-danger">-29 Trades</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
-                      </div>
-                  </div><!-- end card body -->
-              </div><!-- end card -->
-          </div><!-- end col-->
+        <!-- Lợi nhuận -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-h-100">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-6">
+                            <span class="text-muted mb-3 lh-1 d-block text-truncate">Lợi nhuận</span>
+                            <h4 class="mb-3">
+                                <span class="counter-value" data-target="{{ number_format($investment / 1000000, 2) }}">
+                                    {{ number_format($investment / 1000000, 2) }}
+                                </span> triệu
+                            </h4>
+                        </div>
+                        <div class="col-6">
+                            <div id="mini-chart3" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
+                        </div>
+                    </div>
+                    <div class="text-nowrap">
+                        <span class="badge bg-success-subtle text-success">
+                            {{ $profitDiff >= 0 ? '+' : '' }}{{ number_format($profitDiff / 1000000, 2) }} triệu
+                        </span>
+                        <span class="ms-1 text-muted font-size-13">Từ tuần trước</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-          <div class="col-xl-3 col-md-6">
-              <!-- card -->
-              <div class="card card-h-100">
-                  <!-- card body -->
-                  <div class="card-body">
-                      <div class="row align-items-center">
-                          <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Invested Amount</span>
-                              <h4 class="mb-3">
-                                  $<span class="counter-value" data-target="4.32">0</span>M
-                              </h4>
-                          </div>
-                          <div class="col-6">
-                              <div id="mini-chart3" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
-                          </div>
-                      </div>
-                      <div class="text-nowrap">
-                          <span class="badge bg-success-subtle text-success">+ $2.8k</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
-                      </div>
-                  </div><!-- end card body -->
-              </div><!-- end card -->
-          </div><!-- end col -->
+    </div>
+    
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card card-h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Top 5 Best-Selling Products</h5>
+                    <ul class="list-group list-group-flush">
+                        @forelse ($topProducts as $item)
+                            <li class="list-group-item d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ asset($item->product->productTemplate->image ?? 'default.png') }}" alt="{{ $item->product->productTemplate->name }}" style="width:40px; height:auto; margin-right:10px;">
+                                    <div>
+                                        <strong>{{ $item->product->productTemplate->name ?? 'N/A' }}</strong><br>
+                                        <small>Price: ${{ number_format($item->product->price, 2) }} | Qty Sold: {{ $item->total_qty }}</small>
+                                    </div>
+                                </div>
+                            </li>
+                        @empty
+                            <p class="text-muted">No products sold yet.</p>
+                        @endforelse
 
-          <div class="col-xl-3 col-md-6">
-              <!-- card -->
-              <div class="card card-h-100">
-                  <!-- card body -->
-                  <div class="card-body">
-                      <div class="row align-items-center">
-                          <div class="col-6">
-                              <span class="text-muted mb-3 lh-1 d-block text-truncate">Profit Ration</span>
-                              <h4 class="mb-3">
-                                  <span class="counter-value" data-target="12.57">0</span>%
-                              </h4>
-                          </div>
-                          <div class="col-6">
-                              <div id="mini-chart4" data-colors='["#5156be"]' class="apex-charts mb-2"></div>
-                          </div>
-                      </div>
-                      <div class="text-nowrap">
-                          <span class="badge bg-success-subtle text-success">+2.95%</span>
-                          <span class="ms-1 text-muted font-size-13">Since last week</span>
-                      </div>
-                  </div><!-- end card body -->
-              </div><!-- end card -->
-          </div><!-- end col -->    
-      </div><!-- end row-->
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-      <div class="row">
-          <div class="col-xl-5">
-              <!-- card -->
-              <div class="card card-h-100">
-                  <!-- card body -->
-                  <div class="card-body">
-                      <div class="d-flex flex-wrap align-items-center mb-4">
-                          <h5 class="card-title me-2">Wallet Balance</h5>
-                          <div class="ms-auto">
-                              <div>
-                                  <button type="button" class="btn btn-soft-secondary btn-sm">
-                                      ALL
-                                  </button>
-                                  <button type="button" class="btn btn-soft-primary btn-sm">
-                                      1M
-                                  </button>
-                                  <button type="button" class="btn btn-soft-secondary btn-sm">
-                                      6M
-                                  </button>
-                                  <button type="button" class="btn btn-soft-secondary btn-sm">
-                                      1Y
-                                  </button>
-                              </div>
-                          </div>
-                      </div>
-
-                      <div class="row align-items-center">
-                          <div class="col-sm">
-                              <div id="wallet-balance" data-colors='["#777aca", "#5156be", "#a8aada"]' class="apex-charts"></div>
-                          </div>
-                          <div class="col-sm align-self-center">
-                              <div class="mt-4 mt-sm-0">
-                                  <div>
-                                      <p class="mb-2"><i class="mdi mdi-circle align-middle font-size-10 me-2 text-success"></i> Bitcoin</p>
-                                      <h6>0.4412 BTC = <span class="text-muted font-size-14 fw-normal">$ 4025.32</span></h6>
-                                  </div>
-
-                                  <div class="mt-4 pt-2">
-                                      <p class="mb-2"><i class="mdi mdi-circle align-middle font-size-10 me-2 text-primary"></i> Ethereum</p>
-                                      <h6>4.5701 ETH = <span class="text-muted font-size-14 fw-normal">$ 1123.64</span></h6>
-                                  </div>
-
-                                  <div class="mt-4 pt-2">
-                                      <p class="mb-2"><i class="mdi mdi-circle align-middle font-size-10 me-2 text-info"></i> Litecoin</p>
-                                      <h6>35.3811 LTC = <span class="text-muted font-size-14 fw-normal">$ 2263.09</span></h6>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <!-- end card -->
-          </div>
-          <!-- end col -->
-          <div class="col-xl-7">
-              <div class="row">
-                  <div class="col-xl-8">
-                      <!-- card -->
-                      <div class="card card-h-100">
-                          <!-- card body -->
-                          <div class="card-body">
-                              <div class="d-flex flex-wrap align-items-center mb-4">
-                                  <h5 class="card-title me-2">Invested Overview</h5>
-                                  <div class="ms-auto">
-                                      <select class="form-select form-select-sm">
-                                          <option value="MAY" selected="">May</option>
-                                          <option value="AP">April</option>
-                                          <option value="MA">March</option>
-                                          <option value="FE">February</option>
-                                          <option value="JA">January</option>
-                                          <option value="DE">December</option>
-                                      </select>
-                                  </div>
-                              </div>
-
-                              <div class="row align-items-center">
-                                  <div class="col-sm">
-                                      <div id="invested-overview" data-colors='["#5156be", "#34c38f"]' class="apex-charts"></div>
-                                  </div>
-                                  <div class="col-sm align-self-center">
-                                      <div class="mt-4 mt-sm-0">
-                                          <p class="mb-1">Invested Amount</p>
-                                          <h4>$ 6134.39</h4>
-
-                                          <p class="text-muted mb-4"> + 0.0012.23 ( 0.2 % ) <i class="mdi mdi-arrow-up ms-1 text-success"></i></p>
-
-                                          <div class="row g-0">
-                                              <div class="col-6">
-                                                  <div>
-                                                      <p class="mb-2 text-muted text-uppercase font-size-11">Income</p>
-                                                      <h5 class="fw-medium">$ 2632.46</h5>
-                                                  </div>
-                                              </div>
-                                              <div class="col-6">
-                                                  <div>
-                                                      <p class="mb-2 text-muted text-uppercase font-size-11">Expenses</p>
-                                                      <h5 class="fw-medium">-$ 924.38</h5>
-                                                  </div>
-                                              </div>
-                                          </div>
-
-                                          <div class="mt-2">
-                                              <a href="#" class="btn btn-primary btn-sm">View more <i class="mdi mdi-arrow-right ms-1"></i></a>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <!-- end col -->
-
-              </div>
-              <!-- end row -->
-          </div>
-          <!-- end col -->
-      </div> <!-- end row-->
+        <div class="col-xl-6">
+            <div class="card card-h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Top 5 Highest Value Orders</h5>
+                    <ul class="list-group list-group-flush">
+                        @forelse ($topOrders as $order)
+                            <li class="list-group-item">
+                                <div>
+                                    <strong>Order #{{ $order->id }}</strong> — {{ $order->name }} ({{ $order->email }})<br>
+                                    <small>
+                                        Phone: {{ $order->phone }} |
+                                        Date: {{ $order->order_date }} |
+                                        Status: {{ ucfirst($order->status) }}
+                                    </small>
+                                </div>
+                                <span class="badge bg-success rounded-pill float-end">${{ number_format($order->total_amount, 2) }}</span>
+                            </li>
+                        @empty
+                            <p class="text-muted">No orders yet.</p>
+                        @endforelse
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
   </div>
   <!-- container-fluid -->

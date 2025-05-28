@@ -14,6 +14,7 @@ use App\Notifications\OrderComplete;
 use App\Models\ProductNew;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Client;
 use App\Models\Admin;
 
 use App\Models\Menu;
@@ -58,6 +59,7 @@ class OrderController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
+            'ward_id' => $request->locality_code,
             'payment_type' => 'Thanh toán khi nhận hàng',
             'payment_method' => 'Thanh toán khi nhận hàng',
 
@@ -73,6 +75,8 @@ class OrderController extends Controller
             'created_at' => Carbon::now(),
         ]);
 
+        $clientIds = []; // các client_id của order items
+
         $carts = session()->get('cart', []);
         foreach ($carts as $cart_item) {
             OrderItem::insert([
@@ -83,6 +87,11 @@ class OrderController extends Controller
                 'price' => $cart_item['price'],
                 'created_at' => Carbon::now(),
             ]);
+
+            $clientIds[] = $cart_item['client_id'];
+            
+            // Giảm số lượng sản phẩm tương ứng
+            ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
         } // end foreach
 
         if (Session::has('coupon')) {
@@ -93,8 +102,9 @@ class OrderController extends Controller
             Session::forget('cart');
         } 
 
-        // Send Notification to Admin
         Notification::send($user, new OrderComplete($request->name));
+        $clients = Client::whereIn('id', array_unique($clientIds))->get();
+        Notification::send($clients, new OrderComplete($request->name));
         
         $notification = array(
             'message' => 'Đặt hàng thành công',

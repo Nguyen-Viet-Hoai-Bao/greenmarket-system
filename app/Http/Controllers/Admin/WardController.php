@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\City;
 use App\Models\Ward;
 use App\Models\District;
 use Illuminate\Support\Str;
@@ -11,11 +12,11 @@ use Illuminate\Support\Str;
 class WardController extends Controller
 {
     // Tất cả phường/xã
-    public function AllWard()
+    public function AllWards()
     {
-        $ward = Ward::with('district')->latest()->get();
-        $districts = District::with('city')->get();
-        return view('admin.backend.ward.all_ward', compact('ward', 'districts'));
+        $district = District::with('city')->latest()->get();
+        $city = City::latest()->get();
+        return view('admin.backend.city.all_city', compact('district', 'city'));
     }
 
     // Thêm phường/xã

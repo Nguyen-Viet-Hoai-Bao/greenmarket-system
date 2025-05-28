@@ -13,7 +13,7 @@
                     <h4 class="mb-sm-0 font-size-18">Thêm Sản Phẩm</h4>
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript:void(0);">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0);">Bảng thống kê</a></li>
                             <li class="breadcrumb-item active">Thêm Sản Phẩm</li>
                         </ol>
                     </div>
@@ -96,8 +96,19 @@
                         <!-- Additional Field 1 -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <label class="form-label">Giá</label>
-                                <input class="form-control" type="text" name="price" placeholder="Enter price">
+                                <label class="form-label">Giá Nhập</label>
+                                <input class="form-control" type="text" name="cost_price" placeholder="Giá Nhập">
+                                @error('cost_price')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Additional Field 1 -->
+                        <div class="col-xl-4 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Giá Bán</label>
+                                <input class="form-control" type="text" name="price" placeholder="Giá Bán">
                                 @error('price')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -108,7 +119,7 @@
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá Giảm</label>
-                                <input class="form-control" type="text" name="discount_price" placeholder="Enter discount price">
+                                <input class="form-control" type="text" name="discount_price" placeholder="Giá Giảm">
                                 @error('discount_price')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -119,7 +130,7 @@
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Số Lượng</label>
-                                <input class="form-control" type="number" name="qty" placeholder="Enter quantity">
+                                <input class="form-control" type="number" name="qty" placeholder="Số Lượng">
                                 @error('qty')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
