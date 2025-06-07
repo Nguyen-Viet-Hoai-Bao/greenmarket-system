@@ -8,7 +8,7 @@
          <div class="row">
              <div class="col-12">
                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                     <h4 class="mb-sm-0 font-size-18">Tìm kiếm tất cả theo ngày đơn hàng</h4>
+                     <h4 class="mb-sm-0 font-size-18">Tìm kiếm tất cả đơn hàng theo ngày</h4>
  
                      <div class="page-title-right">
                          <ol class="breadcrumb m-0">
@@ -27,13 +27,32 @@
                       
                      <div class="card-body">
          <h3 class="text-danger">Tìm kiếm theo ngày: {{ $formatDate }}</h3>
+         <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="alert alert-primary">
+                    <strong>Tổng Doanh Thu:</strong> {{ number_format($totalAmount, 0, ',', '.') }}đ
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-success">
+                    <strong>Lợi Nhuận Thực Tế:</strong> {{ number_format($totalRevenue, 0, ',', '.') }}đ
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-warning">
+                    <strong>Doanh thu của Admin:</strong> {{ number_format($totalServiceFee, 0, ',', '.') }}đ
+                </div>
+            </div>
+        </div>
          <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
              <thead>
              <tr>
                 <th>STT</th>
                 <th>Ngày</th>
+                <th>Chi nhánh</th>
                 <th>Hóa đơn</th>
                 <th>Số tiền</th>
+                <th>Phí dịch vụ</th>
                 <th>Phương thức thanh toán</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
@@ -43,11 +62,17 @@
  
              <tbody>
             @foreach ($orderDate as $key=> $item)  
+            @php
+                $firstItem = $item->OrderItems->first();
+                $market = $firstItem ? \App\Models\Client::find($firstItem->client_id) : null;
+            @endphp
              <tr>
                  <td>{{ $key+1 }}</td>
                  <td>{{ $item->order_date }}</td>
+                 <td>{{ $market->name ?? 'Không xác định' }}</td>
                  <td>{{ $item->invoice_no }}</td>
                  <td>{{ $item->amount }}</td>
+                 <td>{{ $item->service_fee }}</td>
                  <td>{{ $item->payment_method }}</td>
                  <td>
                     @switch($item->status)

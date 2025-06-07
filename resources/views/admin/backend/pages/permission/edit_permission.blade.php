@@ -50,7 +50,7 @@
                 <option value="Category" {{ $permission->group_name == 'Category' ? 'selected' : '' }}>Danh Mục</option>
                 <option value="City" {{ $permission->group_name == 'City' ? 'selected' : '' }}>Thành Phố</option>
                 <option value="Product" {{ $permission->group_name == 'Product' ? 'selected' : '' }}>Sản Phẩm</option>
-                <option value="Market" {{ $permission->group_name == 'Market' ? 'selected' : '' }}>Chợ</option>
+                <option value="Market" {{ $permission->group_name == 'Market' ? 'selected' : '' }}>Cửa hàng</option>
                 <option value="Banner" {{ $permission->group_name == 'Banner' ? 'selected' : '' }}>Quảng Cáo</option>
                 <option value="Order" {{ $permission->group_name == 'Order' ? 'selected' : '' }}>Đơn Hàng</option>
                 <option value="Reports" {{ $permission->group_name == 'Reports' ? 'selected' : '' }}>Báo Cáo</option>

@@ -13,6 +13,7 @@ use App\Models\ProductNew;
 use App\Models\Coupon;
 use App\Models\Client;
 use App\Models\Menu;
+use App\Models\Order;
 use App\Models\City;
 use Illuminate\Support\Facades\DB;
 
@@ -150,6 +151,7 @@ class CartController extends Controller
             $cart[$id]['quantity'] = (int) $request->quantity;
             session(['cart' => $cart]);
 
+            $this->recalculateCoupon();
             return response()->json(['status' => 'success', 'cartItem' => $cart[$id]]);
         }
 
@@ -165,6 +167,7 @@ class CartController extends Controller
             session(['cart' => $cart]);
             return response()->json(['status' => 'success']);
         }
+        $this->recalculateCoupon();
         return response()->json(['status' => 'error']);
     }
 
@@ -181,6 +184,7 @@ class CartController extends Controller
         $discountAmount = $coupon ? $total * ($coupon['discount'] / 100) : 0;
         $finalAmount = $total - $discountAmount;
 
+        $this->recalculateCoupon();
         return response()->json([
             'html' => view('frontend.cart.partial', compact('cart', 'total', 'coupon', 'discountAmount', 'finalAmount'))->render()
         ]);
@@ -203,6 +207,8 @@ class CartController extends Controller
         }
 
         $clients = Client::where('id', $selectedMarketId)->get()->keyBy('id');
+
+        $this->recalculateCoupon();
 
         try {
             $html = view('frontend.cart.header_partial', compact('cart', 'groupedCart', 'clients', 'total'))->render();
@@ -256,6 +262,7 @@ class CartController extends Controller
     // End Method
 
     public function ApplyCoupon(Request $request) {
+        $user = Auth::guard('web')->user();
         $coupon = Coupon::where('coupon_name', $request->coupon_name)
                         ->where('validity', '>=', Carbon::now()->format('Y-m-d'))
                         ->first();
@@ -271,28 +278,58 @@ class CartController extends Controller
         }
 
         if ($coupon) {
+            $userHasUsedCoupon = Order::where('user_id', $user->id)
+                                    ->where('coupon_code', $coupon->id)
+                                    ->exists();
+
+            if ($userHasUsedCoupon) {
+                return response()->json([
+                    'error' => 'Bạn đã sử dụng mã giảm giá này trước đó.',
+                ]);
+            }
+
             if (count(array_unique($clientIds)) === 1) {
                 $cclientId = $coupon->client_id;
-                if ($cclientId == $clientIds[0]) {
+                if ($cclientId == $clientIds[0] || $cclientId == 0) {
+                    if ($cclientId == 0 && $coupon->quantity_apply <= 0) {
+                        return response()->json([
+                            'error' => 'Mã giảm giá này đã hết lượt sử dụng.',
+                        ]);
+                    }
+                    
+                    $calculatedDiscount = $totalAmount * $coupon->discount / 100;
+                    if ($coupon->max_discount_amount && $calculatedDiscount > $coupon->max_discount_amount) {
+                        $discountAmount = $coupon->max_discount_amount;
+                    } else {
+                        $discountAmount = $calculatedDiscount;
+                    }
+
+                    $coupon->decrement('quantity_apply');
+
+                    // Tính phí giao hàng
+                    $shippingFee = $totalAmount - $discountAmount > 100000 ? 0 : 15000;
+                    Session::put('shipping_fee', $shippingFee);
+
                     Session::put('coupon', [
+                        'coupon_id' => $coupon->id,
                         'coupon_name' => $coupon->coupon_name,
                         'discount' => $coupon->discount,
-                        'discount_amount' => $totalAmount - ($totalAmount * $coupon->discount / 100),
+                        'discount_amount' => $totalAmount - $discountAmount,
                     ]);
                     $couponData = Session()->get('coupon');
                     return response()->json(array(
                         'validity' => true,
-                        'success' => 'Coupon Applied Successfully',
+                        'success' => 'Áp dụng mã giảm giá thành công',
                         'couponData' => $couponData,
                     ));
                 } else {
                     return response()->json([
-                        'error' => 'This Coupon Not Valid for Market',
+                        'error' => 'Mã giảm giá không phù hợp với cửa hàng này',
                     ]);
                 }
             } else {
                 return response()->json([
-                    'error' => 'This Coupon for one of the selected Market',
+                    'error' => 'Vui lòng chọn sản phẩm trước khi áp dụng',
                 ]);
             }
         } else {
@@ -304,9 +341,35 @@ class CartController extends Controller
     // End Method
 
     public function RemoveCoupon() {
+        $couponSession = session()->get('coupon');
+
+        if ($couponSession && isset($couponSession['coupon_id'])) {
+            $coupon = Coupon::find($couponSession['coupon_id']);
+            if ($coupon) {
+                $coupon->increment('quantity_apply');
+            }
+        }
+
         Session::forget('coupon');
+        
+        $cart = session()->get('cart', []);
+        $totalAmount = 0;
+        foreach ($cart as $car) {
+            $totalAmount += ($car['price'] * $car['quantity']);
+        }
+        // Tính phí giao hàng
+        if ($totalAmount === 0) {
+            $shippingFee = 0;
+        } elseif ($totalAmount > 100000) {
+            $shippingFee = 0;
+        } else {
+            $shippingFee = 15000;
+        }
+
+        Session::put('shipping_fee', $shippingFee);
+        
         return response()->json([
-            'success' => 'Coupon Remove Successfully',
+            'success' => 'Xóa mã giảm giá thành công',
         ]);
     }
     // End Method
@@ -314,6 +377,23 @@ class CartController extends Controller
     // logic coupon
     private function recalculateCoupon(){
         if (!Session::has('coupon')) {
+            $cart = session()->get('cart', []);
+            $totalAmount = 0;
+
+            foreach ($cart as $car) {
+                $totalAmount += ($car['price'] * $car['quantity']);
+            }
+
+            // Tính phí giao hàng
+            if ($totalAmount === 0) {
+                $shippingFee = 0;
+            } elseif ($totalAmount > 100000) {
+                $shippingFee = 0;
+            } else {
+                $shippingFee = 15000;
+            }
+
+            Session::put('shipping_fee', $shippingFee);
             return;
         }
 
@@ -331,14 +411,48 @@ class CartController extends Controller
             $totalAmount += ($car['price'] * $car['quantity']);
             $pd = ProductNew::find($car['id']);
             $clid = $pd->client_id;
-            array_push($clientIds, $clid);
+            $clientIds[] = $clid;
+        }
+        
+        if (!$coupon) {
+            Session::forget('coupon');
+            return;
         }
 
-        if ($coupon && count(array_unique($clientIds)) === 1 && $coupon->client_id == $clientIds[0]) {
+        if ($coupon->client_id == 0) {
+            $calculatedDiscount = $totalAmount * $coupon->discount / 100;
+            $discountAmount = ($coupon->max_discount_amount && $calculatedDiscount > $coupon->max_discount_amount)
+                ? $coupon->max_discount_amount
+                : $calculatedDiscount;
+
+            // Tính phí giao hàng
+            if ($totalAmount - $discountAmount > 100000) {
+                $shippingFee = 0;
+            } else {
+                $shippingFee = 15000;
+            }
+            Session::put('shipping_fee', $shippingFee);
+
             Session::put('coupon', [
                 'coupon_name' => $coupon->coupon_name,
                 'discount' => $coupon->discount,
-                'discount_amount' => $totalAmount - ($totalAmount * $coupon->discount / 100),
+                'discount_amount' => $totalAmount - $discountAmount, // ✅ là số tiền còn lại
+            ]);
+        } elseif ($coupon->client_id != 0 && count(array_unique($clientIds)) === 1 && $coupon->client_id == $clientIds[0]) {
+            $discountAmount = $totalAmount * $coupon->discount / 100;
+
+            // Tính phí giao hàng
+            if ($totalAmount - $discountAmount > 100000) {
+                $shippingFee = 0;
+            } else {
+                $shippingFee = 15000;
+            }
+            Session::put('shipping_fee', $shippingFee);
+
+            Session::put('coupon', [
+                'coupon_name' => $coupon->coupon_name,
+                'discount' => $coupon->discount,
+                'discount_amount' => $totalAmount - $discountAmount,
             ]);
         } else {
             Session::forget('coupon');
@@ -364,7 +478,9 @@ class CartController extends Controller
 
 
         if(Auth::check()){
+            $shipping_fee = session()->get('shipping_fee');
             $cart = session()->get('cart', []);
+            $coupon = session()->get('coupon', []);
             $totalAmount = 0;
             foreach ($cart as $car) {
                 $totalAmount += $car['price'];
@@ -372,7 +488,7 @@ class CartController extends Controller
 
             if ($totalAmount > 0) {
 
-                return view('frontend.checkout.view_checkout', compact('cart', 'cities', 'menus_footer', 'products_list'));
+                return view('frontend.checkout.view_checkout', compact('cart', 'cities', 'menus_footer', 'products_list', 'shipping_fee'));
 
             } else {
 

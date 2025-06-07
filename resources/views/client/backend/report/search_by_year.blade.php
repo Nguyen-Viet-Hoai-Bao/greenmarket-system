@@ -27,6 +27,23 @@
                       
                      <div class="card-body">
          <h3 class="text-danger">Tìm Kiếm Theo Năm: {{ $years }}</h3>
+         <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="alert alert-primary">
+                    <strong>Tổng Doanh Thu:</strong> {{ number_format($totalAmount, 0, ',', '.') }}đ
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-warning">
+                    <strong>Phí Dịch Vụ:</strong> {{ number_format($totalServiceFee, 0, ',', '.') }}đ
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-success">
+                    <strong>Lợi Nhuận Thực Tế:</strong> {{ number_format($totalRevenue, 0, ',', '.') }}đ
+                </div>
+            </div>
+        </div>
          <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
              <thead>
              <tr>
@@ -34,6 +51,7 @@
                 <th>Ngày</th>
                 <th>Hóa Đơn</th>
                 <th>Số Tiền</th>
+                <th>Phí dịch vụ</th>
                 <th>Phương Thức Thanh Toán</th> 
                 <th>Trạng Thái</th>
                 <th>Hành Động </th> 
@@ -51,6 +69,7 @@
                         <td>{{ $item->order->order_date }}</td>
                         <td>{{ $item->order->invoice_no }}</td>
                         <td>{{ $item->order->amount }}</td>
+                        <td>{{ $item->order->service_fee }}</td>
                         <td>{{ $item->order->payment_method }}</td>
                         <td>
                             @switch($item->order->status)

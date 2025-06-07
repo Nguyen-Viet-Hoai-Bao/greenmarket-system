@@ -21,6 +21,10 @@ use App\Models\ProductDetail;
 use App\Models\Client;
 use App\Models\Banner;
 
+use App\Mail\ClientApprovedMailer;
+use App\Mail\ClientRejectedMailer;
+use App\Mail\ClientBlockedMailer;
+use App\Mail\ClientUnblockedMailer;
 class ManageController extends Controller
 {
     
@@ -197,13 +201,52 @@ class ManageController extends Controller
     }
     // End Method
 
-    public function ClientChangeStatus(Request $request) {
-        $client = Client::find($request->client_id);
-        $client->status = $request->status;
-        $client->save();
-        return response()->json(['success' => 'Status Change Successfully']);
+    public function RejectedMarket() {
+        $client = Client::where('status', 2)->get();
+        return view('admin.backend.market.rejected_market', compact('client'));    
     }
     // End Method
+
+    public function SuspendedMarket() {
+        $client = Client::where('status', 3)->get();
+        return view('admin.backend.market.suspended_market', compact('client'));    
+    }
+    // End Method
+
+    public function ClientChangeStatus(Request $request)
+    {
+        $client = Client::find($request->client_id);
+
+        if (!$client) {
+            return response()->json(['error' => 'Client not found']);
+        }
+
+        $oldStatus = $client->status;
+        $newStatus = $request->status;
+
+        $client->status = $newStatus;
+        $client->save();
+
+        if ($oldStatus == 0 && $newStatus == 1) {
+            // Được duyệt
+            
+            ClientApprovedMailer::send($client);
+        } elseif ($oldStatus == 2 && $newStatus == 1) {
+            // Không được duyệt
+            ClientApprovedMailer::send($client);
+        } elseif ($oldStatus == 0 && $newStatus == 2) {
+            // Không được duyệt
+            ClientRejectedMailer::send($client);
+        } elseif ($oldStatus == 1 && $newStatus == 3) {
+            // Bị khóa
+            ClientBlockedMailer::send($client);
+        } elseif ($oldStatus == 3 && $newStatus == 1) {
+            // Mở lại
+            ClientUnblockedMailer::send($client);
+        }
+
+        return response()->json(['success' => 'Cập nhật trạng thái cửa hàng thành công']);
+    }
 
     public function ApproveMarket() {
         $client = Client::where('status', 1)->get();

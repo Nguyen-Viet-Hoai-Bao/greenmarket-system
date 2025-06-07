@@ -16,74 +16,44 @@ class ReviewController extends Controller
 {
     public function VerifyOrderForReview(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'order_code' => 'required|string',
-            'order_email' => 'required|email',
-            'client_id' => 'required|exists:clients,id', // client_id của cửa hàng ĐANG ĐƯỢC ĐÁNH GIÁ
-        ]);
+        $user = Auth::guard('web')->user();
+        $clientId = $request->input('client_id');
 
-        if ($validator->fails()) {
+        if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Dữ liệu không hợp lệ.',
-                'errors' => $validator->errors()
-            ], 422);
+                'message' => 'Bạn cần đăng nhập để đánh giá.'
+            ], 401);
         }
 
-        $orderCode = $request->input('order_code');
-        $orderEmail = $request->input('order_email');
-        $requestedClientId = (int) $request->input('client_id');
-
+        // Tìm đơn hàng đã giao có sản phẩm thuộc client này
         $order = Order::with(['OrderItems.product.client'])
-                      ->where('invoice_no', $orderCode)
-                      ->where('email', $orderEmail)
-                      ->where('status', 'delivered')
-                      ->first();
+                    ->where('user_id', $user->id)
+                    ->where('status', 'delivered')
+                    ->whereHas('OrderItems.product', function ($query) use ($clientId) {
+                        $query->where('client_id', $clientId);
+                    })
+                    ->latest()
+                    ->first();
 
-        if (!$order) {
+        // Kiểm tra xem người dùng đã từng đánh giá đơn hàng nào của cửa hàng này chưa
+        $reviewedOrder = Review::where('user_id', $user->id)
+            ->whereHas('order.OrderItems.product', function ($query) use ($clientId) {
+                $query->where('client_id', $clientId);
+            })
+            ->first();
+
+        if ($reviewedOrder) {
             return response()->json([
                 'success' => false,
-                'message' => 'Mã số đơn hàng hoặc email không chính xác, hoặc đơn hàng chưa được giao.'
+                'message' => 'Bạn đã đánh giá cửa hàng này rồi. Không thể đánh giá thêm.'
             ]);
         }
 
-        // *********** THAY THẾ KIỂM TRA HAS_REVIEW BẰNG TRUY VẤN BẢNG REVIEWS ***********
-        $existingReview = Review::where('order_id', $order->id)->first();
-        if ($existingReview) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Đơn hàng này đã được đánh giá rồi. Mỗi đơn hàng chỉ được đánh giá một lần.'
-            ]);
-        }
-        // ********************************************************************************
-
-        // Logic kiểm tra đơn hàng có thuộc cửa hàng này không
-        $belongsToRequestedClient = false;
-        if ($order->OrderItems->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Đơn hàng không có sản phẩm hợp lệ để đánh giá.'
-            ]);
-        }
-
-        foreach ($order->OrderItems as $item) {
-            if ($item->product && $item->product->client && (int)$item->product->client->id === $requestedClientId) {
-                $belongsToRequestedClient = true;
-                break;
-            }
-        }
-
-        if (!$belongsToRequestedClient) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Đơn hàng này không chứa sản phẩm từ cửa hàng bạn đang xem.'
-            ]);
-        }
-
-        // Nếu tất cả các kiểm tra đều thành công
+        // Nếu chưa từng đánh giá -> cho phép đánh giá
         return response()->json([
             'success' => true,
-            'message' => 'Xác thực đơn hàng thành công! Vui lòng để lại đánh giá của bạn.',
+            'message' => 'Bạn có thể gửi đánh giá cho cửa hàng này.',
             'order_id' => $order->id
         ]);
     }
@@ -124,7 +94,9 @@ class ReviewController extends Controller
      // End Method 
 
      public function AdminApproveReview(){
-        $approveReview = Review::where('status',1)->orderBy('id','desc')->get();
+        $approveReview = Review::where('status',1)
+                                ->with(['user', 'client', 'reviewReport'])
+                                ->orderBy('id','desc')->get();
         return view('admin.backend.review.view_approve_review',compact('approveReview'));
     }
      // End Method  

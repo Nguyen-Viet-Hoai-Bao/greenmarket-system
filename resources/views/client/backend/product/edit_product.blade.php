@@ -91,36 +91,68 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Price -->
+                        <!-- Giá nhập -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá nhập</label>
-                                <input class="form-control" type="text" name="cost_price" value="{{ $product->cost_price }}" placeholder="Enter cost price">
+                                <input 
+                                    class="form-control @error('cost_price') is-invalid @enderror" 
+                                    type="text" 
+                                    name="cost_price" 
+                                    value="{{ old('cost_price', $product->cost_price) }}" 
+                                    placeholder="Enter cost price"
+                                >
+                                @error('cost_price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
-
-                        <!-- Price -->
+                        <!-- Giá bán -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá bán</label>
-                                <input class="form-control" type="text" name="price" value="{{ $product->price }}" placeholder="Enter price">
+                                <input 
+                                    class="form-control @error('price') is-invalid @enderror" 
+                                    type="text" 
+                                    name="price" 
+                                    value="{{ old('price', $product->price) }}" 
+                                    placeholder="Enter price"
+                                >
+                                @error('price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
-                
-                        <!-- Discount Price -->
+                        <!-- Giá giảm giá -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá giảm giá</label>
-                                <input class="form-control" type="text" name="discount_price" value="{{ $product->discount_price }}" placeholder="Enter discount price">
+                                <input 
+                                    class="form-control @error('discount_price') is-invalid @enderror" 
+                                    type="text" 
+                                    name="discount_price" 
+                                    value="{{ old('discount_price', $product->discount_price) }}" 
+                                    placeholder="Enter discount price"
+                                >
+                                @error('discount_price')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
-                
-                        <!-- Quantity -->
+                        <!-- Số lượng -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Số lượng</label>
-                                <input class="form-control" type="number" name="qty" value="{{ $product->qty }}" placeholder="Enter quantity">
+                                <input 
+                                    class="form-control @error('qty') is-invalid @enderror" 
+                                    type="number" 
+                                    name="qty" 
+                                    value="{{ old('qty', $product->qty) }}" 
+                                    placeholder="Enter quantity"
+                                >
+                                @error('qty')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                 

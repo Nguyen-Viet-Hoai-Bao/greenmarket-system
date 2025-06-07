@@ -11,7 +11,7 @@
       <div class="row">
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Phê Duyệt Chợ</h4>
+                  <h4 class="mb-sm-0 font-size-18">Cửa hàng đã duyệt</h4>
               </div>
           </div>
       </div>
@@ -27,7 +27,7 @@
     <tr>
         <th>STT</th>
         <th>Hình Ảnh</th>
-        <th>Tên Chợ</th>
+        <th>Tên Cửa Hàng</th>
         <th>Email</th>
         <th>Số Điện Thoại</th>
         <th>Trạng Thái</th>
@@ -62,8 +62,8 @@
                   data-toggle="toggle" 
                   data-onstyle="success" 
                   data-offstyle="danger" 
-                  data-on="Active" 
-                  data-off="Inactive" 
+                  data-on="Khóa" 
+                  data-off="Mở khóa" 
                   {{ $item->status ? 'checked' : '' }}>
             </td>
         </tr>
@@ -85,7 +85,7 @@
 <script type="text/javascript">
   $(function() {
     $('.toggle-class').change(function() {
-        var status = $(this).prop('checked') == true ? 1 : 0; 
+        var status = $(this).prop('checked') == true ? 1 : 3; 
         var client_id = $(this).data('id'); 
          
         $.ajax({

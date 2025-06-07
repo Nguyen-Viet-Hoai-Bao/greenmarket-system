@@ -60,7 +60,7 @@
             </div>
             <div class="p-3 position-relative">
                <div class="list-card-body">
-                  <h6 class="mb-1"><a href="detail.html" class="text-black">Nhà Hàng Osahan
+                  <h6 class="mb-1"><a href="detail.html" class="text-black">Cửa hàng Osahan
                      </a>
                   </h6>
                   <p class="text-gray mb-3">Miền Bắc • Hamburger • Thuần Chay</p>
@@ -84,7 +84,7 @@
             </div>
             <div class="p-3 position-relative">
                <div class="list-card-body">
-                  <h6 class="mb-1"><a href="detail.html" class="text-black">Nhà Hàng Stan's
+                  <h6 class="mb-1"><a href="detail.html" class="text-black">Cửa hàng Stan's
                      </a>
                   </h6>
                   <p class="text-gray mb-3">Bắc Ấn • Ấn Độ • Thuần Chay</p>

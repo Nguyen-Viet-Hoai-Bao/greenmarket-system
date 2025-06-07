@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\OrderProcessing;
+use App\Notifications\OrderDelivered;
+use App\Notifications\OrderCancelledBySystem;
+use App\Notifications\OrderCancelled;
 
 use App\Models\ProductNew;
 use App\Models\City;
@@ -16,6 +21,7 @@ use App\Models\Menu;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\AdminWallet;
 use Illuminate\Support\Facades\DB;
 
 class ManageOrderController extends Controller
@@ -131,33 +137,70 @@ class ManageOrderController extends Controller
     // End Method
 
     public function ConfirmToProcessing($id) {
-        Order::find($id)->update(['status' => 'processing']);
-        
-        $notification = array(
+        $order = Order::with('user')->find($id);
+        if (!$order) {
+            return redirect()->back()->withErrors('Không tìm thấy đơn hàng.');
+        }
+
+        $order->update(['status' => 'processing']);
+
+        $user = $order->user;
+        if ($user) {
+            Notification::send($user, new OrderProcessing($order->invoice_no));
+        }
+
+        $notification = [
             'message' => 'Đơn hàng đang được xử lý',
-            'alert-type' => 'success'
-        );
+            'alert-type' => 'success',
+        ];
+
         return redirect()->route('processing.order')->with($notification);
     }
     // End Method
 
-    public function ProcessingToDiliverd($id) {
-        Order::find($id)->update(['status' => 'delivered']);
-        
-        $notification = array(
+    public function ProcessingToDiliverd($id)
+    {
+        $order = Order::findOrFail($id);
+
+        $order->update(['status' => 'delivered']);
+
+        $serviceFee = $order->service_fee ?? 0;
+
+        if ($serviceFee > 0) {
+            $latestWallet = AdminWallet::latest()->first();
+
+            $totalIncome = ($latestWallet->total_income ?? 0) + $serviceFee;
+            $totalExpense = $latestWallet->total_expense ?? 0;
+            $balance = $totalIncome - $totalExpense;
+
+            AdminWallet::create([
+                'type' => 'income',
+                'amount' => $serviceFee,
+                'description' => 'Phí dịch vụ từ đơn hàng #' . $order->invoice_no,
+                'total_income' => $totalIncome,
+                'total_expense' => $totalExpense,
+                'balance' => $balance,
+            ]);
+        }
+
+        $user = $order->user;
+        if ($user) {
+            Notification::send($user, new OrderDelivered($order->invoice_no));
+        }
+
+        $notification = [
             'message' => 'Đơn hàng đã được giao thành công',
             'alert-type' => 'success'
-        );
+        ];
+
         return redirect()->route('delivered.order')->with($notification);
     }
-    // End Method
 
     public function AllOrders() {
         $orderItemGroupData = OrderItem::with(['product', 'order'])
                                         ->orderBy('order_id', 'desc')
                                         ->get()
                                         ->groupBy('order_id');
-                        
         return view('admin.backend.order.all_orders', 
                     compact('orderItemGroupData'));
     }
@@ -270,7 +313,7 @@ class ManageOrderController extends Controller
 
     public function CancelOrderByClient(Request $request,$id)
     {
-        $order = Order::find($id);
+        $order = Order::with('user')->find($id);
 
         if (!$order || $order->status == 'delivered') {
             return redirect()->back()->with('error', 'Không thể huỷ đơn đã giao.');
@@ -283,20 +326,34 @@ class ManageOrderController extends Controller
                                 : 'CỬA HÀNG HỦY do lý do đặc biệt',
 
         ]);
-
+        
+        $user = $order->user;
+        if ($user) {
+            Notification::send($user, new OrderCancelledBySystem($order->invoice_no, $order->cancel_reason));
+        }
+        
         return redirect()->back()->with('success', 'Đã huỷ đơn hàng thành công.');
     }
 
     public function CancelPendingOrderByClient($id)
     {
-        $order = Order::find($id);
+        $order = Order::with('user')->find($id);
+        if (!$order) {
+            return redirect()->back()->withErrors('Không tìm thấy đơn hàng.');
+        }
 
         $order->update([
             'status' => 'cancelled',
         ]);
+        
+        $user = $order->user;
+        if ($user) {
+            Notification::send($user, new OrderCancelledBySystem($order->invoice_no, $order->cancel_reason));
+        }
 
         return redirect()->back()->with('success', 'Đã huỷ đơn hàng thành công.');
     }
+    // End Method
      
     public function UserInvoiceDownload($id){
         $order = Order::with('user')

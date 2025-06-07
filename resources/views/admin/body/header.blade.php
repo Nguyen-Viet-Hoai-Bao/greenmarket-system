@@ -94,7 +94,7 @@
                           </div>
                       </div>
                   </div>
-                  <div data-simplebar style="max-height: 230px;">
+                  <div data-simplebar style="max-height: 460px; overflow-y: auto;">
                     
                     @php
                         $user = Auth::guard('admin')->user();
@@ -191,4 +191,41 @@
             console.log('Error', error);
         });
     }
+</script>
+<script>
+    function fetchNotifications() {
+        fetch('/admin/notifications')
+            .then(res => res.json())
+            .then(data => {
+                document.querySelector('.badge.bg-danger').innerText = data.count;
+                
+                let dropdown = document.querySelector('[data-simplebar]');
+                dropdown.innerHTML = '';
+
+                data.notifications.forEach(noti => {
+                    let readClass = noti.read_at ? 'notification-read' : 'notification-unread';
+                    dropdown.innerHTML += `
+                        <a href="/admin/orders" class="text-reset notification-item">
+                            <div class="d-flex ${readClass}" onclick="markNotificationRead('${noti.id}')">
+                                <div class="flex-shrink-0 avatar-sm me-3">
+                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                        <i class="bx bx-cart"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">${noti.message}</h6>
+                                    <div class="font-size-13 text-muted">
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>${noti.created_at}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                });
+            });
+    }
+
+    setInterval(fetchNotifications, 5000);
+
+    document.addEventListener('DOMContentLoaded', fetchNotifications);
 </script>

@@ -53,7 +53,7 @@
 
                      <!-- Khu vực -->
                      <div class="col-lg-3 col-md-6 col-sm-12 form-group">
-                        <label for="areaSelect" class="text-white">Khu vực</label>
+                        <label for="areaSelect" class="text-white">Quận/Huyện</label>
                         <select class="custom-select form-control-lg" name="area_code" id="areaSelect"
                               onchange="onAreaChange(this)">
                            <option value="">-- Chọn quận/huyện --</option>
@@ -62,7 +62,7 @@
 
                      <!-- Địa bàn -->
                      <div class="col-lg-3 col-md-6 col-sm-12 form-group">
-                        <label for="localitySelect" class="text-white">Địa bàn</label>
+                        <label for="localitySelect" class="text-white">Phường/Xã</label>
                         <select class="custom-select form-control-lg" name="locality_code" id="localitySelect"
                               onchange="onLocalityChange(this)">
                            <option value="">-- Chọn phường/xã --</option>
@@ -129,13 +129,13 @@
         const branch = document.getElementById('branchSelect');
 
         area.innerHTML = '<option>Đang tải...</option>';
-        locality.innerHTML = '<option>-- Chọn địa bàn --</option>';
+        locality.innerHTML = '<option>-- Chọn Phường/Xã --</option>';
         branch.innerHTML = '<option>-- Chọn chi nhánh --</option>';
 
         if (provinceId) {
             const res = await fetch(`/get-districts/${provinceId}`);
             const data = await res.json();
-            area.innerHTML = '<option>-- Chọn khu vực --</option>';
+            area.innerHTML = '<option>-- Chọn Quận/Huyện --</option>';
             data.forEach(item => {
                 area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
             });
@@ -153,7 +153,7 @@
         if (areaId) {
             const res = await fetch(`/get-wards/${areaId}`);
             const data = await res.json();
-            locality.innerHTML = '<option>-- Chọn địa bàn --</option>';
+            locality.innerHTML = '<option>-- Chọn Phường/Xã --</option>';
             data.forEach(item => {
                 locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
             });

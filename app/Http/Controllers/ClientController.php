@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ClientRegisterMailer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -23,25 +24,33 @@ class ClientController extends Controller
     //End Method
 
     public function ClientRegister() {
-        return view('client.client_register');
+        $cities = City::all();
+        return view('client.client_register', compact('cities'));
     }
     //End Method
 
     public function ClientRegisterSubmit(Request $request) {
         $request->validate([
             'name' => ['required', 'string', 'max:200'],
-            'email' => ['required', 'string', 'unique:clients'
-            ]
+            'phone' => ['required', 'regex:/^0\d{9}$/', 'unique:clients,phone'], 
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:clients,email'],
+            'password' => ['required', 'string', 'min:6'],
+            'locality_code' => ['required', 'exists:wards,id'],
+            'address' => ['required', 'string', 'max:255'],
         ]);
         Client::insert([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
-            'ward_id' => $request->ward_id,
+            'ward_id' => $request->locality_code,
             'password' => Hash::make($request->password),
             'role' => 'client',
             'status' => '0',
+        ]);
+        ClientRegisterMailer::send((object)[
+            'name' => $request->name,
+            'email' => $request->email,
         ]);
 
         $notification = array(

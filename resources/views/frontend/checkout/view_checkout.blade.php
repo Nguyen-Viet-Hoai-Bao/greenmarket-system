@@ -45,7 +45,7 @@
             <div class="pt-2"></div>
               <div class="bg-white rounded shadow-sm p-4 osahan-payment">
                  <h4 class="mb-1">Chọn phương thức thanh toán</h4>
-                 <h6 class="mb-3 text-black-50">Thẻ Tín Dụng/Ghi Nợ</h6>
+                 <h6 class="mb-3 text-black-50">Thanh toán trực tuyến/Tiền mặt</h6>
                  <div class="row">
                     <div class="col-sm-4 pr-0">
                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -66,6 +66,20 @@
                     </div>
                     <div class="col-sm-8 pl-0">
                        <div class="tab-content h-100" id="v-pills-tabContent">
+
+                        
+  @php
+    $total_1 = 0; // Khởi tạo tổng số tiền
+    // Kiểm tra nếu giỏ hàng có tồn tại trong session
+    if (session('cart')) {
+        // Duyệt qua từng sản phẩm trong giỏ hàng
+        foreach (session('cart') as $id => $details) {
+            // Tính tổng giá trị của giỏ hàng
+            $total_1 += (float) $details['price'] * (int) $details['quantity'];
+        }
+        $total_1 += Session()->get('shipping_fee');
+    }
+  @endphp
 
   <div class="tab-pane fade show active" id="v-pills-cash" role="tabpanel" aria-labelledby="v-pills-cash-tab">
     <h6 class="mb-3 mt-0">Tiền mặt</h6>
@@ -105,7 +119,7 @@
 
         <!-- Khu vực -->
         <div class="form-group col-md-6">
-            <label for="areaSelect">Khu vực*</label>
+            <label for="areaSelect">Quận/Huyện*</label>
             <select class="custom-select form-control" name="area_code" id="cashAreaSelect" onchange="onCashAreaChange(this)" required>
                 <option value="">-- Chọn quận/huyện --</option>
             </select>
@@ -113,7 +127,7 @@
 
         <!-- Địa bàn -->
         <div class="form-group col-md-6">
-            <label for="localitySelect">Địa bàn*</label>
+            <label for="localitySelect">Phường/Xã*</label>
             <select class="custom-select form-control" name="locality_code" id="cashLocalitySelect" onchange="onCashLocalityChange(this)" required>
                 <option value="">-- Chọn phường/xã --</option>
             </select>
@@ -122,6 +136,19 @@
         <div class="form-group col-md-12">
             <label for="address">Số nhà, tên đường*</label>
             <input type="text" class="form-control" name="address" value="{{ Auth::user()->address }}" required>
+        </div>
+      </div>
+      <div class="form-group">
+          <label for="amount">Số tiền (VNĐ)</label>
+          <input type="number" name="amount" class="form-control" value="{{ $total_1 }}" placeholder="Nhập số tiền" readonly>
+      </div>
+      <div class="form-group mt-3">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="cashAgreeCheckbox">
+          <label class="form-check-label" for="cashAgreeCheckbox">
+            Tôi đồng ý với '<a href="{{ route('personal.data.policy') }}" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>'
+            {{-- Tôi đồng ý với '<a href="#" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>' --}}
+          </label>
         </div>
       </div>
 
@@ -177,17 +204,6 @@
     </form>
   </div>
 
-  @php
-    $total_1 = 0; // Khởi tạo tổng số tiền
-    // Kiểm tra nếu giỏ hàng có tồn tại trong session
-    if (session('cart')) {
-        // Duyệt qua từng sản phẩm trong giỏ hàng
-        foreach (session('cart') as $id => $details) {
-            // Tính tổng giá trị của giỏ hàng
-            $total_1 += (float) $details['price'] * (int) $details['quantity'];
-        }
-    }
-  @endphp
 
   <div class="tab-pane fade" id="v-pills-vnpay" role="tabpanel" aria-labelledby="v-pills-vnpay-tab">
     <h6 class="mb-3 mt-0">Thanh toán VNPay</h6>
@@ -222,7 +238,7 @@
 
           <!-- Khu vực -->
           <div class="form-group col-md-6">
-              <label for="areaSelect">Khu vực*</label>
+              <label for="areaSelect">Quận/Huyện*</label>
               <select class="custom-select form-control" name="area_code" id="areaSelect" onchange="onAreaChange(this)" required>
                   <option value="">-- Chọn quận/huyện --</option>
               </select>
@@ -230,7 +246,7 @@
 
           <!-- Địa bàn -->
           <div class="form-group col-md-6">
-              <label for="localitySelect">Địa bàn*</label>
+              <label for="localitySelect">Phường/Xã*</label>
               <select class="custom-select form-control" name="locality_code" id="localitySelect" onchange="onLocalityChange(this)" required>
                   <option value="">-- Chọn phường/xã --</option>
               </select>
@@ -244,6 +260,15 @@
         <div class="form-group">
             <label for="amount">Số tiền (VNĐ)</label>
             <input type="number" name="amount" class="form-control" value="{{ $total_1 }}" placeholder="Nhập số tiền" readonly>
+        </div>
+        <div class="form-group mt-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="vnpayAgreeCheckbox">
+            <label class="form-check-label" for="vnpayAgreeCheckbox">
+              Tôi đồng ý với '<a href="{{ route('personal.data.policy') }}" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>'
+              {{-- Tôi đồng ý với '<a href="#" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>' --}}
+            </label>
+          </div>
         </div>
         <button type="submit" class="btn btn-success btn-block btn-lg">Thanh toán qua VNPay
             <i class="icofont-long-arrow-right"></i>
@@ -389,14 +414,19 @@
           </div>
         </div>
         @endif
-
-  
-
+            <div class="mb-2 bg-white rounded p-2 d-flex align-items-center">
+                <i class="fas fa-shipping-fast fa-2x mr-2" style="color: #28a745;"></i> <p class="mb-0 flex-grow-1 text-right">
+                    Phí giao hàng: 
+                    <strong class="text-dark">
+                        {{ number_format(Session::get('shipping_fee', 0), 0, ',', '.') }} VNĐ
+                    </strong>
+                </p>
+            </div>
               <a href="#" class="btn btn-success btn-block btn-lg">
                 THANH TOÁN  @if (Session::has('coupon'))
-                      {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
+                      {{ number_format(Session()->get('coupon')['discount_amount'] + Session()->get('shipping_fee'), 0, ',', '.') }} VNĐ
                     @else
-                      {{ number_format($total, 0, ',', '.') }} VNĐ
+                      {{ number_format($total + Session()->get('shipping_fee'), 0, ',', '.') }} VNĐ
                     @endif
               <i class="icofont-long-arrow-right"></i></a>
            </div>
@@ -493,6 +523,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const vnpayInputs = vnpayForm.querySelectorAll('[required]');
     const vnpaySubmitButton = vnpayForm.querySelector('button[type="submit"]');
 
+    const vnpayAgreeCheckbox = document.getElementById('vnpayAgreeCheckbox');
+
     function validateVnpayForm() {
         let isValid = true;
         vnpayInputs.forEach(input => {
@@ -507,6 +539,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+        if (!vnpayAgreeCheckbox.checked) {
+            isValid = false;
+        }
         vnpaySubmitButton.disabled = !isValid;
     }
 
@@ -526,12 +561,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const locality = document.getElementById('localitySelect');
 
         area.innerHTML = '<option value="">Đang tải...</option>';
-        locality.innerHTML = '<option value="">-- Chọn địa bàn --</option>';
+        locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
 
         if (provinceId) {
             const res = await fetch(`/get-districts/${provinceId}`);
             const data = await res.json();
-            area.innerHTML = '<option value="">-- Chọn khu vực --</option>';
+            area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
             data.forEach(item => {
                 area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
             });
@@ -548,7 +583,90 @@ document.addEventListener('DOMContentLoaded', function () {
         if (areaId) {
             const res = await fetch(`/get-wards/${areaId}`);
             const data = await res.json();
-            locality.innerHTML = '<option value="">-- Chọn địa bàn --</option>';
+            locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            data.forEach(item => {
+                locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
+            });
+        }
+        validateVnpayForm(); // validate lại
+    }
+
+    // Trường hợp người dùng chọn lại từ đầu, cũng cần gọi lại validate
+    document.getElementById('localitySelect').addEventListener('change', validateVnpayForm);
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const vnpayForm = document.getElementById('vnpay-form');
+    const vnpayInputs = vnpayForm.querySelectorAll('[required]');
+    const vnpaySubmitButton = vnpayForm.querySelector('button[type="submit"]');
+    // Lấy tham chiếu đến checkbox đồng ý của form VNPay
+    const vnpayAgreeCheckbox = document.getElementById('vnpayAgreeCheckbox');
+
+    function validateVnpayForm() {
+        let isValid = true;
+        vnpayInputs.forEach(input => {
+            const value = input.value;
+            if (input.tagName === 'SELECT') {
+                if (!value || value === '') {
+                    isValid = false;
+                }
+            } else {
+                if (!value.trim()) {
+                    isValid = false;
+                }
+            }
+        });
+        // Thêm điều kiện kiểm tra checkbox đồng ý
+        if (!vnpayAgreeCheckbox.checked) {
+            isValid = false;
+        }
+        vnpaySubmitButton.disabled = !isValid;
+    }
+
+    // Gắn sự kiện khi người dùng thay đổi dữ liệu
+    vnpayInputs.forEach(input => {
+        input.addEventListener('input', validateVnpayForm);
+        input.addEventListener('change', validateVnpayForm);
+    });
+
+    // Gắn sự kiện cho checkbox đồng ý
+    vnpayAgreeCheckbox.addEventListener('change', validateVnpayForm);
+
+    // Gọi hàm kiểm tra ban đầu
+    validateVnpayForm();
+
+    // Gọi validate lại sau khi dữ liệu được load động từ API
+    window.onProvinceChange = async function (selectElement) {
+        const provinceId = selectElement.value;
+        const area = document.getElementById('areaSelect');
+        const locality = document.getElementById('localitySelect');
+
+        area.innerHTML = '<option value="">Đang tải...</option>';
+        locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+
+        if (provinceId) {
+            const res = await fetch(`/get-districts/${provinceId}`);
+            const data = await res.json();
+            area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            data.forEach(item => {
+                area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
+            });
+        }
+        validateVnpayForm(); // validate lại
+    }
+
+    window.onAreaChange = async function (selectElement) {
+        const areaId = selectElement.value;
+        const locality = document.getElementById('localitySelect');
+
+        locality.innerHTML = '<option value="">Đang tải...</option>';
+
+        if (areaId) {
+            const res = await fetch(`/get-wards/${areaId}`);
+            const data = await res.json();
+            locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
             data.forEach(item => {
                 locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
             });
@@ -566,6 +684,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const cashForm = document.getElementById('cash-form');
     const cashInputs = cashForm.querySelectorAll('[required]');
     const cashSubmitButton = cashForm.querySelector('button[type="submit"]');
+    // Lấy tham chiếu đến checkbox đồng ý của form Cash
+    const cashAgreeCheckbox = document.getElementById('cashAgreeCheckbox');
 
     function validateCashForm() {
         let isValid = true;
@@ -581,6 +701,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+        // Thêm điều kiện kiểm tra checkbox đồng ý
+        if (!cashAgreeCheckbox.checked) {
+            isValid = false;
+        }
         cashSubmitButton.disabled = !isValid;
     }
 
@@ -588,6 +712,9 @@ document.addEventListener('DOMContentLoaded', function () {
         input.addEventListener('input', validateCashForm);
         input.addEventListener('change', validateCashForm);
     });
+
+    // Gắn sự kiện cho checkbox đồng ý
+    cashAgreeCheckbox.addEventListener('change', validateCashForm);
 
     validateCashForm();
 
@@ -597,12 +724,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const locality = document.getElementById('cashLocalitySelect');
 
         area.innerHTML = '<option value="">Đang tải...</option>';
-        locality.innerHTML = '<option value="">-- Chọn địa bàn --</option>';
+        locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
 
         if (provinceId) {
             const res = await fetch(`/get-districts/${provinceId}`);
             const data = await res.json();
-            area.innerHTML = '<option value="">-- Chọn khu vực --</option>';
+            area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
             data.forEach(item => {
                 area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
             });
@@ -620,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (areaId) {
             const res = await fetch(`/get-wards/${areaId}`);
             const data = await res.json();
-            locality.innerHTML = '<option value="">-- Chọn địa bàn --</option>';
+            locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
             data.forEach(item => {
                 locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
             });

@@ -29,7 +29,7 @@
                   <div class="container">
                      <div class="row">
                         <div class="col-md-9 col-lg-8 mx-auto pl-5 pr-5">
-                           <h3 class="login-heading mb-4">Chào mừng bạn trở lại!</h3>
+                           <h3 class="login-heading mb-4">Bạn chưa có tài khoản?</h3>
     @if ($errors->any())
         @foreach ($errors->all() as $error)
         <li>{{ $error }}</li>

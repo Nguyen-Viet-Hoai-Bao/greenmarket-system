@@ -12,13 +12,13 @@
           <div class="col-12">
               <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                   <h4 class="mb-sm-0 font-size-18">Tất Cả Sản Phẩm</h4>
+                        <div class="page-title-right">
+                            <a href="{{ route('add.product') }}" 
+                            class="btn btn-info waves-effect waves-light me-2">Thêm Sản Phẩm</a>
 
-                  <div class="page-title-right">
-                      <ol class="breadcrumb m-0">
-                        <a href="{{ route('add.product') }}" 
-                            class="btn btn-info waves-effect waves-light">Thêm Sản Phẩm</a>
-                      </ol>
-                  </div>
+                            <a href="{{ route('add.product.multi') }}"  
+                            class="btn btn-primary waves-effect waves-light">Thêm Hàng Loạt</a>
+                        </div>
 
               </div>
           </div>
@@ -50,7 +50,7 @@
 
     <tbody>
       @foreach ($product as $key=>$item)
-        <tr>
+        <tr @if($item->qty < 10) class="table-warning" @endif>
             <td>{{ $key+1 }}</td>
             <td>
               <img src="{{ asset($item['productTemplate']['image']) }}" 
@@ -81,23 +81,22 @@
                 @endif
             </td>
             <td class="d-flex align-items-center gap-1">
-<a href="{{ route('edit.product', $item->id) }}"
-    class="btn btn-info waves-effect waves-light">
-    <i class="fas fa-edit"></i>
-</a>
-<a href="{{ route('delete.product', $item->id) }}" 
-    class="btn btn-danger waves-effect waves-light" id="delete">
-    <i class="fas fa-trash"></i>
-</a>
-<input data-id="{{ $item->id }}" 
-    class="toggle-class" type="checkbox" 
-    data-toggle="toggle" 
-    data-onstyle="success" 
-    data-offstyle="danger" 
-    data-on="Active" 
-    data-off="Inactive" 
-    {{ $item->status ? 'checked' : '' }}>
-
+                <a href="{{ route('edit.product', $item->id) }}"
+                    class="btn btn-info waves-effect waves-light">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{{ route('delete.product', $item->id) }}" 
+                    class="btn btn-danger waves-effect waves-light" id="delete">
+                    <i class="fas fa-trash"></i>
+                </a>
+                <input data-id="{{ $item->id }}" 
+                        class="toggle-class" type="checkbox" 
+                        data-toggle="toggle" 
+                        data-onstyle="success" 
+                        data-offstyle="danger" 
+                        data-on="Active" 
+                        data-off="Inactive" 
+                        {{ $item->status ? 'checked' : '' }}>
             </td>
         </tr>
       @endforeach

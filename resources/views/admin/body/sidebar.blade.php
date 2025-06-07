@@ -120,6 +120,16 @@
                                 <span data-key="t-chat">Cửa hàng đã duyệt</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('rejected.market') }}">
+                                <span data-key="t-ban">Cửa hàng từ chối duyệt</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('suspended.market') }}">
+                                <span data-key="t-lock">Cửa hàng đã khóa</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 
@@ -136,6 +146,26 @@
                         </li>
                     </ul>
                 </li>
+                
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow">
+                        <i data-feather="grid"></i>
+                        <span data-key="t-apps">Mã giảm giá</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li>
+                            <a href="{{ route('admin.all.coupon') }}">
+                                <span data-key="t-calendar">Tất cả mã giảm giá</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('admin.add.coupon') }}">
+                                <span data-key="t-chat">Thêm mã giảm giá</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
                 <li class="menu-title mt-2" data-key="t-components">Phần tử</li>
 
@@ -148,15 +178,44 @@
                         <li><a href="{{ route('admin.all.reports') }}" data-key="t-alerts">Tất cả báo cáo</a></li>
                     </ul>
                 </li>
-
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow">
+                        <i data-feather="briefcase"></i>
+                        <span data-key="t-components">Quản lý thu chi</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('admin.wallet.report') }}" data-key="t-alerts">Báo cáo thu chi</a></li>
+                    </ul>
+                </li>
                 <li>
                     <a href="javascript: void(0);" class="has-arrow">
                         <i data-feather="gift"></i>
-                        <span data-key="t-ui-elements">Quản lý đánh giá</span>
+                        <span data-key="t-ui-elements">Quản lý đánh giá cửa hàng</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                             <li><a href="{{ route('admin.pending.review') }}" data-key="t-lightbox">Đánh giá chờ duyệt</a></li>
                             <li><a href="{{ route('admin.approve.review') }}" data-key="t-range-slider">Đánh giá đã duyệt</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow">
+                        <i data-feather="gift"></i>
+                        <span data-key="t-ui-elements">Quản lý đánh giá sản phẩm</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="{{ route('admin.pending.product.review') }}" data-key="t-lightbox">Đánh giá chờ duyệt</a></li>
+                            <li><a href="{{ route('admin.approve.product.review') }}" data-key="t-range-slider">Đánh giá đã duyệt</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow">
+                        <i data-feather="gift"></i>
+                        <span data-key="t-ui-elements">Quản lý báo cáo vấn đề </span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                            <li><a href="{{ route('admin.order.report') }}" data-key="t-range-slider">Báo cáo đơn hàng</a></li>
                     </ul>
                 </li>
 
@@ -188,15 +247,6 @@
 
           </ul>
 
-          <div class="card sidebar-alert border-0 text-center mx-4 mb-0 mt-5">
-              <div class="card-body">
-                  <img src="assets/images/giftbox.png" alt="">
-                  <div class="mt-4">
-                      <h5 class="alertcard-title font-size-16">Truy cập không giới hạn</h5>
-                      <p class="font-size-13">Nâng cấp kế hoạch của bạn từ thử nghiệm miễn phí lên “Kế hoạch doanh nghiệp”.</p>
-                  </div>
-              </div>
-          </div>
       </div>
       <!-- Sidebar -->
   </div>
