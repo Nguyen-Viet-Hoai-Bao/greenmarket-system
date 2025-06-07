@@ -42,7 +42,7 @@
         @endforeach   
         @endif
     </div>
-    <div class="dropdown-cart-top-footer border-top p-4">
+    <div class="dropdown-cart-top-footer border-top p-2">
         <p class="mb-0 font-weight-bold text-secondary">
         Tổng Tiền 
         <span class="float-right text-dark">
@@ -50,6 +50,26 @@
                 {{ number_format(Session()->get('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
             @else
                 {{ number_format($total, 0, ',', '.') }} VNĐ
+            @endif
+        </span>
+        </p>
+    </div>
+    <div class="dropdown-cart-top-footer border-top p-2">
+        <p class="mb-0 font-weight-bold text-secondary">
+            Phí Giao Hàng
+            <span class="float-right text-dark">
+                {{ number_format(Session::get('shipping_fee', 0), 0, ',', '.') }} VNĐ
+            </span>
+        </p>
+    </div>
+    <div class="dropdown-cart-top-footer border-top p-2">
+        <p class="mb-0 font-weight-bold text-secondary">
+        Tổng Thanh Toán
+        <span class="float-right text-dark">
+            @if (Session::has('coupon'))
+                {{ number_format(Session()->get('coupon')['discount_amount'] + Session::get('shipping_fee'), 0, ',', '.') }} VNĐ
+            @else
+                {{ number_format($total + Session::get('shipping_fee'), 0, ',', '.') }} VNĐ
             @endif
         </span>
         </p>

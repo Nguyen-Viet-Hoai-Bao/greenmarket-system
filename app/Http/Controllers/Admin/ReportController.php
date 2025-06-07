@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Coupon;
 use App\Models\OrderItem;
 use App\Models\Order;
+use App\Models\AdminWallet;
 use DateTime;
 
 class ReportController extends Controller
@@ -25,12 +26,22 @@ class ReportController extends Controller
     public function AdminSearchBydate(Request $request) {
         $date = new DateTime($request->date);
         
-        $formatDate = $date->format('d F Y');
+        $formatDate = $date->format('d M Y');
         $orderDate = Order::where('order_date', $formatDate)
                             ->latest()
                             ->get();
 
-        return view('admin.backend.report.search_by_date', compact('orderDate', 'formatDate'));
+        $totalRevenue = 0;
+        $totalAmount = 0;
+        $totalServiceFee = 0;
+
+        foreach ($orderDate as $orderGroup) {
+            $totalAmount += $orderGroup->total_amount;
+            $totalRevenue += $orderGroup->net_revenue;
+            $totalServiceFee += $orderGroup->service_fee;
+        }
+
+        return view('admin.backend.report.search_by_date', compact('orderDate', 'formatDate', 'totalServiceFee', 'totalRevenue', 'totalAmount'));
     }
     // End Method
     
@@ -38,12 +49,22 @@ class ReportController extends Controller
         $month = $request->month;
         $years = $request->year_name;
         
-        $orderMonth = Order::where('order_month', $month)
+        $orderMonth = Order::where('order_month', $month)->with('OrderItems')
                             ->where('order_year', $years)
                             ->latest()
                             ->get();
 
-        return view('admin.backend.report.search_by_month', compact('orderMonth', 'month', 'years'));
+        $totalRevenue = 0;
+        $totalAmount = 0;
+        $totalServiceFee = 0;
+
+        foreach ($orderMonth as $orderGroup) {
+            $totalAmount += $orderGroup->total_amount;
+            $totalRevenue += $orderGroup->net_revenue;
+            $totalServiceFee += $orderGroup->service_fee;
+        }
+
+        return view('admin.backend.report.search_by_month', compact('orderMonth', 'month', 'years', 'totalServiceFee', 'totalRevenue', 'totalAmount'));
     }
     // End Method
     
@@ -54,10 +75,33 @@ class ReportController extends Controller
                             ->latest()
                             ->get();
 
-        return view('admin.backend.report.search_by_year', compact('orderYear', 'year'));
+        
+        $totalRevenue = 0;
+        $totalAmount = 0;
+        $totalServiceFee = 0;
+
+        foreach ($orderYear as $orderGroup) {
+            $totalAmount += $orderGroup->total_amount;
+            $totalRevenue += $orderGroup->net_revenue;
+            $totalServiceFee += $orderGroup->service_fee;
+        }
+
+        return view('admin.backend.report.search_by_year', compact('orderYear', 'year', 'totalServiceFee', 'totalRevenue', 'totalAmount'));
     }
     // End Method
     
+    public function AdminWalletReport()
+    {
+        $wallets = AdminWallet::orderBy('created_at', 'desc')->get();
+
+        $latest = AdminWallet::latest()->first();
+
+        $totalIncome = $latest?->total_income ?? 0;
+        $totalExpense = $latest?->total_expense ?? 0;
+        $balance = $latest?->balance ?? 0;
+
+        return view('admin.backend.report.admin_wallet', compact('wallets', 'totalIncome', 'totalExpense', 'balance'));
+    }
 
 
     //////////////////// CLIENT REPORT ////////////////////
@@ -68,7 +112,7 @@ class ReportController extends Controller
     
     public function ClientSearchBydate(Request $request) {
         $date = new DateTime($request->date);
-        $formatDate = $date->format('d F Y');
+        $formatDate = $date->format('d M Y');
 
         $client_id = Auth::guard('client')->id();
 
@@ -86,7 +130,20 @@ class ReportController extends Controller
                                         ->get()
                                         ->groupBy('order_id');
 
-        return view('client.backend.report.search_by_date', compact('orderItemGroupData', 'formatDate'));
+        $totalRevenue = 0;
+        $totalAmount = 0;
+        $totalServiceFee = 0;
+
+        foreach ($orderItemGroupData as $orderGroup) {
+            foreach ($orderGroup as $item) {
+                $totalAmount += $item->order->total_amount;
+                $totalRevenue += $item->order->net_revenue;
+                $totalServiceFee += $item->order->service_fee;
+                break; // mỗi order tính 1 lần
+            }
+        }
+
+        return view('client.backend.report.search_by_date', compact('orderItemGroupData', 'formatDate', 'totalRevenue', 'totalServiceFee', 'totalAmount'));
     }
     // End Method
     
@@ -110,7 +167,20 @@ class ReportController extends Controller
                                         ->get()
                                         ->groupBy('order_id');
 
-        return view('client.backend.report.search_by_month',compact('orderItemGroupData','month','years'));
+        $totalRevenue = 0;
+        $totalAmount = 0;
+        $totalServiceFee = 0;
+
+        foreach ($orderItemGroupData as $orderGroup) {
+            foreach ($orderGroup as $item) {
+                $totalAmount += $item->order->total_amount;
+                $totalRevenue += $item->order->net_revenue;
+                $totalServiceFee += $item->order->service_fee;
+                break; // mỗi order tính 1 lần
+            }
+        }
+
+        return view('client.backend.report.search_by_month',compact('orderItemGroupData','month','years', 'totalRevenue', 'totalServiceFee', 'totalAmount'));
     }
       // End Method 
 
@@ -134,7 +204,20 @@ class ReportController extends Controller
                                         ->get()
                                         ->groupBy('order_id');
 
-        return view('client.backend.report.search_by_year',compact('orderItemGroupData','years'));
+        $totalRevenue = 0;
+        $totalAmount = 0;
+        $totalServiceFee = 0;
+
+        foreach ($orderItemGroupData as $orderGroup) {
+            foreach ($orderGroup as $item) {
+                $totalAmount += $item->order->total_amount;
+                $totalRevenue += $item->order->net_revenue;
+                $totalServiceFee += $item->order->service_fee;
+                break; // mỗi order tính 1 lần
+            }
+        }
+
+        return view('client.backend.report.search_by_year',compact('orderItemGroupData','years', 'totalRevenue', 'totalServiceFee', 'totalAmount'));
     }
       // End Method 
 

@@ -4,7 +4,7 @@
     <head>
 
         <meta charset="utf-8" />
-        <title>Client Register</title>
+        <title>Đăng ký trở thành cửa hàng</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
         <meta content="Themesbrand" name="author" />
@@ -34,8 +34,8 @@
                             <div class="w-100">
                                 <div class="d-flex flex-column h-100">
                                     <div class="mb-4 mb-md-5 text-center">
-                                        <a href="index.html" class="d-block auth-logo">
-                                            <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="28"> <span class="logo-txt">Client Register</span>
+                                        <a href="#" class="d-block auth-logo">
+                                            <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="28"> <span class="logo-txt">Đăng ký trở thành cửa hàng</span>
                                         </a>
                                     </div>
                                     <div class="auth-content my-auto">
@@ -68,10 +68,31 @@
                       <label class="form-label">Số điện thoại</label>
                       <input type="text" name="phone" class="form-control" id="phone" placeholder="Nhập số điện thoại">
                   </div>
-                  <div class="mb-3">
-                      <label class="form-label">Địa chỉ</label>
-                      <input type="text" name="address" class="form-control" id="address" placeholder="Nhập địa chỉ">
-                  </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tỉnh/Thành phố*</label>
+                        <select class="form-control" name="province_code" id="provinceSelect" onchange="onProvinceChange(this)" required>
+                            <option value="">-- Chọn tỉnh/thành phố --</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">{{ $city->city_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quận/Huyện*</label>
+                        <select class="form-control" name="area_code" id="areaSelect" onchange="onAreaChange(this)" required>
+                            <option value="">-- Chọn quận/huyện --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phường/Xã*</label>
+                        <select class="form-control" name="locality_code" id="localitySelect" required>
+                            <option value="">-- Chọn phường/xã --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số nhà, tên đường*</label>
+                        <input type="text" class="form-control" name="address" placeholder="Nhập địa chỉ chi tiết" required>
+                    </div>
                   <div class="mb-3">
                       <label class="form-label">Email</label>
                       <input type="email" name="email" class="form-control" id="email" placeholder="Nhập email">
@@ -181,6 +202,44 @@
         <script src="{{ asset('backend/assets/libs/pace-js/pace.min.js') }}"></script>
         <!-- password addon init -->
         <script src="{{ asset('backend/assets/js/pages/pass-addon.init.js') }}"></script>
+
+        <script>
+            window.onProvinceChange = async function (selectElement) {
+                const provinceId = selectElement.value;
+                const area = document.getElementById('areaSelect');
+                const locality = document.getElementById('localitySelect');
+
+                area.innerHTML = '<option value="">Đang tải...</option>';
+                locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+
+                if (provinceId) {
+                    const res = await fetch(`/get-districts/${provinceId}`);
+                    const data = await res.json();
+
+                    area.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+                    data.forEach(item => {
+                        area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
+                    });
+                }
+            }
+
+            window.onAreaChange = async function (selectElement) {
+                const areaId = selectElement.value;
+                const locality = document.getElementById('localitySelect');
+
+                locality.innerHTML = '<option value="">Đang tải...</option>';
+
+                if (areaId) {
+                    const res = await fetch(`/get-wards/${areaId}`);
+                    const data = await res.json();
+
+                    locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                    data.forEach(item => {
+                        locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
+                    });
+                }
+            }
+        </script>
 
     </body>
 

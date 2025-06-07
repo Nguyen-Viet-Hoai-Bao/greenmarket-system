@@ -11,11 +11,16 @@ use Illuminate\Support\Facades\Notification;
 use Carbon\Carbon;
 
 use App\Notifications\OrderComplete;
+use App\Notifications\OrderPlaced;
+use App\Notifications\OrderCancelRequested;
+use App\Notifications\OrderCancelRequestedByUser;
+
 use App\Models\ProductNew;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Client;
 use App\Models\Admin;
+use App\Models\OrderReport;
 
 use App\Models\Menu;
 use App\Models\City;
@@ -25,7 +30,7 @@ class OrderController extends Controller
 {
     public function CashOrder(Request $request) {
 
-        $user = Admin::where('role', 'admin')
+        $admin = Admin::where('role', 'admin')
                         ->get();
 
         $validateData = $request->validate([
@@ -36,17 +41,32 @@ class OrderController extends Controller
         ]);
 
         $cart = session()->get('cart', []);
+        $shipping_fee = session()->get('shipping_fee');
         $totalAmount = 0;
+        $totalCostPrice = 0;
 
         foreach ($cart as $car) {
             $totalAmount += ($car['price'] * $car['quantity']);
+
+            // Lấy cost_price
+            $product = ProductNew::find($car['id']);
+            $costPrice = $product->cost_price ?? 0;
+
+            $totalCostPrice += ($costPrice * $car['quantity']);
         }
+        // Tính phí dịch vụ 8% của tổng đơn
+        $serviceFee = $totalAmount * 0.08;
 
         if (Session()->has('coupon')) {
+            $coupon_code = (Session()->get('coupon')['coupon_id']);
             $tt = (Session()->get('coupon')['discount_amount']);
         } else {
             $tt = $totalAmount;
+            $coupon_code = null;
         }
+
+        // Tính net_revenue
+        $netRevenue = $tt - $serviceFee - $totalCostPrice;
 
         do {
             $invoice = 'Green' . mt_rand(10000000, 99999999);
@@ -65,10 +85,14 @@ class OrderController extends Controller
 
             'currency' => 'VNĐ',
             'amount' => $totalAmount,
-            'total_amount' => $tt,
+            'total_amount' => $tt + $shipping_fee,
+            'coupon_code' => $coupon_code,
+            'service_fee'    => $serviceFee,
+            'shipping_fee'    => $shipping_fee,
+            'net_revenue'    => $netRevenue + $shipping_fee,
             'invoice_no' => $invoice,
-            'order_date' => Carbon::now()->format('d F Y'),
-            'order_month' => Carbon::now()->format('F'),
+            'order_date' => Carbon::now()->format('d M Y'),
+            'order_month' => Carbon::now()->format('M'),
             'order_year' => Carbon::now()->format('Y'),
 
             'status' => 'confirm',
@@ -92,6 +116,8 @@ class OrderController extends Controller
             
             // Giảm số lượng sản phẩm tương ứng
             ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
+            // Tăng số lượng đã bán
+            ProductNew::where('id', $cart_item['id'])->increment('sold', $cart_item['quantity']);
         } // end foreach
 
         if (Session::has('coupon')) {
@@ -102,7 +128,14 @@ class OrderController extends Controller
             Session::forget('cart');
         } 
 
-        Notification::send($user, new OrderComplete($request->name));
+        if (Session::has('shipping_fee')) {
+            Session::forget('shipping_fee');
+        } 
+
+        $user = Auth::guard('web')->user();
+        Notification::send($user, new OrderPlaced($invoice));
+
+        Notification::send($admin, new OrderComplete($request->name));
         $clients = Client::whereIn('id', array_unique($clientIds))->get();
         Notification::send($clients, new OrderComplete($request->name));
         
@@ -235,6 +268,7 @@ class OrderController extends Controller
     public function CancelOrder(Request $request, $id)
     {
         $order = Order::where('id', $id)
+                        ->with('user', 'OrderItems')
                         ->where('user_id', Auth::id())
                         ->first();
 
@@ -250,10 +284,51 @@ class OrderController extends Controller
             'status' => 'cancel_pending',
             'cancel_reason' => $request->cancel_reason ?? 'Người dùng huỷ',
         ]);
+        
+        $user = $order->user;
+        if ($user) {
+            Notification::send($user, new OrderCancelRequested($order->invoice_no));
+        }
+
+        $firstOrderItem = $order->OrderItems->first();
+        if ($firstOrderItem) {
+            $client = Client::where('id', $firstOrderItem->client_id)
+                        ->first();
+            Notification::send($client, new OrderCancelRequestedByUser($order->invoice_no, $order->cancel_reason));
+        }
 
         return redirect()->route('user.order.list')->with('success', 'Huỷ đơn hàng thành công.');
     }
 
+    public function ReportOrder(Request $request, Order $order)
+    {
+        $user = Auth::guard('web')->user();
+        $order = Order::with('orderItems')->find($order->id);
+        $clientId = $order->orderItems->first()->client_id ?? null;
+
+        if ($order->status !== 'delivered') {
+            return redirect()->back()->with('error', 'Chỉ có thể báo cáo với đơn hàng đã hoàn tất.');
+        }
+
+        $existingReport = OrderReport::where('order_id', $order->id)->first();
+        if ($existingReport) {
+            return redirect()->back()->with('error', 'Đơn hàng này đã có báo cáo, không thể báo cáo thêm.');
+        }
+
+        $request->validate([
+            'report_content' => 'required|string|max:1000',
+        ]);
+
+        OrderReport::create([
+            'order_id' => $order->id,
+            'client_id' => $clientId, 
+            'issue_type' => $request->issue_type,
+            'content' => $request->report_content,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Báo cáo của bạn đã được gửi. Chúng tôi sẽ xử lý sớm nhất.');
+    }
 
     public function CheckoutThanks(){
         $notification = array(
@@ -280,6 +355,28 @@ class OrderController extends Controller
 
     public function MarkAsRead(Request $request, $notificationId){
         $user = Auth::guard('admin')->user();
+        $notification = $user->notifications()->where('id',$notificationId)->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['count' => $user->unreadNotifications()->count()]);
+    }
+    //End Method 
+
+    public function ClientMarkAsRead(Request $request, $notificationId){
+        $user = Auth::guard('client')->user();
+        $notification = $user->notifications()->where('id',$notificationId)->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['count' => $user->unreadNotifications()->count()]);
+    }
+    //End Method 
+
+    public function UserMarkAsRead(Request $request, $notificationId){
+        $user = Auth::guard('web')->user();
         $notification = $user->notifications()->where('id',$notificationId)->first();
 
         if ($notification) {

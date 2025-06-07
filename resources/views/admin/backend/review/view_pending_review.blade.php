@@ -30,10 +30,11 @@
              <tr>
                 <th>STT</th>
                 <th>Người dùng</th>
-                <th>Nhà hàng</th>
+                <th>Cửa hàng</th>
                 <th>Ý kiến</th>
                 <th>Đánh giá</th>                
                 <th>Trạng thái</th> 
+                <th>Yêu cầu ẩn</th>
                 <th>Thao tác</th> 
              </tr>
              </thead>
@@ -58,6 +59,13 @@
                      <span class="text-danger"><b>Không hoạt động</b></span>
                      @endif
                  </td>
+                 <td>
+                    @if ($item->reviewReport)
+                        <span class="text-danger">{{ $item->reviewReport->reason }}</span>
+                    @else
+                        <span class="text-muted"></span>
+                    @endif
+                </td>
                  
          <td> 
          <input data-id="{{$item->id}}" class="toggle-class" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="Inactive" {{ $item->status ? 'checked' : '' }}>

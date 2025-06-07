@@ -92,14 +92,19 @@
                                 <div id="unitLabel" class="form-control" readonly>-</div>
                             </div>
                         </div>
-
-                        <!-- Additional Field 1 -->
+                        
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá Nhập</label>
-                                <input class="form-control" type="text" name="cost_price" placeholder="Giá Nhập">
+                                <input 
+                                    class="form-control @error('cost_price') is-invalid @enderror" 
+                                    type="text" 
+                                    name="cost_price" 
+                                    placeholder="Giá Nhập" 
+                                    value="{{ old('cost_price') }}"
+                                >
                                 @error('cost_price')
-                                    <div class="text-danger">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -108,9 +113,15 @@
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá Bán</label>
-                                <input class="form-control" type="text" name="price" placeholder="Giá Bán">
+                                <input 
+                                    class="form-control @error('price') is-invalid @enderror" 
+                                    type="text" 
+                                    name="price" 
+                                    placeholder="Giá Bán" 
+                                    value="{{ old('price') }}"
+                                >
                                 @error('price')
-                                    <div class="text-danger">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -119,9 +130,15 @@
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Giá Giảm</label>
-                                <input class="form-control" type="text" name="discount_price" placeholder="Giá Giảm">
+                                <input 
+                                    class="form-control @error('discount_price') is-invalid @enderror" 
+                                    type="text" 
+                                    name="discount_price" 
+                                    placeholder="Giá Giảm" 
+                                    value="{{ old('discount_price') }}"
+                                >
                                 @error('discount_price')
-                                    <div class="text-danger">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
@@ -130,15 +147,19 @@
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Số Lượng</label>
-                                <input class="form-control" type="number" name="qty" placeholder="Số Lượng">
+                                <input 
+                                    class="form-control @error('qty') is-invalid @enderror" 
+                                    type="number" 
+                                    name="qty" 
+                                    placeholder="Số Lượng" 
+                                    value="{{ old('qty') }}"
+                                >
                                 @error('qty')
-                                    <div class="text-danger">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
-                    </div>
-                    
                     <div class="form-check mt-4">
                         <input class="form-check-input" type="checkbox" name="best_seller" id="formCheck2" value="1">
                         <label for="formCheck2" class="form-check-lable">Sản Phẩm Bán Chạy</label>

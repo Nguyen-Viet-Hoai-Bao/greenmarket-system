@@ -68,14 +68,14 @@
             </span>
         </p>
         <p class="mb-1 text-success">
-            Tổng tiền sau giảm giá
+            Tổng tiền giảm giá
             <span class="float-right text-success">
                 {{ number_format($total - session('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
             </span>
         </p>
         <hr />
         <h6 class="font-weight-bold mb-0">
-            SỐ TIỀN CẦN THANH TOÁN
+            SỐ TIỀN SAU GIẢM GIÁ
             <span class="float-right">
                 {{ number_format(session('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
             </span>
@@ -93,16 +93,23 @@
         </div>
     </div>
 @endif
-
+<div class="mb-2 bg-white rounded p-2 d-flex align-items-center">
+    <i class="fas fa-shipping-fast fa-2x mr-2" style="color: #3ecf8e ;"></i> <p class="mb-0 flex-grow-1 text-right">
+        <a href="{{ route('shipping.policy') }}" target="_blank">Phí giao hàng: </a>
+        <strong class="text-dark">
+            {{ number_format(Session::get('shipping_fee', 0), 0, ',', '.') }} VNĐ
+        </strong>
+    </p>
+</div>
 <div class="mb-2 bg-white rounded p-2 clearfix">
     <img class="img-fluid float-left" src="{{ asset('frontend/img/wallet-icon.png') }}">
     <h6 class="font-weight-bold text-right mb-2">
         Tạm tính :
         <span class="text-danger">
             @if (Session::has('coupon'))
-                {{ number_format(session('coupon')['discount_amount'], 0, ',', '.') }} VNĐ
+                {{ number_format(session('coupon')['discount_amount'] + session('shipping_fee'), 0, ',', '.') }} VNĐ
             @else
-                {{ number_format($total, 0, ',', '.') }} VNĐ
+                {{ number_format($total + session('shipping_fee'), 0, ',', '.') }} VNĐ
             @endif
         </span>
     </h6>

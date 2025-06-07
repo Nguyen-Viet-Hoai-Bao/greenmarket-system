@@ -32,6 +32,7 @@
           <tr>
             <th>STT</th>
             <th>Ngày</th>
+            <th>Chi nhánh</th>
             <th>Hóa Đơn</th>
             <th>Số Tiền</th>
             <th>Phương Thức Thanh Toán</th> 
@@ -46,10 +47,13 @@
          @php
              $firstItem = $orderitem->first();
              $order = $firstItem->order;
+            $market =  \App\Models\Client::where('id', $firstItem->client_id)
+                            ->first();
          @endphp  
           <tr>
               <td>{{ $key+1 }}</td>
               <td>{{ $order->order_date }}</td>
+              <td>{{ $market->name }}</td>
               <td>{{ $order->invoice_no }}</td>
               <td>{{ number_format($order->amount, 0, ',', '.') }} VNĐ</td>
               <td>{{ $order->payment_method }}</td>

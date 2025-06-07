@@ -123,13 +123,33 @@ class VnpayController extends Controller
 
         // Calculate total amount from cart
         $cart = session()->get('cart', []);
+        $shipping_fee = session()->get('shipping_fee');
         $totalAmount = 0;
+        $totalCostPrice = 0;
 
         foreach ($cart as $car) {
             $totalAmount += ($car['price'] * $car['quantity']);
+            
+            // Lấy cost_price
+            $product = ProductNew::find($car['id']);
+            $costPrice = $product->cost_price ?? 0;
+
+            $totalCostPrice += ($costPrice * $car['quantity']);
         }
 
-        $tt = Session()->has('coupon') ? Session()->get('coupon')['discount_amount'] : $totalAmount;
+        // Tính phí dịch vụ 8% của tổng đơn
+        $serviceFee = $totalAmount * 0.08;
+
+        if (Session()->has('coupon')) {
+            $coupon_code = (Session()->get('coupon')['coupon_id']);
+            $tt = (Session()->get('coupon')['discount_amount']);
+        } else {
+            $tt = $totalAmount;
+            $coupon_code = null;
+        }
+
+        // Tính net_revenue
+        $netRevenue = $tt - $serviceFee - $totalCostPrice;
 
         // Generate unique invoice number
         do {
@@ -149,9 +169,15 @@ class VnpayController extends Controller
             'payment_method' => 'Đã thanh toán bằng VNPay',
             'currency' => 'VNĐ',
             'amount' => $totalAmount,
-            'total_amount' => $tt,
+            'total_amount' => $tt + $shipping_fee,
+            'coupon_code' => $coupon_code,
+            'service_fee'    => $serviceFee,
+            'shipping_fee'    => $shipping_fee,
+            'net_revenue'    => $netRevenue + $shipping_fee,
             'invoice_no' => $invoice,
-            'order_date' => Carbon::now()->format('d F Y'),
+            'order_date' => Carbon::now()->format('d M Y'),
+            'order_month' => Carbon::now()->format('M'),
+            'order_year' => Carbon::now()->format('Y'),
             'status' => 'confirm',
             'created_at' => Carbon::now(),
         ]);
@@ -161,6 +187,7 @@ class VnpayController extends Controller
             OrderItem::insert([
                 'order_id' => $order_id,
                 'product_id' => $cart_item['id'],
+                'client_id' => $cart_item['client_id'],
                 'qty' => $cart_item['quantity'],
                 'price' => $cart_item['price'],
                 'created_at' => Carbon::now(),
@@ -169,10 +196,12 @@ class VnpayController extends Controller
             $clientIds[] = $cart_item['client_id'];
             // Giảm số lượng sản phẩm tương ứng
             ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
+            // Tăng số lượng đã bán
+            ProductNew::where('id', $cart_item['id'])->increment('sold', $cart_item['quantity']);
         }
 
         // Clear session data after order is created
-        session()->forget(['coupon', 'cart']);
+        session()->forget(['coupon', 'cart', 'shipping_fee']);
 
         // Notify admin about the order
         Notification::send($user, new OrderComplete($request->name));

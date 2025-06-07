@@ -48,7 +48,7 @@ class OrderComplete extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'New Order Added in Shop'
+            'message' => 'Đơn hàng mới vừa được thêm vào cửa hàng'
         ];
     }
 }

@@ -1,3 +1,44 @@
+<style>
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0; /* fix bug khoảng cách */
+}
+.notification-read{
+    background-color: #e9e9e9 !important;
+    color: #6c757d !important;
+    font-weight: normal !important;
+}
+.notification-unread {
+    background-color: bisque !important;
+    color: #212529 !important;
+    font-weight: bold !important;
+}
+.dropdown-menu div[style*="overflow-y: auto"]::-webkit-scrollbar {
+    width: 6px; /* Smaller scrollbar */
+}
+
+.dropdown-menu div[style*="overflow-y: auto"]::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.dropdown-menu div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.dropdown-menu div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.dropdown-menu li:not(.notification-read):hover {
+    background-color: #f8f9fa !important;
+}
+.dropdown-menu li.notification-read:hover {
+    background-color: #e9ecef !important;
+}
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-dark osahan-nav">
   <div class="container">
      <a class="navbar-brand" href="{{ route('index') }}"><img alt="logo" src="{{ asset('frontend/img/logo.png') }}"></a>
@@ -51,51 +92,111 @@
                  <a class="dropdown-item" href="extra.html">Extra :)</a>
               </div>
            </li>
+         @auth
+            @php
+               $id = Auth::user()->id;
+               $profileData = App\Models\User::find($id);
+            @endphp
+            <li class="nav-item dropdown">
+               <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               <img alt="Generic placeholder image" 
+                  src="{{ (!empty($profileData->photo)) 
+                  ? url('upload/user_images/'.$profileData->photo)
+                  : url('upload/no_image.jpg')}}"    
+                  class="nav-osahan-pic rounded-pill"> Tài Khoản
+               </a>
+               <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
+                  <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Thống kê</a>
+                  <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Đăng Xuất</a>
+               </div>
+            </li>
+            
+            {{-- Thông báo --}}
+            @php
+               $user = Auth::user();
+               $ncount = $user->unreadNotifications()->count();
+            @endphp
 
+            <li class="nav-item dropdown">
+               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     <i class="fa fa-bell" style="font-size: 16px;"></i>
 
-@auth
-   @php
-      $id = Auth::user()->id;
-      $profileData = App\Models\User::find($id);
-   @endphp
-   <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <img alt="Generic placeholder image" 
-         src="{{ (!empty($profileData->photo)) 
-         ? url('upload/user_images/'.$profileData->photo)
-         : url('upload/no_image.jpg')}}"    
-         class="nav-osahan-pic rounded-pill"> Tài Khoản Của Tôi
-      </a>
-      <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
-         <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="icofont-food-cart"></i>Thống kê</a>
-         <a class="dropdown-item" href="{{ route('user.logout') }}"><i class="icofont-sale-discount"></i>Đăng Xuất</a>
-      </div>
-   </li>
-   @else
-   <li class="nav-item dropdown">
-      <a class="nav-link" href="{{ route('login') }}" role="button" aria-haspopup="true" aria-expanded="false">
-         Đăng Nhập
-      </a>
-   </li>
-   <li class="nav-item dropdown">
-      <a class="nav-link" href="{{ route('register') }}" role="button" aria-haspopup="true" aria-expanded="false">
-         Đăng Ký
-      </a>
-   </li>
-@endauth
+                     @if($ncount > 0)
+                        <span id="notification-count" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" style="font-size: 0.65rem;">
+                           {{$ncount}}
+                        </span>
+                     @endif
+               </a>
+               
+               <ul id="notification-list" class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0 shadow-lg border-0 rounded-3 mt-2"
+                     aria-labelledby="notificationDropdown"
+                     style="width: 290px; max-height: 480px; overflow: hidden; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 0.85rem;">
 
-@php
-   $total = 0;
-   $cart = session()->get('cart',[]);
-   $groupedCart = [];
+                     <li class="p-2 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top-3">
+                        <h6 class="mb-0 text-dark" style="font-size: 1rem;">Thông báo</h6>
+                        <a href="#" class="small text-primary text-decoration-underline fw-semibold" style="font-size: 0.75rem;">Chưa đọc ({{ $ncount }})</a>
+                     </li>
 
-   foreach ($cart as $item) {
-      $groupedCart[$item['client_id']][] = $item;
-   }
+                     <div style="max-height: 410px; overflow-y: auto;">
+                        @forelse ($user->notifications()->latest()->limit(10)->get() as $notification)
+                           <li class="py-2 px-3 {{ $notification->read_at ? 'notification-read' : 'notification-unread' }}"
+                                 style="border-bottom: 1px solid #eee; transition: background-color 0.2s ease;
+                                 {{ $notification->read_at ? 'background-color: #f0f2f5; color: #6c757d;' : 'font-weight: bold;' }}">
+                                 <a href="{{ route('user.order.list') }}"
+                                 class="text-decoration-none text-dark d-flex align-items-center gap-2"
+                                 onclick="markNotificationRead('{{ $notification->id }}')">
 
-   $clients = App\Models\Client::whereIn('id',array_keys($groupedCart))->get()->keyBy('id');
+                                    <div class="flex-shrink-0">
+                                       <span class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width: 36px; height: 36px; line-height: 36px; font-size: 1rem;">
+                                             <i class="fa fa-bell"></i>
+                                       </span>
+                                    </div>
 
-@endphp
+                                    <div class="flex-grow-1" style="line-height: 1.3;">
+                                       <p class="mb-1 fw-medium" style="font-size: 0.8rem; white-space: normal; word-wrap: break-word; {{ $notification->read_at ? 'color: #6c757d;' : 'color: #212529;' }}">
+                                             {{ $notification->data['message'] ?? 'Bạn có thông báo mới' }}
+                                       </p>
+                                       <small class="text-muted d-flex align-items-center gap-1" style="font-size: 0.65rem;">
+                                             <i class="fa fa-clock-o"></i>
+                                             <span>{{ $notification->created_at->diffForHumans() }}</span>
+                                       </small>
+                                    </div>
+                                 </a>
+                           </li>
+                        @empty
+                           <li class="py-3 px-3 text-center text-muted" style="font-size: 0.8rem;">
+                                 <p class="mb-0">Không có thông báo nào.</p>
+                           </li>
+                        @endforelse
+                     </div>
+               </ul>
+            </li>
+            @else
+            <li class="nav-item dropdown">
+               <a class="nav-link" href="{{ route('login') }}" role="button" aria-haspopup="true" aria-expanded="false">
+                  Đăng Nhập
+               </a>
+            </li>
+            <li class="nav-item dropdown">
+               <a class="nav-link" href="{{ route('register') }}" role="button" aria-haspopup="true" aria-expanded="false">
+                  Đăng Ký
+               </a>
+            </li>
+         @endauth
+
+         @php
+            $total = 0;
+            $cart = session()->get('cart',[]);
+            $groupedCart = [];
+
+            foreach ($cart as $item) {
+               $groupedCart[$item['client_id']][] = $item;
+            }
+
+            $clients = App\Models\Client::whereIn('id',array_keys($groupedCart))->get()->keyBy('id');
+
+         @endphp
 
             <li class="nav-item dropdown dropdown-cart">
                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -152,7 +253,7 @@
 
 
 <!-- Modal: Choose Market -->
-<div id="chooseMarketModal" class="modal fade" tabindex="-1" aria-labelledby="chooseMarketLabel" aria-hidden="true" data-bs-scroll="true">
+<div id="chooseMarketModal" class="modal fade" tabindex="-1" aria-labelledby="chooseMarketLabel" data-bs-scroll="true">
    <div class="modal-dialog">
        <div class="modal-content">
            {{-- <form id="marketSelectorForm" method="GET" action="{{ route('market.details.redirect') }}"> --}}
@@ -166,6 +267,10 @@
                </div>
 
                <div class="modal-body">
+                    <div class="alert alert-info small" role="alert">
+                       <i class="bi bi-info-circle-fill me-2"></i>
+                       Xin lưu ý: Khi thay đổi chi nhánh cửa hàng, giá bán của sản phẩm có thể có sự chênh lệch do chính sách giá riêng biệt tại mỗi địa điểm.
+                   </div>
                    <div class="mb-3">
                        <label for="cityDropdown" class="form-label">Thành phố</label>
                        <select class="form-select" name="city_id" id="cityDropdown">
@@ -217,7 +322,6 @@
        chooseMarketModal.addEventListener('shown.bs.modal', function (event) {
            const productId = event.relatedTarget.getAttribute('data-product-id');
            document.getElementById('selectedProductId').value = productId;
-   
            const city = chooseMarketModal.querySelector('#cityDropdown');
            const district = chooseMarketModal.querySelector('#districtDropdown');
            const ward = chooseMarketModal.querySelector('#wardDropdown');
@@ -283,4 +387,86 @@
       window.location.href = `/market/details/${marketId}`;
    });
 
+      // Notification
+   function markNotificationRead(notificationId){
+      fetch('/user-mark-notification-as-read/'+notificationId,{
+         method: 'POST',
+         headers: {
+               'Content-Type': 'application/json',
+               'X-CSRF-TOKEN': '{{ csrf_token() }}'
+         },
+         body: JSON.stringify({})
+      })
+      .then(response => response.json())
+      .then(data => {
+         document.getElementById('notification-count').textContent = data.count;
+         const notificationElement = document.querySelector(`[onclick="markNotificationRead('${notificationId}')"]`);
+         if (notificationElement) {
+               notificationElement.classList.remove('notification-unread');
+               notificationElement.classList.add('notification-read');
+         }
+      })
+      .catch(error => {
+         console.log('Error', error);
+      });
+   }
+   function fetchNotifications() {
+      $.ajax({
+         url: '/user/notifications',
+         method: 'GET',
+         success: function(data) {
+               if (data.count > 0) {
+                  $('#notification-count').text(data.count).show();
+               } else {
+                  $('#notification-count').hide();
+               }
+
+               let html = `
+                  <li class="p-2 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top-3">
+                     <h6 class="mb-0 text-dark" style="font-size: 1rem;">Thông báo</h6>
+                     <a href="#" class="small text-primary text-decoration-underline fw-semibold" style="font-size: 0.75rem;">Chưa đọc (${data.count})</a>
+                  </li>
+                  <div style="max-height: 410px; overflow-y: auto;">`;
+
+               if (data.notifications.length === 0) {
+                  html += `
+                     <li class="py-3 px-3 text-center text-muted" style="font-size: 0.8rem;">
+                           <p class="mb-0">Không có thông báo nào.</p>
+                     </li>`;
+               } else {
+                  data.notifications.forEach(function (item) {
+                     const isRead = !!item.read_at;
+                     html += `
+                           <li class="py-2 px-3 ${isRead ? 'notification-read' : 'notification-unread'}"
+                              style="border-bottom: 1px solid #eee; ${isRead ? 'background-color: #f0f2f5; color: #6c757d;' : 'font-weight: bold;'}">
+                              <a href="{{ route('user.order.list') }}"
+                                 class="text-decoration-none text-dark d-flex align-items-center gap-2"
+                                 onclick="markNotificationRead('${item.id}')">
+                                 <div class="flex-shrink-0">
+                                       <span class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                          style="width: 36px; height: 36px; line-height: 36px; font-size: 1rem;">
+                                          <i class="fa fa-bell"></i>
+                                       </span>
+                                 </div>
+                                 <div class="flex-grow-1" style="line-height: 1.3;">
+                                       <p class="mb-1 fw-medium" style="font-size: 0.8rem; ${isRead ? 'color: #6c757d;' : 'color: #212529;'}">
+                                          ${item.message}
+                                       </p>
+                                       <small class="text-muted d-flex align-items-center gap-1" style="font-size: 0.65rem;">
+                                          <i class="fa fa-clock-o"></i>
+                                          <span>${item.created_at}</span>
+                                       </small>
+                                 </div>
+                              </a>
+                           </li>`;
+                  });
+               }
+
+               html += `</div>`;
+               $('#notification-list').html(html);
+         }
+      });
+   }
+   setInterval(fetchNotifications, 5000);
+   fetchNotifications();
 </script>

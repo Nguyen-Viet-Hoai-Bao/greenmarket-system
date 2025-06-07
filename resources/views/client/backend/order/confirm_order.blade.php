@@ -31,6 +31,7 @@
       <th>STT</th>
       <th>Ngày đặt hàng</th>
       <th>Mã hóa đơn</th>
+      <th>SĐT đặt hàng</th>
       <th>Số tiền</th>
       <th>Phương thức thanh toán</th>
       <th>Trạng thái</th>
@@ -41,10 +42,15 @@
 
     <tbody>
       @foreach ($allData as $key=>$item)
+        @php
+            $user =  \App\Models\User::where('id', $item->user_id)
+                            ->first();
+        @endphp
         <tr>
             <td>{{ $key+1 }}</td>
             <td>{{ $item->order_date }}</td>
             <td>{{ $item->invoice_no }}</td>
+            <td>{{ $user->phone }}</td>
             <td>{{ $item->amount }}</td>
             <td>{{ $item->payment_method }}</td>
             <td>

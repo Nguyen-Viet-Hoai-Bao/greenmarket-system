@@ -3,7 +3,7 @@
    <div class="container">
       <div class="row">
          <div class="col-sm-12">
-            <h5 class="m-0">Bạn đang vận hành cửa hàng thực phẩm hoặc nhà hàng? <a href="{{ route('client.register') }}">Hợp tác với chúng tôi</a></h5>
+            <h5 class="m-0">Bạn đang vận hành cửa hàng thực phẩm hoặc Cửa hàng? <a href="{{ route('client.register') }}">Hợp tác với chúng tôi</a></h5>
          </div>
       </div>
    </div>

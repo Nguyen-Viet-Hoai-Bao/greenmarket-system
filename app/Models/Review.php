@@ -21,4 +21,9 @@ class Review extends Model
     public function order(){
         return $this->belongsTo(Order::class, 'order_id','id');
     }
+
+    public function reviewReport()
+    {
+        return $this->hasOne(ReviewReport::class);
+    }
 }

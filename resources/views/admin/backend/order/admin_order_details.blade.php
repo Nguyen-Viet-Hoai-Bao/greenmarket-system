@@ -105,6 +105,10 @@
                                     <td>{{ number_format($order->amount, 0, ',', '.') }} VNĐ</td>
                                 </tr>
                                 <tr>
+                                    <th width="50%">Phí vận chuyển:</th>
+                                    <td>{{ number_format($order->shipping_fee, 0, ',', '.') }} VNĐ</td>
+                                </tr>
+                                <tr>
                                     <th width="50%">Tổng thanh toán:</th>
                                     <td class="text-danger">{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</td>
                                 </tr>
@@ -128,6 +132,20 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @if ($order->status == 'delivered')
+                                    <tr>
+                                        <th width="50%">Phí dịch vụ:</th>
+                                        <td>
+                                            <span class="badge bg-info">{{ number_format($order->service_fee, 0, ',', '.') }} VNĐ</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th width="50%">Lợi nhuận:</th>
+                                        <td>
+                                            <span class="badge bg-danger">{{ number_format($order->net_revenue, 0, ',', '.') }} VNĐ</span>
+                                        </td>
+                                    </tr>
+                                @endif
                                 <tr>
                                     @if($order->status == 'cancel_pending')
                                         <th width="50%">Lý do hủy:</th>

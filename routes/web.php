@@ -18,10 +18,12 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Client\MarketController;
 use App\Http\Controllers\Client\GalleryController;
 use App\Http\Controllers\Client\CouponController;
+use App\Http\Controllers\Client\ReviewReportController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\ReviewController;
+use App\Http\Controllers\Frontend\ProductReviewController;
 use App\Http\Controllers\Frontend\FilterController;
 
 use App\Http\Controllers\ChatController;
@@ -202,6 +204,8 @@ Route::middleware('admin')->group(function () {
     // ALL ADMIN Product
     Route::controller(ManageController::class)->group(function(){
         Route::get('/pending/market', 'PendingMarket')->name('pending.market');
+        Route::get('/rejected/market', 'RejectedMarket')->name('rejected.market');
+        Route::get('/suspended/market', 'SuspendedMarket')->name('suspended.market');
         Route::get('/clientChangeStatus', 'ClientChangeStatus');
         Route::get('/approve/market', 'ApproveMarket')->name('approve.market');
     });
@@ -241,6 +245,7 @@ Route::middleware('admin')->group(function () {
         Route::post('/admin/search/bydate', 'AdminSearchBydate')->name('admin.search.bydate');
         Route::post('/admin/search/bymonth', 'AdminSearchBymonth')->name('admin.search.bymonth');
         Route::post('/admin/search/byyear', 'AdminSearchByyear')->name('admin.search.byyear');
+        Route::get('/admin/wallet/report', 'AdminWalletReport')->name('admin.wallet.report');
     });
 
     // ALL ADMIN REVIEW 
@@ -248,6 +253,16 @@ Route::middleware('admin')->group(function () {
         Route::get('/admin/pending/review', 'AdminPendingReview')->name('admin.pending.review');
         Route::get('/admin/approve/review', 'AdminApproveReview')->name('admin.approve.review'); 
         Route::get('/reviewchangeStatus', 'ReviewChangeStatus'); 
+    });
+    
+    // ALL ADMIN REVIEW PRODUCT
+    Route::controller(ProductReviewController::class)->group(function(){
+        Route::get('/admin/pending/product/review', 'AdminPendingProductReview')->name('admin.pending.product.review');
+        Route::get('/admin/approve/product/review', 'AdminApproveProductReview')->name('admin.approve.product.review'); 
+        Route::get('/reviewchangeProductReviewStatus', 'ProductReviewChangeStatus'); 
+
+        Route::get('/admin/order/report', 'AdminOrderReport')->name('admin.order.report'); 
+        Route::get('/changeOrderReport', 'ChangeOrderReport'); 
     });
     
     // ALL ADMIN PERMISSION 
@@ -297,6 +312,18 @@ Route::middleware('admin')->group(function () {
 
         Route::get('/delete/admin/{id}', 'DeleteAdmin')->name('delete.admin');
     });
+    
+    Route::controller(CouponController::class)->group(function(){
+        Route::get('/admin/all/coupon', 'AdminAllCoupon')->name('admin.all.coupon');
+        
+        Route::get('/admin/add/coupon', 'AdminAddCoupon')->name('admin.add.coupon');
+        Route::post('/admin/store/coupon', 'AdminStoreCoupon')->name('admin.coupon.store');
+        
+        Route::get('/admin/edit/coupon/{id}', 'AdminEditCoupon')->name('admin.edit.coupon');
+        Route::post('/admin/update_coupon', 'AdminUpdateCoupon')->name('admin.coupon.update');
+        
+        Route::get('/admin/delete/coupon/{id}', 'AdminDeleteCoupon')->name('admin.delete.coupon');
+    });
 
 }); // End Admin Middleware
 
@@ -308,11 +335,16 @@ Route::middleware(['client', 'status'])->group(function () {
         
         Route::get('/add/product', 'AddProduct')->name('add.product');
         Route::post('/store/product', 'StoreProduct')->name('product.store');
+
+        Route::get('/add/product/multi', 'AddProductMulti')->name('add.product.multi');
+        Route::post('/store/product/multi', 'StoreProductMulti')->name('product.store.multi');
         
         Route::get('/edit/product/{id}', 'EditProduct')->name('edit.product');
         Route::post('/update/product', 'UpdateProduct')->name('product.update');
         
         Route::get('/delete/product/{id}', 'DeleteProduct')->name('delete.product');
+
+        Route::get('/product/get-info/{template_id}', 'GetProductInfo')->name('product.getInfo');
     });
 
     
@@ -340,7 +372,11 @@ Route::middleware(['client', 'status'])->group(function () {
         
         Route::get('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon');
     });
-    
+    Route::controller(ReviewReportController::class)->group(function(){
+        Route::post('/reviews/report', 'ReportReview')->name('reviews.report');
+        Route::post('/reviews/product/report', 'ReportReviewProduct')->name('reviews.product.report');
+    });
+
     // Route::controller(ManageOrderController::class)->group(function(){
     //     Route::get('/all/clients/orders', 'AllClientsOrders')->name('all.clients.orders');
     //     Route::get('/client/order/details/{id}', 'ClientOrderDetails')->name('client.order.details');
@@ -371,7 +407,12 @@ Route::middleware(['client', 'status'])->group(function () {
 
     // ALL CLIENT REVIEW 
     Route::controller(ReviewController::class)->group(function(){
-        Route::get('/client/all/reviews', 'ClientAllReviews')->name('client.all.reviews'); 
+        Route::get('/client/all/reviews', 'ClientAllReviews')->name('client.all.reviews');
+    });
+    
+    // ALL CLIENT REVIEW 
+    Route::controller(ProductReviewController::class)->group(function(){
+        Route::get('/client/all/product/reviews', 'ClientAllProductReviews')->name('client.all.product.reviews');
     });
 
 }); // End Client Middleware
@@ -417,8 +458,12 @@ Route::controller(OrderController::class)->group(function(){
     Route::get('/checkout/thanks', 'CheckoutThanks')->name('checkout.thanks');
 
     Route::post('/mark-notification-as-read/{notification}', 'MarkAsRead');
+    Route::post('/client-mark-notification-as-read/{notification}', 'ClientMarkAsRead');
+    Route::post('/user-mark-notification-as-read/{notification}', 'UserMarkAsRead');
 
     Route::post('/user/order/cancel/{id}', 'CancelOrder')->name('user.order.cancel');
+    Route::post('/user/order/{order}/report', 'ReportOrder')->name('user.order.report');
+
 });
 
 Route::controller(ManageOrderController::class)->group(function(){
@@ -431,6 +476,13 @@ Route::controller(ReviewController::class)->group(function(){
     Route::post('/store/review', 'StoreReview')->name('store.review');  
     Route::post('/verify-order-for-review', 'VerifyOrderForReview')
             ->name('verify.order.for.review');
+    
+});
+
+Route::controller(ProductReviewController::class)->group(function(){
+    Route::post('/store/product/review', 'StoreProductReview')->name('store.product.review');  
+    Route::post('/verify-order-for-product-review', 'VerifyOrderForProductReview')
+            ->name('verify.order.for.product.review');
     
 });
 
@@ -462,4 +514,53 @@ Route::controller(InfoController::class)->group(function(){
     Route::get('/payment-policy', 'PaymentPolicy')->name('payment.policy');
     Route::get('/return-and-exchange-policy', 'ReturnAndExchangePolicy')->name('return.and.exchange.policy');
 
+    Route::get('/personal-data-policy', 'PersonalDataPolicy')->name('personal.data.policy');
+    Route::get('/shipping-policy', 'ShippingPolicy')->name('shipping.policy');
+
 });
+
+// notifications
+Route::get('/admin/notifications', function () {
+    $user = Auth::guard('admin')->user();
+    return response()->json([
+        'count' => $user->unreadNotifications()->count(),
+        'notifications' => $user->notifications->map(function ($n) {
+            return [
+                'id' => $n->id,
+                'message' => $n->data['message'],
+                'read_at' => $n->read_at,
+                'created_at' => $n->created_at->diffForHumans()
+            ];
+        })
+    ]);
+})->middleware('auth:admin');
+
+Route::get('/client/notifications', function () {
+    $user = Auth::guard('client')->user();
+    return response()->json([
+        'count' => $user->unreadNotifications->count(),
+        'notifications' => $user->notifications->map(function ($noti) {
+            return [
+                'id' => $noti->id,
+                'message' => $noti->data['message'],
+                'created_at' => $noti->created_at->diffForHumans(),
+                'read_at' => $noti->read_at !== null,
+            ];
+        }),
+    ]);
+})->middleware('auth:client');
+
+Route::get('/user/notifications', function () {
+    $user = Auth::guard('web')->user();
+    return response()->json([
+        'count' => $user->unreadNotifications->count(),
+        'notifications' => $user->notifications->map(function ($noti) {
+            return [
+                'id' => $noti->id,
+                'message' => $noti->data['message'],
+                'created_at' => $noti->created_at->diffForHumans(),
+                'read_at' => $noti->read_at !== null,
+            ];
+        }),
+    ]);
+})->middleware('auth:web');

@@ -153,7 +153,7 @@ class MarketController extends Controller
         $validated = $request->validate([
             'product_template_id' => 'required|exists:product_templates,id',
             'qty' => 'required|integer|min:1',
-            'cost_price' => 'required|numeric|min:0',
+            'cost_price' => 'required|numeric|min:1000',
             'price' => 'required|numeric|min:1000',
             'discount_price' => 'nullable|numeric|min:1000',
             'most_popular' => 'nullable|boolean',
@@ -214,6 +214,92 @@ class MarketController extends Controller
         return redirect()->route('all.product')->with($notification);
     }
     // End Method
+    
+    public function AddProductMulti(){
+        $menus = Menu::latest()->get();
+        $categories = Category::latest()->get();
+        $productTemplates = ProductTemplate::with(['category', 'menu'])
+                                        ->latest()
+                                        ->get()
+                                        ->groupBy('menu_id');
+        return view('client.backend.product.add_product_multi', compact('productTemplates', 'menus', 'categories'));
+    } 
+    //End Method
+
+    public function StoreProductMulti(Request $request)
+    {
+        $clientId = Auth::guard('client')->id();
+
+        $validatedData = $request->validate([
+            'products' => 'required|array|min:1',
+            'products.*.product_template_id' => 'required|exists:product_templates,id',
+            'products.*.qty' => 'required|integer|min:1',
+            'products.*.cost_price' => 'required|numeric|min:1000',
+            'products.*.price' => 'required|numeric|min:1000',
+            'products.*.discount_price' => 'nullable|numeric|min:1000',
+        ]);
+
+        foreach ($validatedData['products'] as $productData) {
+            if (!empty($productData['discount_price']) && $productData['discount_price'] >= $productData['price']) {
+                return back()->withErrors([
+                    'products' => 'Giá giảm phải nhỏ hơn giá bán.',
+                ])->withInput();
+            }
+
+            $existingProduct = ProductNew::where('client_id', $clientId)
+                ->where('product_template_id', $productData['product_template_id'])
+                ->first();
+
+            if ($existingProduct) {
+                $existingProduct->update([
+                    'qty' => $existingProduct->qty + $productData['qty'],
+                    'cost_price' => $productData['cost_price'],
+                    'price' => $productData['price'],
+                    'discount_price' => $productData['discount_price'],
+                    'updated_at' => now(),
+                ]);
+            } else {
+                ProductNew::create([
+                    'client_id' => $clientId,
+                    'product_template_id' => $productData['product_template_id'],
+                    'qty' => $productData['qty'],
+                    'cost_price' => $productData['cost_price'],
+                    'price' => $productData['price'],
+                    'discount_price' => $productData['discount_price'],
+                    'status' => 1,
+                    'created_at' => now(),
+                ]);
+            }
+        }
+        
+        $notification = array(
+            'message' => 'Đã thêm/cập nhật sản phẩm hàng loạt thành công.',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('all.product')->with($notification);
+    }
+
+    public function GetProductInfo($template_id)
+    {
+        $clientId = Auth::guard('client')->id();
+
+        $product = ProductNew::where('client_id', $clientId)
+                    ->where('product_template_id', $template_id)
+                    ->first();
+
+        if ($product) {
+            return response()->json([
+                'exists' => true,
+                'cost_price' => $product->cost_price,
+                'price' => $product->price,
+                'discount_price' => $product->discount_price,
+                'qty' => $product->qty
+            ]);
+        } else {
+            return response()->json(['exists' => false]);
+        }
+    }
 
     public function EditProduct($id) {
         $product = ProductNew::findOrFail($id);
@@ -279,10 +365,10 @@ class MarketController extends Controller
     // End Method
 
     public function ChangeStatus(Request $request) {
-        $product = Product::find($request->product_id);
+        $product = ProductNew::find($request->product_id);
         $product->status = $request->status;
         $product->save();
-        return response()->json(['success' => 'Status Change Successfully']);
+        return response()->json(['success' => 'Cập nhật trạng thái sản phẩm thành công']);
     }
     // End Method
     

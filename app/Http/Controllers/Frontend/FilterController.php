@@ -17,6 +17,7 @@ use App\Models\Ward;
 use App\Models\City;
 use App\Models\OrderItem;
 use App\Models\Menu;
+use App\Models\ProductReview;
 use Illuminate\Support\Facades\DB;
 
 class FilterController extends Controller
@@ -111,13 +112,15 @@ class FilterController extends Controller
         $productsQuery = ProductNew::with([
             'productTemplate.menu',
             'productTemplate.category'
-        ])->where('qty', '>', 0)->whereHas('productTemplate', function ($query) use ($categoryIds, $menuIds) {
-            if (!empty($categoryIds)) {
-                $query->whereIn('category_id', $categoryIds);
-            }
-            if (!empty($menuIds)) {
-                $query->whereIn('menu_id', $menuIds);
-            }
+            ])->where('qty', '>', 0)
+            ->where('status', 1)
+            ->whereHas('productTemplate', function ($query) use ($categoryIds, $menuIds) {
+                if (!empty($categoryIds)) {
+                    $query->whereIn('category_id', $categoryIds);
+                }
+                if (!empty($menuIds)) {
+                    $query->whereIn('menu_id', $menuIds);
+                }
         });
 
         // Filter by market from session
@@ -138,7 +141,6 @@ class FilterController extends Controller
     public function ProductDetail($id)
     {
         $product = ProductNew::with('productTemplate')->find($id);
-        
 
         if (!$product) {
             abort(404);
@@ -147,22 +149,57 @@ class FilterController extends Controller
         // Lấy productDetail từ productTemplate
         $productDetail = $product->productTemplate->productDetail;
 
-        // For Footer
+        // ----- Reviews cho sản phẩm -----
+        $reviews = ProductReview::where('product_id', $product->id)
+                                ->where('status', 1)
+                                ->get();
+
+        $totalReviews = $reviews->count();
+        $ratingSum = $reviews->sum('rating');
+        $averageRating = $totalReviews > 0 ? $ratingSum / $totalReviews : 0;
+        $roundedAverageRating = round($averageRating, 1);
+
+        $ratingCounts = [
+            '5' => $reviews->where('rating', 5)->count(),
+            '4' => $reviews->where('rating', 4)->count(),
+            '3' => $reviews->where('rating', 3)->count(),
+            '2' => $reviews->where('rating', 2)->count(),
+            '1' => $reviews->where('rating', 1)->count(),
+        ];
+
+        $ratingPercentages = array_map(function ($count) use ($totalReviews) {
+            return $totalReviews > 0 ? ($count / $totalReviews) * 100 : 0;
+        }, $ratingCounts);
+
+        // ----- Dữ liệu dùng chung -----
         $cities = City::all();
         $menus_footer = Menu::all();
+
         $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
-                                ->groupBy('client_id')
-                                ->orderByDesc('total')
-                                ->value('client_id'); 
+            ->groupBy('client_id')
+            ->orderByDesc('total')
+            ->value('client_id');
+
         $products_list = ProductNew::with([
-                        'productTemplate.menu',
-                        'productTemplate.category'
-                    ])
-                    ->where('client_id', $topClientId)
-                    ->orderBy('id', 'desc')
-                    ->get();
-        
-        return view('frontend.product_detail', compact('product', 'productDetail', 'cities', 'menus_footer', 'products_list'));
+                'productTemplate.menu',
+                'productTemplate.category'
+            ])
+            ->where('client_id', $topClientId)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('frontend.product_detail', compact(
+            'product', 
+            'productDetail', 
+            'cities', 
+            'menus_footer', 
+            'products_list', 
+            'reviews',
+            'roundedAverageRating', 
+            'totalReviews',
+            'ratingCounts',
+            'ratingPercentages'
+        ));
     }
 
     public function SearchProducts(Request $request)
@@ -174,6 +211,7 @@ class FilterController extends Controller
         // Lấy product theo tên search và market
         $products_search = ProductNew::with(['productTemplate.menu', 'productTemplate.category'])
             ->where('client_id', $marketId)
+            ->where('status', 1)
             ->whereHas('productTemplate', function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%");
             })
@@ -198,8 +236,29 @@ class FilterController extends Controller
                     ->where('client_id', session('selected_market_id'))
                     ->orderBy('id', 'desc')
                     ->get();
+        $isEmpty = false;
+        if ($products_search->isEmpty()) {
+            $notification = array(
+                'message' => 'Không tìm thấy sản phẩm nào phù hợp. Vui lòng thử từ khóa khác hoặc xem các sản phẩm bên dưới.',
+                'alert-type' => 'error'
+            );
+            $isEmpty = true;
+            $products_search = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', session('selected_market_id'))
+                    ->where('status', 1)
+                    ->where('qty', '>', 0)
+                    ->orderBy('id', 'desc')
+                    ->get();
 
-        return view('frontend.search_product', compact('products_all', 'products_search', 'menusWithCategories', 'categoryIds', 'menuIdsToExpand'))->render();
+            return view('frontend.search_product', compact('products_all', 'products_search', 'menusWithCategories', 'categoryIds', 'menuIdsToExpand', 'isEmpty'))
+                ->with($notification);
+        }
+
+        return view('frontend.search_product', compact('products_all', 'products_search', 'menusWithCategories', 'categoryIds', 'menuIdsToExpand', 'isEmpty'))
+                    ->render();
     }
 
     

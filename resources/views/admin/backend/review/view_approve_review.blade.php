@@ -10,7 +10,7 @@
          <div class="row">
              <div class="col-12">
                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                     <h4 class="mb-sm-0 font-size-18">Duyệt Đánh Giá Quản Trị</h4>
+                     <h4 class="mb-sm-0 font-size-18">Duyệt Đánh Giá Cửa Hàng</h4>
  
                      
  
@@ -30,10 +30,11 @@
              <tr>
                 <th>STT</th>
                 <th>Người dùng</th>
-                <th>Nhà hàng</th>
+                <th>Cửa hàng</th>
                 <th>Ý kiến</th>
                 <th>Đánh giá</th>                
                 <th>Trạng thái</th> 
+                <th>Yêu cầu ẩn</th>
                 <th>Thao tác</th> 
              </tr>
              </thead>
@@ -50,7 +51,7 @@
                      @for ($i = 1; $i <= 5; $i++)
                          <i class="bx bxs-star {{ $i <= $item->rating ? 'text-warning' : 'text-secondary' }}"></i>
                      @endfor 
-                     </td> 
+                </td> 
                  <td> 
                      @if ($item->status == 1)
                      <span class="text-success"><b>Hoạt động</b></span>
@@ -58,7 +59,13 @@
                      <span class="text-danger"><b>Không hoạt động</b></span>
                      @endif
                  </td>
-                 
+                 <td>
+                    @if ($item->reviewReport)
+                        <span class="text-danger">{{ $item->reviewReport->reason }}</span>
+                    @else
+                        <span class="text-muted"></span>
+                    @endif
+                </td>
          <td> 
          <input data-id="{{$item->id}}" class="toggle-class" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="Inactive" {{ $item->status ? 'checked' : '' }}>
  

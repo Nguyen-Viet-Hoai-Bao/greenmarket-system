@@ -137,7 +137,7 @@
         <div class="col-xl-6">
             <div class="card card-h-100">
                 <div class="card-body">
-                    <h5 class="card-title mb-4">Top 5 Best-Selling Products</h5>
+                    <h5 class="card-title mb-4">Top 5 Sản phẩm bán chạy nhất</h5>
                     <ul class="list-group list-group-flush">
                         @forelse ($topProducts as $item)
                             <li class="list-group-item d-flex align-items-center justify-content-between">
@@ -145,7 +145,7 @@
                                     <img src="{{ asset($item->product->productTemplate->image ?? 'default.png') }}" alt="{{ $item->product->productTemplate->name }}" style="width:40px; height:auto; margin-right:10px;">
                                     <div>
                                         <strong>{{ $item->product->productTemplate->name ?? 'N/A' }}</strong><br>
-                                        <small>Price: ${{ number_format($item->product->price, 2) }} | Qty Sold: {{ $item->total_qty }}</small>
+                                        <small>Giá bán: {{ number_format($item->product->price) }}đ | Đã bán: {{ $item->total_qty }}</small>
                                     </div>
                                 </div>
                             </li>
@@ -161,16 +161,16 @@
         <div class="col-xl-6">
             <div class="card card-h-100">
                 <div class="card-body">
-                    <h5 class="card-title mb-4">Top 5 Highest Value Orders</h5>
+                    <h5 class="card-title mb-4">Top 5 Đơn hàng giá trị nhất</h5>
                     <ul class="list-group list-group-flush">
                         @forelse ($topOrders as $order)
                             <li class="list-group-item">
                                 <div>
                                     <strong>Order #{{ $order->id }}</strong> — {{ $order->name }} ({{ $order->email }})<br>
                                     <small>
-                                        Phone: {{ $order->phone }} |
-                                        Date: {{ $order->order_date }} |
-                                        Status: {{ ucfirst($order->status) }}
+                                        SDT: {{ $order->phone }} |
+                                        Ngày: {{ $order->order_date }} |
+                                        Trạng thái: {{ ucfirst($order->status) }}
                                     </small>
                                 </div>
                                 <span class="badge bg-success rounded-pill float-end">${{ number_format($order->total_amount, 2) }}</span>

@@ -95,7 +95,7 @@
                           </div>
                       </div>
                   </div>
-                  <div data-simplebar style="max-height: 230px;">
+                  <div id="client-notification-list" data-simplebar style="max-height: 460px; overflow-y: auto;">
                     
                     @php
                         $user = Auth::guard('client')->user();
@@ -157,3 +157,72 @@
       </div>
   </div>
 </header>
+
+<script>
+    function markNotificationRead(notificationId){
+        fetch('/client-mark-notification-as-read/'+notificationId,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('notification-count').textContent = data.count;
+            const notificationElement = document.querySelector(`[onclick="markNotificationRead('${notificationId}')"]`);
+            if (notificationElement) {
+                notificationElement.classList.remove('notification-unread');
+                notificationElement.classList.add('notification-read');
+            }
+        })
+        .catch(error => {
+            console.log('Error', error);
+        });
+    }
+
+    function fetchClientNotifications() {
+        fetch('/client/notifications')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.querySelector('#page-header-notifications-dropdown .badge');
+                if (badge) {
+                    badge.textContent = data.count;
+                    badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+                }
+
+                const listContainer = document.querySelector('#client-notification-list');
+                if (listContainer) {
+                    listContainer.innerHTML = '';
+                    data.notifications.forEach(noti => {
+                        const item = document.createElement('a');
+                        item.href = "{{ route('confirm.order') }}";
+                        item.className = 'text-reset notification-item';
+
+                        item.innerHTML = `
+                            <div class="d-flex ${noti.read_at ? 'notification-read' : 'notification-unread'}"
+                                onclick="markNotificationRead('${noti.id}')">
+                                <div class="flex-shrink-0 avatar-sm me-3">
+                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                        <i class="bx bx-cart"></i>
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">${noti.message}</h6>
+                                    <div class="font-size-13 text-muted">
+                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> <span>${noti.created_at}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        listContainer.appendChild(item);
+                    });
+                }
+            })
+            .catch(err => console.error('Error fetching notifications:', err));
+    }
+
+    fetchClientNotifications();
+    setInterval(fetchClientNotifications, 5000);
+</script>

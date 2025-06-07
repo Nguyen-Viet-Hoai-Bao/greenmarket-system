@@ -144,7 +144,8 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                                     ->get();
                      @endphp
                      <div id="menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
-                        <h6 class="mb-3">Sản Phẩm Phổ Biến Nhất <span class="badge badge-success"><i class="icofont-tags"></i> Giảm 15% Cho Tất Cả Sản Phẩm </span></h6>
+                        <h6 class="mb-3">Sản Phẩm Phổ Biến Nhất </h6>
+                        {{-- <span class="badge badge-success"><i class="icofont-tags"></i> Sản Phẩm Phổ Biến Nhất </span> --}}
                         <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
                            @foreach ($populers as $populer)
                               <div class="item">
@@ -152,6 +153,10 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                                        <a href="{{ route('product.detail', $populer->id) }}">
                                           <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
                                           <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
+                                          <small class="text-muted d-block mb-1">
+                                             <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $populer->sold }}
+                                          </small>
+
 
                                           @if ($populer->discount_price == NULL)
                                                 {{ number_format($populer->price, 0, ',', '.') }}
@@ -223,6 +228,9 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                                        <a href="{{ route('product.detail', $populer->id) }}">
                                           <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
                                           <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
+                                          <small class="text-muted d-block mb-1">
+                                             <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $populer->sold }}
+                                          </small>
 
                                           @if ($populer->discount_price == NULL)
                                                 {{ number_format($populer->price, 0, ',', '.') }}
@@ -493,18 +501,11 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                <div class="reviews-members-body">
                   <p> {{ $review->comment }} </p>
                </div>
-               <div class="reviews-members-footer">
-                  <a class="total-like" href="#"><i class="icofont-thumbs-up"></i> ...</a> <a class="total-like" href="#"><i class="icofont-thumbs-down"></i> ...</a> 
-                  
-               </div>
             </div>
          </div>
       </div>
 
       @endforeach
-      <hr>
-      <hr>
-   <a class="text-center w-100 d-block mt-4 font-weight-bold" href="#">Xem Tất Cả Nhận Xét</a>
 </div>
 
                     <div class="bg-white rounded shadow-sm p-4 mb-5 rating-review-select-page">
@@ -525,13 +526,15 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                       color: #dd646e;
                    }
                   </style> 
-                
-                  <h5 class="mb-4">Để Lại Nhận Xét</h5>
+                  
+                     <h5 class="mb-4">Để Lại Nhận Xét</h5>
                      <p class="mb-2">Đánh Giá Địa Điểm</p>
 
                      <button type="button" class="btn btn-success mb-3" id="leaveReviewButton">
                         Để lại đánh giá của bạn
                      </button>
+
+                     <div id="verificationMessage"></div>
 
                      {{-- Form đánh giá ban đầu (sẽ được ẩn/hiện bởi JS) --}}
                      <form method="post" action="{{ route('store.review') }}" id="reviewForm" style="display: none;">
@@ -562,40 +565,6 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                         </div>
                      </form>
 
-                     <div class="modal fade" id="orderVerificationModal" tabindex="-1" role="dialog" aria-labelledby="orderVerificationModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                           <div class="modal-content">
-                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="orderVerificationModalLabel">Nhập chi tiết đơn hàng của bạn</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                       <span aria-hidden="true">&times;</span>
-                                    </button>
-                                 </div>
-                                 <div class="modal-body">
-                                    <p>Vui lòng kiểm tra đơn hàng đã đặt để tìm mã số đơn hàng và email đặt hàng:</p>
-                                    <form id="orderVerificationForm">
-                                       <div class="form-group">
-                                             <label for="orderCodeInput">Mã số đơn hàng</label>
-                                             <input type="text" class="form-control" id="orderCodeInput" required>
-                                       </div>
-                                       <div class="form-group">
-                                             <label for="orderEmailInput">Email đặt hàng</label>
-                                             <input type="email" class="form-control" id="orderEmailInput" required>
-                                       </div>
-                                       <div class="alert alert-info mt-3" role="alert">
-                                             Chỉ khách đặt hàng thành công qua website chúng tôi mới có thể viết đánh giá. Điều này giúp chúng tôi thu thập các đánh giá từ khách thực, như bạn vậy.
-                                       </div>
-                                       <div id="verificationMessage" class="mt-3"></div>
-                                    </form>
-                                 </div>
-                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                                    <button type="button" class="btn btn-primary" id="verifyOrderButton">Đánh giá trải nghiệm đặt hàng của bạn</button>
-                                 </div>
-                           </div>
-                        </div>
-                     </div>
-                
                    @endguest
                    </div>
 
@@ -604,37 +573,111 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
               </div>
            </div>
         </div>
-
 @php
     use App\Models\Coupon;
+    use App\Models\Order;
     use Carbon\Carbon;
 
-    $coupon_tmp = Coupon::where('client_id', $client->id)
-                        ->where('validity', '>=', Carbon::now()->format('Y-m-d'))
-                        ->latest()
-                        ->first();
+    $coupons = Coupon::where(function ($query) use ($client) {
+                    $query->where('client_id', $client->id)
+                          ->orWhere('client_id', 0);
+                })
+                ->where('validity', '>=', Carbon::now()->format('Y-m-d'))
+                ->orderByDesc('created_at')
+                ->get();
+
+    $usedCouponIds = [];
+
+    if (auth()->check()) {
+        $orders = Order::where('user_id', auth()->id())->get();
+        $usedCouponIds = $orders->pluck('coupon_code')->filter()->unique()->toArray();
+    }
 @endphp
 
 <div class="col-md-4">
-    <div class="pb-2">
-        <div class="bg-white rounded shadow-sm text-white mb-4 p-4 clearfix restaurant-detailed-earn-pts card-icon-overlap">
-            <img class="img-fluid float-left mr-3" src="{{ asset('frontend/img/earn-score-icon.png') }}">
-            <h6 class="pt-0 text-primary mb-1 font-weight-bold">ƯU ĐÃI</h6>
+   <div class="pb-2">
+    <div class="bg-white rounded shadow-sm text-white mb-4 p-4 clearfix restaurant-detailed-earn-pts card-icon-overlap">
+        <img class="img-fluid float-left mr-3" src="{{ asset('frontend/img/earn-score-icon.png') }}">
+        <h6 class="pt-0 text-primary mb-1 font-weight-bold">ƯU ĐÃI</h6>
 
-            @if ($coupon_tmp === null)
-                <p class="mb-0">Không có mã giảm giá</p>
-            @else
-                <p class="mb-0">
-                    <span class="text-danger font-weight-bold">{{ $coupon_tmp->discount }}</span>% cho đơn hàng | Sử dụng mã 
-                    <span class="text-danger font-weight-bold">{{ $coupon_tmp->coupon_name }}</span>
-                </p>
-            @endif
+        @if ($coupons->isEmpty())
+            <p class="mb-0">Không có mã giảm giá</p>
+        @else
+            <ul class="pl-3 text-dark">
+                @foreach ($coupons as $coupon)
+                    @php
+                        // Kiểm tra coupon đã được dùng chưa
+                        $isUsed = in_array($coupon->id, $usedCouponIds);
+                        $discountClass = $isUsed ? 'text-muted' : 'text-danger font-weight-bold';
+                        $nameClass = $isUsed ? 'text-muted font-weight-bold text-decoration-underline' : 'text-danger font-weight-bold text-decoration-underline';
+                    @endphp
+                    <li class="mb-2">
+                        <span class="{{ $discountClass }}">{{ $coupon->discount }}%</span> cho đơn hàng - 
 
-            <div class="icon-overlap">
-                <i class="icofont-sale-discount"></i>
-            </div>
+                        <a href="#" 
+                            class="{{ $nameClass }}" 
+                            data-toggle="modal" 
+                            data-target="#couponModal{{ $coupon->id }}">
+                                {{ $coupon->coupon_name }}
+                        </a>
+                    </li>
+
+                    {{-- Modal --}}
+                    <div class="modal fade" id="couponModal{{ $coupon->id }}" tabindex="-1" role="dialog" aria-labelledby="couponModalLabel{{ $coupon->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header text-white" style="background-color: #3ecf8e;">
+                                    <h5 class="modal-title font-weight-bold" id="couponModalLabel{{ $coupon->id }}">Chi tiết mã giảm giá</h5>
+                                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Đóng">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="row align-items-center">
+                                        {{-- Hình ảnh coupon --}}
+                                        <div class="col-md-5 text-center mb-3 mb-md-0">
+                                            <img src="{{ asset($coupon->image_path ?? 'frontend/img/default-coupon.png') }}" class="img-fluid rounded shadow-sm" alt="Coupon Image">
+                                        </div>
+
+                                        {{-- Thông tin chi tiết --}}
+                                        <div class="col-md-7">
+                                            <h4 class="text-primary font-weight-bold">{{ $coupon->coupon_name }}</h4>
+                                            <p class="mb-2"><strong>Giảm giá:</strong> <span class="text-danger">{{ $coupon->discount }}%</span></p>
+                                            @if ($coupon->max_discount_amount)
+                                                <p class="mb-2"><strong>Giới hạn:</strong> <span class="text-danger">
+                                                    {{ number_format($coupon->max_discount_amount, 0, ',', '.') }} VNĐ
+                                                    trên một đơn hàng</span></p>
+                                            @endif
+                                            <p class="mb-2"><strong>Hạn sử dụng:</strong> {{ \Carbon\Carbon::parse($coupon->validity)->format('d/m/Y') }}</p>
+                                            <p class="mb-3"><strong>Mô tả:</strong> {{ $coupon->coupon_desc ?? 'Không có mô tả.' }}</p>
+
+                                            {{-- Copy mã --}}
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" value="{{ $coupon->coupon_name }}" id="couponCode{{ $coupon->id }}" readonly>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-primary" type="button" onclick="copyToClipboard('couponCode{{ $coupon->id }}')">Copy</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </ul>
+        @endif
+
+        <div class="icon-overlap">
+            <i class="icofont-sale-discount"></i>
         </div>
     </div>
+</div>
 
     <div class="generator-bg rounded shadow-sm mb-4 p-4 osahan-cart-item">
          <div id="cart-container">
@@ -765,26 +808,24 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                                              {{ $product->productTemplate->name }}
                                        </a>
                                     </h6>
-                                    <p class="text-danger mb-2 d-flex justify-content-between align-items-center small">
-                                       <span class="bg-light rounded px-2 py-1">
-                                             {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ
+                                    <small class="text-muted d-block mb-1">
+                                       <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $product->sold }}
+                                    </small>
+                                    <p class="text-success mb-2 d-flex justify-content-between align-items-center fs-6">
+                                       <span class="bg-light rounded px-2 py-1 font-weight-bold">
+                                          {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ
                                        </span>
-                                       <span class="text-muted font-weight-bold">
-                                             <i class="icofont-wall-clock"></i> 20–25 m
+
+                                       @php
+                                          $discount = $product->price - $product->discount_price;
+                                          $percent = round(($discount / $product->price) * 100);
+                                       @endphp
+
+                                       <span class="badge badge-light text-danger font-weight-bold px-2">
+                                          -{{ $percent }}%
                                        </span>
                                     </p>
                                  </div>
-
-                                 @php
-                                    $discount = $product->price - $product->discount_price;
-                                    $percent = round(($discount / $product->price) * 100);
-                                 @endphp
-
-                                 <div class="list-card-badge mb-2 text-center">
-                                    <span class="badge badge-success">GIẢM GIÁ</span>
-                                    <small class="text-success ml-1 font-weight-bold">{{ $percent }}% OFF</small>
-                                 </div>
-
                                  @php
                                     $cart = session('cart', []);
                                     $cartItem = $cart[$product->id] ?? null;
@@ -919,6 +960,49 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 </script>
 
 <script>
+   
+   document.addEventListener('DOMContentLoaded', function () {
+        const leaveReviewButton = document.getElementById('leaveReviewButton');
+        const reviewForm = document.getElementById('reviewForm');
+        const orderIdForReview = document.getElementById('orderIdForReview');
+        const verificationMessage = document.getElementById('verificationMessage');
+        if (leaveReviewButton) {
+            leaveReviewButton.addEventListener('click', async function () {
+               const clientId = document.querySelector('input[name="client_id"]').value;
+               verificationMessage.innerHTML = '<div class="alert alert-info">Đang kiểm tra đơn hàng của bạn...</div>';
+
+               try {
+                  const response = await fetch('/verify-order-for-review', {
+                        method: 'POST',
+                        headers: {
+                           'Content-Type': 'application/json',
+                           'Accept': 'application/json',
+                           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ client_id: clientId })
+                  });
+
+                  const data = await response.json();
+
+                  if (data.success) {
+                        console.log(data);
+                        verificationMessage.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                        orderIdForReview.value = data.order_id;
+                        reviewForm.style.display = 'block';
+                        leaveReviewButton.style.display = 'none';
+                        reviewForm.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                        verificationMessage.innerHTML = `<div class="alert alert-warning">${data.message}</div>`;
+                  }
+               } catch (error) {
+                  verificationMessage.innerHTML = '<div class="alert alert-danger">Lỗi xảy ra khi kiểm tra. Vui lòng thử lại.</div>';
+               }
+            });
+         } else {
+            console.log('Không tìm thấy nút leaveReviewButton');
+         }
+    });
+
    document.querySelectorAll('.star-rating input[type="radio"]').forEach(radio => {
       radio.addEventListener('change', () => {
          const ratingValue = parseInt(radio.value);
@@ -934,73 +1018,12 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
       });
    });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const leaveReviewButton = document.getElementById('leaveReviewButton');
-        const orderVerificationModal = new bootstrap.Modal(document.getElementById('orderVerificationModal')); // Sử dụng Bootstrap 5
-        const orderVerificationForm = document.getElementById('orderVerificationForm');
-        const orderCodeInput = document.getElementById('orderCodeInput');
-        const orderEmailInput = document.getElementById('orderEmailInput');
-        const verifyOrderButton = document.getElementById('verifyOrderButton');
-        const reviewForm = document.getElementById('reviewForm');
-        const orderIdForReview = document.getElementById('orderIdForReview');
-        const verificationMessage = document.getElementById('verificationMessage');
-
-        // Khi nút "Để lại đánh giá của bạn" được click
-        leaveReviewButton.addEventListener('click', function() {
-            // Reset form và thông báo
-            orderVerificationForm.reset();
-            verificationMessage.innerHTML = '';
-            verificationMessage.className = 'mt-3'; // Reset class
-            orderVerificationModal.show(); // Hiển thị modal xác thực đơn hàng
-        });
-
-        // Khi nút "Đánh giá trải nghiệm đặt hàng của bạn" trong modal được click
-        verifyOrderButton.addEventListener('click', async function() {
-            const orderCode = orderCodeInput.value.trim();
-            const orderEmail = orderEmailInput.value.trim();
-
-            if (!orderCode || !orderEmail) {
-                verificationMessage.innerHTML = '<div class="alert alert-danger">Vui lòng điền đầy đủ Mã số đơn hàng và Email.</div>';
-                return;
-            }
-
-            verificationMessage.innerHTML = '<div class="alert alert-info">Đang kiểm tra đơn hàng...</div>';
-            verificationMessage.className = 'mt-3'; // Reset class
-
-            try {
-                const response = await fetch('/verify-order-for-review', { // Endpoint để xác thực đơn hàng (sẽ tạo ở Laravel)
-                    method: 'POST',
-                    headers: {
-                     'Content-Type': 'application/json',
-                     'Accept': 'application/json',
-                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                     },
-                    body: JSON.stringify({
-                        order_code: orderCode,
-                        order_email: orderEmail,
-                        client_id: document.querySelector('input[name="client_id"]').value // Lấy client_id từ hidden input
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    verificationMessage.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                    orderIdForReview.value = data.order_id; // Đặt order_id vào hidden input của form đánh giá
-                    orderVerificationModal.hide(); // Ẩn modal
-                    reviewForm.style.display = 'block'; // Hiển thị form đánh giá
-                    leaveReviewButton.style.display = 'none'; // Ẩn nút "Để lại đánh giá"
-                    // Cuộn tới form đánh giá
-                    reviewForm.scrollIntoView({ behavior: 'smooth' });
-
-                } else {
-                    verificationMessage.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                }
-            } catch (error) {
-                verificationMessage.innerHTML = '<div class="alert alert-danger">Đã xảy ra lỗi khi kiểm tra đơn hàng. Vui lòng thử lại sau.</div>';
-            }
-        });
-    });
+   function copyToClipboard(id) {
+      var copyText = document.getElementById(id);
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); // For mobile
+      document.execCommand("copy");
+   }
 </script>
 
 @endsection

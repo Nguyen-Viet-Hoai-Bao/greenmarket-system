@@ -39,6 +39,12 @@
                                     <span data-key="t-chat">Thêm sản phẩm</span>
                                 </a>
                             </li>
+                            
+                            <li>
+                                <a href="{{ route('add.product.multi') }}">
+                                    <span data-key="t-chat">Thêm hàng loạt</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     
@@ -130,11 +136,24 @@
                     <li>
                         <a href="javascript: void(0);" class="has-arrow">
                             <i data-feather="grid"></i>
-                            <span data-key="t-apps">Quản lý đánh giá</span>
+                            <span data-key="t-apps">Quản lý đánh giá cửa hàng</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
                             <li>
                                 <a href="{{ route('client.all.reviews') }}">
+                                    <span data-key="t-calendar">Tất cả đánh giá</span>
+                                </a>
+                            </li> 
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow">
+                            <i data-feather="grid"></i>
+                            <span data-key="t-apps">Quản lý đánh giá sản phẩm</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="false">
+                            <li>
+                                <a href="{{ route('client.all.product.reviews') }}">
                                     <span data-key="t-calendar">Tất cả đánh giá</span>
                                 </a>
                             </li> 

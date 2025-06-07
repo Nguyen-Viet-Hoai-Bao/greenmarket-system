@@ -4,7 +4,7 @@
  
  <section class="breadcrumb-osahan pt-5 pb-5 bg-dark position-relative text-center">
      <h1 class="text-white">Các Ưu Đãi Gần Bạn</h1>
-     <h6 class="text-white-50">Các giao dịch tốt nhất tại các chợ yêu thích của bạn</h6>
+     <h6 class="text-white-50">Các giao dịch tốt nhất tại các cửa hàng yêu thích của bạn</h6>
   </section>
   <section class="section pt-5 pb-5 products-listing">
      <div class="container">

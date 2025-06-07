@@ -16,6 +16,10 @@
       <link href="{{ asset('frontend/vendor/fontawesome/css/all.min.css') }}" rel="stylesheet">
       <!-- Font Awesome-->
       <link href="{{ asset('frontend/vendor/icofont/icofont.min.css') }}" rel="stylesheet">
+
+      <!-- Icons Css -->
+      <link href="{{ asset('backend/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+
       <!-- Select2 CSS-->
       <link href="{{ asset('frontend/vendor/select2/css/select2.min.css') }}" rel="stylesheet">
       <!-- Custom styles for this template-->

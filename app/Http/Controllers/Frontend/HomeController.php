@@ -34,7 +34,7 @@ class HomeController extends Controller
             $removed = false;
 
             foreach ($oldCart as $item) {
-                $oldProduct = ProductNew::find($item['id']);
+                $oldProduct = ProductNew::where('status', 1)->find($item['id']);
 
                 if (!$oldProduct) {
                     $removed = true;
@@ -42,6 +42,7 @@ class HomeController extends Controller
                 }
 
                 $newProducts = ProductNew::where('product_template_id', $oldProduct->product_template_id)
+                                        ->where('status', 1)
                                         ->where('client_id', $id)
                                         ->get();
 
@@ -150,6 +151,7 @@ class HomeController extends Controller
                         'productTemplate.category'
                     ])
                     ->where('client_id', session('selected_market_id'))
+                    ->where('status', 1)
                     ->where('qty', '>', 0)
                     ->orderBy('id', 'desc')
                     ->get();
@@ -255,7 +257,7 @@ class HomeController extends Controller
 
     public function GetMarketsByWard($ward_id)
     {
-        return Client::where('ward_id', $ward_id)->get(); // hoặc tùy theo quan hệ
+        return Client::where('ward_id', $ward_id)->where('status', '1')->get();
     }
 
     // session()->forget(['selected_market_id', 'selected_market_name', 'selected_market_ward_id']);

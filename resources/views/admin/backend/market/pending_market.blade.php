@@ -1,127 +1,152 @@
 @extends('admin.admin_dashboard')
 @section('admin')
 
+<!-- jQuery & Bootstrap Toggle -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
+<style>
+    .status-select {
+        padding: 6px 12px;
+        font-weight: bold;
+        color: white;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        transition: background-color 0.3s ease;
+    }
+    .status-pheduyet {
+        background-color: #28a745 !important; /* xanh */
+    }
+    .status-khongduyet {
+        background-color: #dc3545 !important; /* đỏ */
+    }
+    .status-default {
+        background-color: #3ecf8e  !important; /* xám nhạt */
+    }
+</style>
+
 <div class="page-content">
-  <div class="container-fluid">
+    <div class="container-fluid">
 
-      <!-- start page title -->
-      <div class="row">
-          <div class="col-12">
-              <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                  <h4 class="mb-sm-0 font-size-18">Chờ Duyệt Chợ</h4>
-              </div>
-          </div>
-      </div>
-      <!-- end page title -->
+        <!-- Page Title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0 font-size-18">Cửa hàng chờ duyệt</h4>
+                </div>
+            </div>
+        </div>
 
-      <div class="row">
-          <div class="col-12">
-              <div class="card">
-                  <div class="card-body">
+        <!-- Table Content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
 
-<table id="datatable" class="table table-bordered dt-responsive w-100">
-    <thead>
-    <tr>
-        <th>STT</th>
-        <th>Hình ảnh</th>
-        <th>Tên chợ</th>
-        <th>Email</th>
-        <th>Điện thoại</th>
-        <th>Trạng thái</th>
-        <th>Hành động</th>
-    </tr>
-    </thead>
+                        <table id="pending-table" class="table table-bordered dt-responsive w-100">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Tên Cửa Hàng</th>
+                                    <th>Email</th>
+                                    <th>Điện thoại</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($client as $key => $item)
+                                    <tr id="row-{{ $item->id }}">
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>
+                                            <img src="{{ !empty($item->photo) 
+                                                        ? url('upload/client_images/' . $item->photo) 
+                                                        : url('upload/no_image.jpg') }}"
+                                                 style="width: 70px; height: 40px;">
+                                        </td>
+                                        <td>{{ $item->name }}</td>
+                                        <td>{{ $item->email }}</td>
+                                        <td>{{ $item->phone }}</td>
+                                        <td class="status-text-{{ $item->id }}">
+                                            <span class="text-warning"><b>Đang chờ duyệt</b></span>
+                                        </td>
+                                        <td>
+                                            <select class="status-select" data-id="{{ $item->id }}">
+                                                <option value="">-- Duyệt/Không --</option>
+                                                <option value="1">Phê duyệt</option>
+                                                <option value="2">Không duyệt</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
 
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <tbody>
-      @foreach ($client as $key=>$item)
-        <tr>
-            <td>{{ $key+1 }}</td>
-            <td>
-              <img src="{{ (!empty($item->photo)) 
-                            ? url('upload/client_images/'.$item->photo)
-                            : url('upload/no_image.jpg')}}" 
-                    alt=""
-                    style="width: 70px; heigh:40px;"></td>
-            <td>{{ $item->name }}</td>
-            <td>{{ $item->email }}</td>
-            <td>{{ $item->phone }}</td>
-            <td class="status-text-{{ $item->id }}">
-                @if ($item->status == 1)
-                    <span class="text-success"><b>Đang hoạt động</b></span>
-                @else
-                    <span class="text-danger"><b>Không hoạt động</b></span>
-                @endif
-            </td>
-            <td class="d-flex align-items-center gap-1">
-              <input data-id="{{ $item->id }}" 
-                  class="toggle-class" type="checkbox" 
-                  data-toggle="toggle" 
-                  data-onstyle="success" 
-                  data-offstyle="danger" 
-                  data-on="Active" 
-                  data-off="Inactive" 
-                  {{ $item->status ? 'checked' : '' }}>
-            </td>
-        </tr>
-      @endforeach
-
-    </tbody>
-</table>
-
-                  </div>
-              </div>
-          </div> <!-- end col -->
-      </div> <!-- end row --> 
-
-  </div> <!-- container-fluid -->
+    </div>
 </div>
-<!-- End Page-content -->
 
+<!-- JS xử lý cập nhật và reload dòng -->
+<script>
+    $(document).ready(function () {
+        function updateSelectColor(select) {
+            const status = $(select).val();
+            $(select).removeClass('status-pheduyet status-khongduyet status-default');
 
-<script type="text/javascript">
-  $(function() {
-    $('.toggle-class').change(function() {
-        var status = $(this).prop('checked') == true ? 1 : 0; 
-        var client_id = $(this).data('id'); 
-         
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: '/clientChangeStatus',
-            data: {'status': status, 'client_id': client_id},
-            success: function(data){
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success', 
-                    showConfirmButton: false,
-                    timer: 3000 
-                })
-                if ($.isEmptyObject(data.error)) {
-                        
-                    Toast.fire({
-                    type: 'success',
-                    title: data.success, 
-                    })
-
-                    $('#datatable').load(location.href + " #datatable>*", "");
-
-                }else{
-                
-                Toast.fire({
-                    type: 'error',
-                    title: data.error, 
-                    })
-                }
-                // End Message   
+            if (status === "1") {
+                $(select).addClass('status-pheduyet');
+            } else if (status === "2") {
+                $(select).addClass('status-khongduyet');
+            } else {
+                $(select).addClass('status-default');
             }
+        }
+
+        $('.status-select').each(function () {
+            updateSelectColor(this);
         });
-    })
-  })
+
+        $('.status-select').on('change', function () {
+            const status = $(this).val();
+            const client_id = $(this).data('id');
+
+            if (status === "") {
+                return; // Không làm gì nếu chưa chọn
+            }
+
+            const rowSelector = `#row-${client_id}`;
+
+            $.ajax({
+                url: '/clientChangeStatus',
+                method: 'GET',
+                data: { status, client_id },
+                dataType: 'json',
+                success: function (data) {
+                    if (!data.error) {
+                        $(rowSelector).fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                        alert(data.success);
+                    } else {
+                        alert(data.error);
+                    }
+                },
+                error: function () {
+                    alert('Đã xảy ra lỗi khi gửi yêu cầu.');
+                }
+            });
+
+            updateSelectColor(this);
+        });
+
+    });
 </script>
- 
+
 @endsection
