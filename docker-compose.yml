@@ -45,7 +45,7 @@ services:
       MYSQL_DATABASE: green_market_test
       MYSQL_USER: laravel_user
       MYSQL_PASSWORD: laravel_password
-      MYSQL_ROOT_PASSWORD: laravel_password
+      MYSQL_ROOT_PASSWORD: 
     volumes:
       - dbdata:/var/lib/mysql # Lưu trữ dữ liệu cơ sở dữ liệu
     networks:
