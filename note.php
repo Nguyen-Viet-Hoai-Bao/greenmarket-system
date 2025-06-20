@@ -421,3 +421,24 @@ CREATE TABLE `wishlists` (
   `created_at` timestamp  ,
   `updated_at` timestamp  
 ) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+vendor/bin/pest

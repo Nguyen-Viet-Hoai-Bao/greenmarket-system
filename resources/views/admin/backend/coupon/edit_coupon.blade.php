@@ -22,17 +22,7 @@
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <div class="alert alert-primary">
-                            <strong>Tổng Thu:</strong> {{ number_format($totalIncome, 0, ',', '.') }}đ
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="alert alert-danger">
-                            <strong>Tổng Chi:</strong> {{ number_format($totalExpense, 0, ',', '.') }}đ
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="alert alert-success">
-                            <strong>Số Dư Hiện Tại:</strong> {{ number_format($balance, 0, ',', '.') }}đ
+                            <strong>Tổng doanh thu:</strong> {{ number_format($totalIncome, 0, ',', '.') }}đ
                         </div>
                     </div>
                 </div>

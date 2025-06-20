@@ -208,6 +208,8 @@ Route::middleware('admin')->group(function () {
         Route::get('/suspended/market', 'SuspendedMarket')->name('suspended.market');
         Route::get('/clientChangeStatus', 'ClientChangeStatus');
         Route::get('/approve/market', 'ApproveMarket')->name('approve.market');
+
+        Route::get('/client/details/{id}', 'showDetails')->name('client.details');
     });
     
     // ALL ADMIN Banner

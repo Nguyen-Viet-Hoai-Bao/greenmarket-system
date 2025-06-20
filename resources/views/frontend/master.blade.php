@@ -7,7 +7,7 @@
       <meta name="csrf-token" content="{{ csrf_token() }}">
       <meta name="description" content="Askbootstrap">
       <meta name="author" content="Askbootstrap">
-      <title>Osahan Eat - Website Đặt Món Ăn Trực Tuyến</title>
+      <title>Green Food - Chuỗi cửa hàng thực phẩm xanh</title>
       <!-- Favicon Icon -->
       <link rel="icon" type="image/png" href="img/favicon.png">
       <!-- Bootstrap core CSS-->

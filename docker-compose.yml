@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    environment:
+      # Thay đổi các giá trị này tùy theo cấu hình cơ sở dữ liệu của bạn
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel_db
+      DB_USERNAME: laravel_user
+      DB_PASSWORD: laravel_password
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: laravel_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80" # Ánh xạ cổng 80 của host tới cổng 80 của container
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf # Ánh xạ cấu hình Nginx
+      # Thêm dòng này để Certbot có thể lưu chứng chỉ SSL (sau này nếu bạn dùng HTTPS)
+      - /etc/letsencrypt:/etc/nginx/ssl
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: laravel_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: green_market_test
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: laravel_password
+      MYSQL_ROOT_PASSWORD: laravel_password
+    volumes:
+      - dbdata:/var/lib/mysql # Lưu trữ dữ liệu cơ sở dữ liệu
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

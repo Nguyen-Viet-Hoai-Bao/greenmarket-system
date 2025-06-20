@@ -119,19 +119,6 @@ class CouponController extends Controller
         $quantity = $request->quantity;
         $max_discount_amount = $request->max_discount_amount;
 
-        $adminWallet = AdminWallet::latest()->first();
-        $balance = $adminWallet ? $adminWallet->balance : 0;
-
-        $totalRequired = $quantity * $max_discount_amount;
-
-        if ($balance < $totalRequired) {
-            $notification = array(
-                'message' => 'Số dư ví admin không đủ để tạo mã giảm giá với số lượng và giới hạn này',
-                'alert-type' => 'error'
-            );
-            return redirect()->back()->with($notification);
-        }
-
         $save_url = null;
         if ($request->file('image')) {
             $image = $request->file('image');
@@ -152,16 +139,6 @@ class CouponController extends Controller
             'max_discount_amount' => $max_discount_amount,
             'client_id' => 0,
             'image_path' => $save_url,
-            'created_at' => Carbon::now(),
-        ]);
-        
-        AdminWallet::create([
-            'type' => 'expense',
-            'amount' => $totalRequired,
-            'description' => 'Chi phí tạo coupon ' . strtoupper($request->coupon_name),
-            'total_income' => $adminWallet ? $adminWallet->total_income : 0,
-            'total_expense' => ($adminWallet ? $adminWallet->total_expense : 0) + $totalRequired,
-            'balance' => $balance - $totalRequired,
             'created_at' => Carbon::now(),
         ]);
 
@@ -193,58 +170,9 @@ class CouponController extends Controller
 
         $coupon = Coupon::find($cou_id);
         if (!$coupon) {
-            // xử lý coupon không tồn tại
             return redirect()->back()->with([
                 'message' => 'Mã giảm giá không tồn tại',
                 'alert-type' => 'error'
-            ]);
-        }
-
-        $oldTotalCommit = $coupon->quantity * $coupon->max_discount_amount;
-        $newTotalCommit = $newQuantity * $newMaxDiscountAmount;
-
-        $adminWallet = AdminWallet::latest()->first();
-        $balance = $adminWallet ? $adminWallet->balance : 0;
-        $totalIncome = $adminWallet ? $adminWallet->total_income : 0;
-        $totalExpense = $adminWallet ? $adminWallet->total_expense : 0;
-
-        // Tính phần chênh lệch cam kết
-        $difference = $newTotalCommit - $oldTotalCommit;
-
-        if ($difference > 0) {
-            // Cam kết tăng → kiểm tra ví admin còn đủ tiền không
-            if ($balance < $difference) {
-                return redirect()->back()->with([
-                    'message' => 'Số dư ví admin không đủ để tăng giới hạn mã giảm giá',
-                    'alert-type' => 'error'
-                ]);
-            }
-            // Trừ tiền ví admin (chi tiêu)
-            AdminWallet::create([
-                'type' => 'expense',
-                'amount' => $difference,
-                'description' => 'Tăng chi phí cập nhật coupon ' . strtoupper($coupon->coupon_name),
-                'total_income' => $totalIncome,
-                'total_expense' => $totalExpense + $difference,
-                'balance' => $balance - $difference,
-                'created_at' => Carbon::now(),
-            ]);
-        } else if ($difference < 0) {
-            // Cam kết giảm → hoàn trả tiền (thu nhập)
-            $refund = abs($difference);
-            $latestWallet = AdminWallet::latest()->first();
-            $totalIncome = $latestWallet ? $latestWallet->total_income : 0;
-            $totalExpense = $latestWallet ? $latestWallet->total_expense : 0;
-            $balance = $latestWallet ? $latestWallet->balance : 0;
-            
-            AdminWallet::create([
-                'type' => 'income',
-                'amount' => $refund,
-                'description' => 'Hoàn trả chi phí cập nhật coupon ' . strtoupper($coupon->coupon_name),
-                'total_income' => $totalIncome,
-                'total_expense' => $totalExpense - $refund,
-                'balance' => $balance + $refund,
-                'created_at' => Carbon::now(),
             ]);
         }
 
