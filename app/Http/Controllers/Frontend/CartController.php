@@ -434,6 +434,7 @@ class CartController extends Controller
             Session::put('shipping_fee', $shippingFee);
 
             Session::put('coupon', [
+                'coupon_id' => $coupon->id,
                 'coupon_name' => $coupon->coupon_name,
                 'discount' => $coupon->discount,
                 'discount_amount' => $totalAmount - $discountAmount, // ✅ là số tiền còn lại

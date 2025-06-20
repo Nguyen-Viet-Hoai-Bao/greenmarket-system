@@ -17,7 +17,7 @@
                       <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24">
                   </span>
                   <span class="logo-lg">
-                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Quản trị</span>
+                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Quản trị viên</span>
                   </span>
               </a>
 
@@ -26,7 +26,7 @@
                       <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24">
                   </span>
                   <span class="logo-lg">
-                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Quản trị</span>
+                      <img src="{{ asset('backend/assets/images/logo-sm.svg') }}" alt="" height="24"> <span class="logo-txt">Quản trị viên</span>
                   </span>
               </a>
           </div>

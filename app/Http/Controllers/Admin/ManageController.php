@@ -254,6 +254,13 @@ class ManageController extends Controller
     }
     // End Method
 
+    public function showDetails($id)
+    {
+        $client = Client::findOrFail($id);
+        return view('admin.backend.market.details', compact('client'));
+    }
+    // End Method
+    
 
 
     ///// BANNER METHOD

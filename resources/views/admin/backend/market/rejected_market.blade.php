@@ -46,7 +46,7 @@
                             : url('upload/no_image.jpg')}}" 
                     alt=""
                     style="width: 70px; heigh:40px;"></td>
-            <td>{{ $item->name }}</td>
+            <td><a href="{{ route('client.details', $item->id) }}" >{{ $item->name }}</a></td>
             <td>{{ $item->email }}</td>
             <td>{{ $item->phone }}</td>
             <td class="status-text-{{ $item->id }}">
