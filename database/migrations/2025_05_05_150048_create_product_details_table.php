@@ -11,16 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Schema::create('product_details', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->unsignedBigInteger('product_template_id');
+        //     $table->string('description', 1000)->nullable()->default('Đang cập nhật');
+        //     $table->string('product_info', 1000)->nullable()->default('Đang cập nhật');
+        //     $table->string('note', 1000)->nullable()->default('Đang cập nhật');
+        //     $table->string('origin', 1000)->nullable()->default('Đang cập nhật');
+        //     $table->string('preservation', 1000)->nullable()->default('Đang cập nhật');
+        //     $table->string('weight', 1000)->nullable()->default('Đang cập nhật');
+        //     $table->string('usage_instructions', 1000)->nullable()->default('Đang cập nhật'); // Cột thêm mới
+        //     $table->timestamps();
+
+        //     $table->foreign('product_template_id')
+        //         ->references('id')->on('product_templates')
+        //         ->onDelete('cascade');
+        // });
         Schema::create('product_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_template_id');
-            $table->string('description', 1000)->nullable()->default('Đang cập nhật');
-            $table->string('product_info', 1000)->nullable()->default('Đang cập nhật');
-            $table->string('note', 1000)->nullable()->default('Đang cập nhật');
-            $table->string('origin', 1000)->nullable()->default('Đang cập nhật');
-            $table->string('preservation', 1000)->nullable()->default('Đang cập nhật');
-            $table->string('weight', 1000)->nullable()->default('Đang cập nhật');
-            $table->string('usage_instructions', 1000)->nullable()->default('Đang cập nhật'); // Cột thêm mới
+            $table->text('description')->nullable(); 
+            $table->text('product_info')->nullable();
+            $table->text('note')->nullable();
+            $table->string('origin', 255)->nullable()->default('Đang cập nhật'); 
+            $table->text('preservation')->nullable();
+            $table->string('weight', 255)->nullable()->default('Đang cập nhật'); 
+            $table->text('usage_instructions')->nullable();
             $table->timestamps();
 
             $table->foreign('product_template_id')
