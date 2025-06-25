@@ -164,13 +164,24 @@
           <input class="form-check-input" type="checkbox" id="cashAgreeCheckbox">
           <label class="form-check-label" for="cashAgreeCheckbox">
             Tôi đồng ý với '<a href="{{ route('personal.data.policy') }}" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>'
-            {{-- Tôi đồng ý với '<a href="#" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>' --}}
           </label>
         </div>
       </div>
+        <div class="form-group mt-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="cashOrderAccuracyAgreeCheckbox">
+                <label class="form-check-label" for="cashOrderAccuracyAgreeCheckbox">
+                Tôi đồng ý với '<a href="{{ route('order.conditions') }}" target="_blank">Điều kiện đặt hàng</a>'. 
+                </label>
+            </div>
+        </div>
 
-      <button type="submit" class="btn btn-success btn-block btn-lg" disabled>THANH TOÁN
-      <i class="icofont-long-arrow-right"></i></butt>
+        <button type="submit" class="btn btn-success btn-block btn-lg" id="cashSubmitButton" disabled>Thanh toán tiền mặt
+              <i class="icofont-long-arrow-right"></i></butt>
+        </button>
+
+      {{-- <button type="submit" class="btn btn-success btn-block btn-lg" disabled>THANH TOÁN
+      <i class="icofont-long-arrow-right"></i></butt> --}}
     </form>
   </div>
                     
@@ -283,13 +294,23 @@
             <input class="form-check-input" type="checkbox" id="vnpayAgreeCheckbox">
             <label class="form-check-label" for="vnpayAgreeCheckbox">
               Tôi đồng ý với '<a href="{{ route('personal.data.policy') }}" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>'
-              {{-- Tôi đồng ý với '<a href="#" target="_blank">Chính sách xử lý dữ liệu cá nhân</a>' --}}
             </label>
           </div>
         </div>
-        <button type="submit" class="btn btn-success btn-block btn-lg">Thanh toán qua VNPay
+        <div class="form-group mt-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="orderAccuracyAgreeCheckbox">
+                <label class="form-check-label" for="orderAccuracyAgreeCheckbox">
+                Tôi đồng ý với '<a href="{{ route('order.conditions') }}" target="_blank">Điều kiện đặt hàng</a>'. 
+                </label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success btn-block btn-lg" id="vnpaySubmitButton" disabled>Thanh toán VNPay
             <i class="icofont-long-arrow-right"></i>
         </button>
+        {{-- <button type="submit" class="btn btn-success btn-block btn-lg">Thanh toán qua VNPay
+            <i class="icofont-long-arrow-right"></i>
+        </button> --}}
     </form>
 </div>
 
@@ -533,247 +554,186 @@
   });
 
 </script>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // --- Logic cho Form VNPay ---
     const vnpayForm = document.getElementById('vnpay-form');
-    const vnpayInputs = vnpayForm.querySelectorAll('[required]');
-    const vnpaySubmitButton = vnpayForm.querySelector('button[type="submit"]');
+    // Kiểm tra nếu form VNPay tồn tại trước khi xử lý
+    if (vnpayForm) {
+        const vnpayInputs = vnpayForm.querySelectorAll('[required]');
+        const vnpaySubmitButton = vnpayForm.querySelector('button[type="submit"]');
+        const vnpayAgreeCheckbox = document.getElementById('vnpayAgreeCheckbox');
+        const orderAccuracyAgreeCheckbox = document.getElementById('orderAccuracyAgreeCheckbox');
 
-    const vnpayAgreeCheckbox = document.getElementById('vnpayAgreeCheckbox');
+        function validateVnpayForm() {
+            let isValid = true;
 
-    function validateVnpayForm() {
-        let isValid = true;
-        vnpayInputs.forEach(input => {
-            const value = input.value;
-            if (input.tagName === 'SELECT') {
-                if (!value || value === '') {
-                    isValid = false;
+            // Validate các trường input yêu cầu (required)
+            vnpayInputs.forEach(input => {
+                const value = input.value;
+                if (input.tagName === 'SELECT') {
+                    if (!value || value === '') {
+                        isValid = false;
+                    }
+                } else {
+                    if (!value.trim()) {
+                        isValid = false;
+                    }
                 }
-            } else {
-                if (!value.trim()) {
-                    isValid = false;
+            });
+
+            // Validate hai checkbox đồng ý của VNPay
+            if (!vnpayAgreeCheckbox.checked || !orderAccuracyAgreeCheckbox.checked) {
+                isValid = false;
+            }
+
+            vnpaySubmitButton.disabled = !isValid;
+        }
+
+        // Gắn sự kiện cho các input, select và checkbox của form VNPay
+        vnpayInputs.forEach(input => {
+            input.addEventListener('input', validateVnpayForm);
+            input.addEventListener('change', validateVnpayForm);
+        });
+        vnpayAgreeCheckbox.addEventListener('change', validateVnpayForm);
+        orderAccuracyAgreeCheckbox.addEventListener('change', validateVnpayForm);
+        document.getElementById('localitySelect')?.addEventListener('change', validateVnpayForm);
+
+
+        // Gọi hàm kiểm tra ban đầu khi trang tải xong
+        validateVnpayForm();
+
+        // Các hàm xử lý API động cho VNPay (nếu có)
+        window.onProvinceChange = async function (selectElement) {
+            const provinceId = selectElement.value;
+            const area = document.getElementById('areaSelect');
+            const locality = document.getElementById('localitySelect');
+
+            if (area) area.innerHTML = '<option value="">Đang tải...</option>';
+            if (locality) locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+
+            if (provinceId) {
+                const res = await fetch(`/get-districts/${provinceId}`);
+                const data = await res.json();
+                if (area) {
+                    area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                    data.forEach(item => {
+                        area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
+                    });
                 }
             }
-        });
-        if (!vnpayAgreeCheckbox.checked) {
-            isValid = false;
+            validateVnpayForm(); // validate lại sau khi load dữ liệu
         }
-        vnpaySubmitButton.disabled = !isValid;
-    }
 
-    // Gắn sự kiện khi người dùng thay đổi dữ liệu
-    vnpayInputs.forEach(input => {
-        input.addEventListener('input', validateVnpayForm);
-        input.addEventListener('change', validateVnpayForm);
-    });
+        window.onAreaChange = async function (selectElement) {
+            const areaId = selectElement.value;
+            const locality = document.getElementById('localitySelect');
 
-    // Gọi hàm kiểm tra ban đầu
-    validateVnpayForm();
+            if (locality) locality.innerHTML = '<option value="">Đang tải...</option>';
 
-    // Gọi validate lại sau khi dữ liệu được load động từ API
-    window.onProvinceChange = async function (selectElement) {
-        const provinceId = selectElement.value;
-        const area = document.getElementById('areaSelect');
-        const locality = document.getElementById('localitySelect');
-
-        area.innerHTML = '<option value="">Đang tải...</option>';
-        locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
-
-        if (provinceId) {
-            const res = await fetch(`/get-districts/${provinceId}`);
-            const data = await res.json();
-            area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            data.forEach(item => {
-                area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
-            });
-        }
-        validateVnpayForm(); // validate lại
-    }
-
-    window.onAreaChange = async function (selectElement) {
-        const areaId = selectElement.value;
-        const locality = document.getElementById('localitySelect');
-
-        locality.innerHTML = '<option value="">Đang tải...</option>';
-
-        if (areaId) {
-            const res = await fetch(`/get-wards/${areaId}`);
-            const data = await res.json();
-            locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            data.forEach(item => {
-                locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
-            });
-        }
-        validateVnpayForm(); // validate lại
-    }
-
-    // Trường hợp người dùng chọn lại từ đầu, cũng cần gọi lại validate
-    document.getElementById('localitySelect').addEventListener('change', validateVnpayForm);
-});
-</script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const vnpayForm = document.getElementById('vnpay-form');
-    const vnpayInputs = vnpayForm.querySelectorAll('[required]');
-    const vnpaySubmitButton = vnpayForm.querySelector('button[type="submit"]');
-    // Lấy tham chiếu đến checkbox đồng ý của form VNPay
-    const vnpayAgreeCheckbox = document.getElementById('vnpayAgreeCheckbox');
-
-    function validateVnpayForm() {
-        let isValid = true;
-        vnpayInputs.forEach(input => {
-            const value = input.value;
-            if (input.tagName === 'SELECT') {
-                if (!value || value === '') {
-                    isValid = false;
-                }
-            } else {
-                if (!value.trim()) {
-                    isValid = false;
+            if (areaId) {
+                const res = await fetch(`/get-wards/${areaId}`);
+                const data = await res.json();
+                if (locality) {
+                    locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                    data.forEach(item => {
+                        locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
+                    });
                 }
             }
-        });
-        // Thêm điều kiện kiểm tra checkbox đồng ý
-        if (!vnpayAgreeCheckbox.checked) {
-            isValid = false;
+            validateVnpayForm(); // validate lại sau khi load dữ liệu
         }
-        vnpaySubmitButton.disabled = !isValid;
     }
 
-    // Gắn sự kiện khi người dùng thay đổi dữ liệu
-    vnpayInputs.forEach(input => {
-        input.addEventListener('input', validateVnpayForm);
-        input.addEventListener('change', validateVnpayForm);
-    });
 
-    // Gắn sự kiện cho checkbox đồng ý
-    vnpayAgreeCheckbox.addEventListener('change', validateVnpayForm);
-
-    // Gọi hàm kiểm tra ban đầu
-    validateVnpayForm();
-
-    // Gọi validate lại sau khi dữ liệu được load động từ API
-    window.onProvinceChange = async function (selectElement) {
-        const provinceId = selectElement.value;
-        const area = document.getElementById('areaSelect');
-        const locality = document.getElementById('localitySelect');
-
-        area.innerHTML = '<option value="">Đang tải...</option>';
-        locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
-
-        if (provinceId) {
-            const res = await fetch(`/get-districts/${provinceId}`);
-            const data = await res.json();
-            area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            data.forEach(item => {
-                area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
-            });
-        }
-        validateVnpayForm(); // validate lại
-    }
-
-    window.onAreaChange = async function (selectElement) {
-        const areaId = selectElement.value;
-        const locality = document.getElementById('localitySelect');
-
-        locality.innerHTML = '<option value="">Đang tải...</option>';
-
-        if (areaId) {
-            const res = await fetch(`/get-wards/${areaId}`);
-            const data = await res.json();
-            locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            data.forEach(item => {
-                locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
-            });
-        }
-        validateVnpayForm(); // validate lại
-    }
-
-    // Trường hợp người dùng chọn lại từ đầu, cũng cần gọi lại validate
-    document.getElementById('localitySelect').addEventListener('change', validateVnpayForm);
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+    // --- Logic cho Form Cash ---
     const cashForm = document.getElementById('cash-form');
-    const cashInputs = cashForm.querySelectorAll('[required]');
-    const cashSubmitButton = cashForm.querySelector('button[type="submit"]');
-    // Lấy tham chiếu đến checkbox đồng ý của form Cash
-    const cashAgreeCheckbox = document.getElementById('cashAgreeCheckbox');
+    // Kiểm tra nếu form Cash tồn tại trước khi xử lý
+    if (cashForm) {
+        const cashInputs = cashForm.querySelectorAll('[required]');
+        const cashSubmitButton = cashForm.querySelector('button[type="submit"]');
+        const cashAgreeCheckbox = document.getElementById('cashAgreeCheckbox');
+        const cashOrderAccuracyAgreeCheckbox = document.getElementById('cashOrderAccuracyAgreeCheckbox');
 
-    function validateCashForm() {
-        let isValid = true;
-        cashInputs.forEach(input => {
-            const value = input.value;
-            if (input.tagName === 'SELECT') {
-                if (!value || value === '') {
-                    isValid = false;
+        function validateCashForm() {
+            let isValid = true;
+
+            // Validate các trường input yêu cầu (required)
+            cashInputs.forEach(input => {
+                const value = input.value;
+                if (input.tagName === 'SELECT') {
+                    if (!value || value === '') {
+                        isValid = false;
+                    }
+                } else {
+                    if (!value.trim()) {
+                        isValid = false;
+                    }
                 }
-            } else {
-                if (!value.trim()) {
-                    isValid = false;
+            });
+
+            // Validate hai checkbox đồng ý của Cash
+            if (!cashAgreeCheckbox.checked || !cashOrderAccuracyAgreeCheckbox.checked) {
+                isValid = false;
+            }
+
+            cashSubmitButton.disabled = !isValid;
+        }
+
+        // Gắn sự kiện cho các input, select và checkbox của form Cash
+        cashInputs.forEach(input => {
+            input.addEventListener('input', validateCashForm);
+            input.addEventListener('change', validateCashForm);
+        });
+        cashAgreeCheckbox.addEventListener('change', validateCashForm);
+        cashOrderAccuracyAgreeCheckbox.addEventListener('change', validateCashForm);
+        document.getElementById('cashLocalitySelect')?.addEventListener('change', validateCashForm);
+
+
+        // Gọi hàm kiểm tra ban đầu khi trang tải xong
+        validateCashForm();
+
+        // Các hàm xử lý API động cho Cash (nếu có)
+        window.onCashProvinceChange = async function (selectElement) {
+            const provinceId = selectElement.value;
+            const area = document.getElementById('cashAreaSelect');
+            const locality = document.getElementById('cashLocalitySelect');
+
+            if (area) area.innerHTML = '<option value="">Đang tải...</option>';
+            if (locality) locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+
+            if (provinceId) {
+                const res = await fetch(`/get-districts/${provinceId}`);
+                const data = await res.json();
+                if (area) {
+                    area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                    data.forEach(item => {
+                        area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
+                    });
                 }
             }
-        });
-        // Thêm điều kiện kiểm tra checkbox đồng ý
-        if (!cashAgreeCheckbox.checked) {
-            isValid = false;
-        }
-        cashSubmitButton.disabled = !isValid;
-    }
-
-    cashInputs.forEach(input => {
-        input.addEventListener('input', validateCashForm);
-        input.addEventListener('change', validateCashForm);
-    });
-
-    // Gắn sự kiện cho checkbox đồng ý
-    cashAgreeCheckbox.addEventListener('change', validateCashForm);
-
-    validateCashForm();
-
-    window.onCashProvinceChange = async function (selectElement) {
-        const provinceId = selectElement.value;
-        const area = document.getElementById('cashAreaSelect');
-        const locality = document.getElementById('cashLocalitySelect');
-
-        area.innerHTML = '<option value="">Đang tải...</option>';
-        locality.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
-
-        if (provinceId) {
-            const res = await fetch(`/get-districts/${provinceId}`);
-            const data = await res.json();
-            area.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            data.forEach(item => {
-                area.innerHTML += `<option value="${item.id}">${item.district_name}</option>`;
-            });
+            validateCashForm(); // validate lại sau khi load dữ liệu
         }
 
-        validateCashForm();
-    }
+        window.onCashAreaChange = async function (selectElement) {
+            const areaId = selectElement.value;
+            const locality = document.getElementById('cashLocalitySelect');
 
-    window.onCashAreaChange = async function (selectElement) {
-        const areaId = selectElement.value;
-        const locality = document.getElementById('cashLocalitySelect');
+            if (locality) locality.innerHTML = '<option value="">Đang tải...</option>';
 
-        locality.innerHTML = '<option value="">Đang tải...</option>';
-
-        if (areaId) {
-            const res = await fetch(`/get-wards/${areaId}`);
-            const data = await res.json();
-            locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            data.forEach(item => {
-                locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
-            });
+            if (areaId) {
+                const res = await fetch(`/get-wards/${areaId}`);
+                const data = await res.json();
+                if (locality) {
+                    locality.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+                    data.forEach(item => {
+                        locality.innerHTML += `<option value="${item.id}">${item.ward_name}</option>`;
+                    });
+                }
+            }
+            validateCashForm(); // validate lại sau khi load dữ liệu
         }
-
-        validateCashForm();
     }
-
-    document.getElementById('cashLocalitySelect').addEventListener('change', validateCashForm);
 });
 </script>
 

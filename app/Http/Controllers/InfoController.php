@@ -190,6 +190,24 @@ class InfoController extends Controller
         return view('frontend.paymentpolicy.paymentpolicy', compact('cities', 'menus_footer', 'products_list'));
     }
 
+    public function OrderConditions(){
+        $cities = City::all();
+        $menus_footer = Menu::all();
+        $topClientId = ProductNew::select('client_id', DB::raw('COUNT(*) as total'))
+                                ->groupBy('client_id')
+                                ->orderByDesc('total')
+                                ->value('client_id'); 
+        $products_list = ProductNew::with([
+                        'productTemplate.menu',
+                        'productTemplate.category'
+                    ])
+                    ->where('client_id', $topClientId)
+                    ->orderBy('id', 'desc')
+                    ->get();
+
+        return view('frontend.paymentpolicy.order_conditions', compact('cities', 'menus_footer', 'products_list'));
+    }
+    
     public function PersonalDataPolicy(){
         $cities = City::all();
         $menus_footer = Menu::all();
