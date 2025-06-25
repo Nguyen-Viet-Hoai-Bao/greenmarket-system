@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\Carbon;
+use Cloudinary\Api\Upload\UploadApi;
 
 class AdminController extends Controller
 {
@@ -253,14 +254,21 @@ class AdminController extends Controller
         
         $oldPhotoPath = $data->photo;
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('upload/admin_images'), $filename);
-            $data->photo = $filename;
+            $uploadApi = new UploadApi();
 
-            if ($oldPhotoPath && $oldPhotoPath !== $filename) {
-                $this->deleteOldImage($oldPhotoPath);
+            try {
+                $uploaded = $uploadApi->upload($file->getRealPath(), [
+                    'folder' => 'admin_images',
+                ]);
+                $secureUrl = $uploaded['secure_url'];
+                $data->photo = $secureUrl;
+            } catch (\Exception $e) {
+                return redirect()->back()->with([
+                    'message' => 'Upload thất bại: ' . $e->getMessage(),
+                    'alert-type' => 'error'
+                ]);
             }
         }
         $data->save();
@@ -275,7 +283,6 @@ class AdminController extends Controller
     private function deleteOldImage(string $oldPhotoPath) : void {
         $fullPath = public_path('upload/admin_images/'.$oldPhotoPath);
         if (file_exists($fullPath)) {
-            unlink($fullPath);
         }
     }
     //End Private Method

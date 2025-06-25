@@ -40,6 +40,7 @@
         <th>Tên Menu</th>
         <th>Kích Cỡ</th>
         <th>Đơn Vị</th>
+        <th>Chế độ kho</th>
         <th>Trạng Thái</th>
         <th>Hành Động</th>
     </tr>
@@ -59,6 +60,15 @@
             <td>{{ $item->menu->menu_name }}</td>
             <td>{{ $item->size }}</td>
             <td>{{ $item->unit }}</td>
+            <td>
+                @if ($item->stock_mode == 'quantity')
+                    Theo Số Lượng
+                @elseif ($item->stock_mode == 'unit')
+                    Theo Đơn Vị
+                @else
+                    N/A {{-- Hoặc giá trị mặc định nếu stock_mode không xác định --}}
+                @endif
+            </td>
             <td class="status-text-{{ $item->id }}">
                 @if ($item->status == 1)
                     <span class="text-success"><b>Active</b></span>

@@ -87,6 +87,22 @@
                             </div>
                         </div>
 
+                        <div class="col-xl-6 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Chế độ tồn kho</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="stock_mode" id="stockModeQuantity" value="quantity" {{ $product->stock_mode == 'quantity' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="stockModeQuantity">Theo Số Lượng (quantity)</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="stock_mode" id="stockModeUnit" value="unit" {{ $product->stock_mode == 'unit' ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="stockModeUnit">Theo Đơn Vị (unit)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Hình ảnh sản phẩm -->
                         <div class="col-xl-6 col-md-6">
                             <div class="form-group mb-3">

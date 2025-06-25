@@ -33,8 +33,8 @@
                       <div class="flex-shrink-0">
                           <div class="avatar-xl me-3">
                               <img src="{{ (!empty($profileData->photo)) 
-                                        ? url('upload/client_images/'.$profileData->photo)
-                                        : url('upload/no_image.jpg')}}" 
+                                        ? url($profileData->photo)
+                                        : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}" 
                                     alt="" class="img-fluid rounded-circle d-block">
                           </div>
                       </div>

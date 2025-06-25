@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Cloudinary\Configuration\Configuration;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Configuration::instance([
+            'cloud' => [
+                'cloud_name' => 'dth3mz6s9',
+                'api_key'    => '792675684592192',
+                'api_secret' => '7jbP0PFmXzSP0LrE_FsvfjAuFIo',
+            ],
+            'url' => [
+                'secure' => true
+            ]
+        ]);
     }
 }

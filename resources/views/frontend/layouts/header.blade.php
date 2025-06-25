@@ -101,8 +101,8 @@
                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                <img alt="Generic placeholder image" 
                   src="{{ (!empty($profileData->photo)) 
-                  ? url('upload/user_images/'.$profileData->photo)
-                  : url('upload/no_image.jpg')}}"    
+                  ? url($profileData->photo)
+                  : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}"    
                   class="nav-osahan-pic rounded-pill"> Tài Khoản
                </a>
                <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
@@ -211,7 +211,7 @@
                         $client = $clients[$clientId];
                      @endphp
                      <div class="dropdown-cart-top-header p-4">
-                        <img class="img-fluid mr-3" alt="osahan" src="{{ asset('upload/client_images/' . $client->photo) }}">
+                        <img class="img-fluid mr-3" alt="osahan" src="{{ asset($client->photo) }}">
                         <h6 class="mb-0">{{ $client->name }}</h6>
                         <p class="text-secondary mb-0">{{ $client->address }}</p>
                      </div>
@@ -467,6 +467,6 @@
          }
       });
    }
-   setInterval(fetchNotifications, 5000);
+   // setInterval(fetchNotifications, 5000);
    fetchNotifications();
 </script>

@@ -14,6 +14,7 @@ use App\Notifications\OrderProcessing;
 use App\Notifications\OrderDelivered;
 use App\Notifications\OrderCancelledBySystem;
 use App\Notifications\OrderCancelled;
+use App\Notifications\OrderConfirm;
 
 use App\Models\ProductNew;
 use App\Models\City;
@@ -26,18 +27,18 @@ use Illuminate\Support\Facades\DB;
 
 class ManageOrderController extends Controller
 {
-    // public function PendingOrder() {
-    //     $clientId = Auth::guard('client')->id();
+    public function PendingOrder() {
+        $clientId = Auth::guard('client')->id();
 
-    //     $allData = Order::where('status', 'pending')
-    //                     ->whereHas('OrderItems', function($query) use ($clientId) {
-    //                         $query->where('client_id', $clientId);
-    //                     })
-    //                     ->orderBy('id', 'desc')
-    //                     ->get();
+        $allData = Order::where('status', 'pending')
+                        ->whereHas('OrderItems', function($query) use ($clientId) {
+                            $query->where('client_id', $clientId);
+                        })
+                        ->orderBy('id', 'desc')
+                        ->get();
 
-    //     return view('client.backend.order.pending_order', compact('allData'));
-    // }
+        return view('client.backend.order.pending_order', compact('allData'));
+    }
 
     public function ConfirmOrder() {
         $clientId = Auth::guard('client')->id();
@@ -108,7 +109,7 @@ class ManageOrderController extends Controller
         $order = Order::with('user')
                         ->where('id', $id)
                         ->first();
-        $orderItem = OrderItem::with('product')
+        $orderItem = OrderItem::with('product', 'productUnit')
                         ->where('order_id', $id)
                         ->orderBy('id', 'desc')
                         ->get();
@@ -126,8 +127,15 @@ class ManageOrderController extends Controller
     // End Method
 
     public function PeningToConfirm($id) {
-        Order::find($id)->update(['status' => 'confirm']);
+        $order = Order::with('user')->find($id);
         
+        $user = $order->user;
+        if ($user) {
+            Notification::send($user, new OrderConfirm($order->invoice_no));
+        }
+
+        $order->update(['status' => 'confirm']);
+
         $notification = array(
             'message' => 'Xác nhận đơn hàng thành công',
             'alert-type' => 'success'
@@ -212,12 +220,11 @@ class ManageOrderController extends Controller
         $order = Order::with('user')
                         ->where('id', $id)
                         ->first();
-        $orderItem = OrderItem::with('product')
+        $orderItem = OrderItem::with('product', 'productUnit')
                         ->where('order_id', $id)
                         ->where('client_id', $clientId)
                         ->orderBy('id', 'desc')
                         ->get();
-
         $totalAmount = $order->total_amount;
         
         $totalPrice = 0;
@@ -279,7 +286,9 @@ class ManageOrderController extends Controller
                         ->where('user_id', Auth::id())
                         ->first();
 
-        $orderItem = OrderItem::with('product')
+        $orderItem = OrderItem::with('product',
+                                    'productUnit'
+                                    )
                        ->where('order_id', $id)
                        ->orderBy('id', 'desc')
                        ->get();
@@ -301,7 +310,7 @@ class ManageOrderController extends Controller
                                 ->value('client_id'); 
         $products_list = ProductNew::with([
                         'productTemplate.menu',
-                        'productTemplate.category'
+                        'productTemplate.category',
                     ])
                     ->where('client_id', $topClientId)
                     ->orderBy('id', 'desc')

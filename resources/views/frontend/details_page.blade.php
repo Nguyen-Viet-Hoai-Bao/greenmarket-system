@@ -25,6 +25,53 @@
       -webkit-line-clamp: 3; 
       -webkit-box-orient: vertical;
    }
+   .image-container {
+      position: relative; /* Rất quan trọng để discount-badge định vị theo */
+      overflow: hidden; /* Đảm bảo mọi thứ bên trong không tràn ra ngoài */
+      display: block; /* Đảm bảo div chiếm đủ không gian */
+   }
+
+   .image-container img {
+      display: block; 
+      width: 100%; 
+      height: auto; 
+   }
+
+   .discount-badge {
+      position: absolute; 
+      top: 5px; 
+      right: 5px; 
+      background-color: #03c800;
+      color: white; 
+      padding: 3px 8px;
+      border-radius: 5px; 
+      font-size: 0.75em; 
+      font-weight: bold;
+      z-index: 10; 
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+   }
+   .list-card-image img.item-img {
+      max-height: 150px;
+      width: 100%; 
+      object-fit: cover;
+   }
+   .btn-unit-select.in-cart {
+      opacity: 0.8; /* Làm mờ đi */
+      cursor: not-allowed; /* Thay đổi con trỏ chuột */
+      background-color: #f0f0f0 !important; /* Nền xám hơn */
+      border-color: #ddd !important;
+      color: #666 !important;
+      pointer-events: none; /* Ngăn chặn sự kiện click */
+   }
+   .btn-unit-select:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
+      background-color: #f8f8f8 !important;
+      border-color: #eee !important;
+      color: #999 !important;
+      pointer-events: none;
+   }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -53,14 +100,14 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 
 <section class="restaurant-detailed-banner">
   <div class="text-center">
-     <img class="img-fluid cover" src="{{ asset('upload/client_images/'. $client->cover_photo) }}">
+     <img class="img-fluid cover" src="{{ asset($client->cover_photo) }}">
   </div>
   <div class="restaurant-detailed-header">
      <div class="container">
         <div class="row d-flex align-items-end">
            <div class="col-md-8">
               <div class="restaurant-detailed-header-left">
-                 <img class="img-fluid mr-3 float-left" alt="osahan" src="{{ asset('upload/client_images/'. $client->photo) }}">
+                 <img class="img-fluid mr-3 float-left" alt="osahan" src="{{ asset($client->photo) }}">
                  <h2 class="text-white">{{ $client->name }}</h2>
                  <p class="text-white mb-1"><i class="icofont-location-pin"></i> {{ $client->fullAddress }} <span class="badge badge-success">Mở</span>
                  </p>
@@ -134,225 +181,196 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
               <div class="tab-content" id="pills-tabContent">
                  <div class="tab-pane fade show active" id="pills-order-online" role="tabpanel" aria-labelledby="pills-order-online-tab">
                      {{-- Most Popular --}}
-                     @php
-                        $populers = App\Models\ProductNew::with('productTemplate')
-                                    ->where('qty', '>', 0)
-                                    ->where('status', 1)
-                                    ->where('client_id', $client->id)
-                                    ->where('most_popular', 1)
-                                    ->orderBy('id', 'desc')
-                                    ->get();
-                     @endphp
                      <div id="menu" class="bg-white rounded shadow-sm p-4 mb-4 explore-outlets">
-                        <h6 class="mb-3">Sản Phẩm Phổ Biến Nhất </h6>
-                        {{-- <span class="badge badge-success"><i class="icofont-tags"></i> Sản Phẩm Phổ Biến Nhất </span> --}}
-                        <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
-                           @foreach ($populers as $populer)
-                              <div class="item">
-                                    <div class="mall-category-item">
-                                       <a href="{{ route('product.detail', $populer->id) }}">
-                                          <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
-                                          <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
-                                          <small class="text-muted d-block mb-1">
-                                             <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $populer->sold }}
-                                          </small>
+                     <h6 class="mb-3">Sản Phẩm Phổ Biến Nhất </h6>
+                     <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel">@foreach ($processedPopulers as $populer) {{-- Sử dụng biến đã xử lý --}}
+                     <div class="item">
+                        <div class="mall-category-item">
+                              <a href="{{ route('product.detail', $populer->id) }}">
+                                 {{-- Thêm div bao quanh ảnh và đặt position: relative --}}
+                                 <div class="image-container" style="position: relative; overflow: hidden;"> 
+                                    <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}" alt="">
+                                    @if (
+                                          ($populer->display_mode === 'unit' && $populer->available_units->isNotEmpty() && $populer->available_units->first()->final_sale_price < $populer->available_units->first()->sale_price) ||
+                                          ($populer->display_mode === 'quantity' && isset($populer->display_original_price) && $populer->display_original_price > 0 && $populer->final_display_price < $populer->display_original_price)
+                                    )
+                                          <span class="discount-badge">Giảm giá</span> {{-- Thẻ Giảm giá sẽ nằm đè lên ảnh --}}
+                                    @endif
+                                 </div>
+                                 <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
+                                 <small class="text-muted d-block mb-1">
+                                    <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $populer->sold }}
+                                 </small>
 
-
-                                          @if ($populer->discount_price == NULL)
-                                                {{ number_format($populer->price, 0, ',', '.') }}
+                                 @if ($populer->display_mode === 'unit')
+                                    {{-- Chế độ UNIT: Hiển thị giá của từng khay chưa bán, ưu tiên HSD gần nhất --}}
+                                    @forelse ($populer->available_units as $unit)
+                                          <div class="price-info">
+                                             @if ($unit->final_sale_price < $unit->sale_price)
+                                                <del>{{ number_format($unit->sale_price, 0, ',', '.') }} VNĐ</del>
+                                                <span class="text-success">{{ number_format($unit->final_sale_price, 0, ',', '.') }} VNĐ</span>
+                                             @else
+                                                <span>{{ number_format($unit->sale_price, 0, ',', '.') }} VNĐ</span>
+                                             @endif
+                                             <br>
+                                             <small class="text-muted">
+                                                {{ $unit->weight }} KG/{{ $populer->productTemplate->unit ?? 'Đơn vị' }} - HSD: {{ \Carbon\Carbon::parse($unit->expiry_date)->format('d/m/Y') }}
+                                             </small>
+                                          </div>
+                                          @break 
+                                    @empty
+                                          <span class="text-danger">Hết hàng</span>
+                                    @endforelse
+                                 @elseif ($populer->display_mode === 'quantity')
+                                    <p class="mb-0">
+                                          <span class="text-primary font-weight-bold">Còn: {{ $populer->total_available_quantity }} {{ $populer->productTemplate->unit ?? 'sản phẩm' }}</span>
+                                    </p>
+                                    <p class="mb-0">
+                                          @if (isset($populer->display_original_price) && $populer->display_original_price > 0)
+                                             @if ($populer->final_display_price < $populer->display_original_price)
+                                                <del>{{ number_format($populer->display_original_price, 0, ',', '.') }} VNĐ</del>
+                                                <span class="text-success">{{ number_format($populer->final_display_price, 0, ',', '.') }} VNĐ</span>
+                                             @else
+                                                <span>{{ number_format($populer->final_display_price, 0, ',', '.') }} VNĐ</span>
+                                             @endif
                                           @else
-                                                <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
-                                                {{ number_format($populer->discount_price, 0, ',', '.') }}
+                                             <span class="text-danger">Hết hàng</span>
                                           @endif
-                                       </a>
+                                    </p>
+                                 @endif
+                              </a>
 
-                                       
-                                       @php
-                                          $cart = session('cart', []);
-                                          $cartItem = $cart[$populer->id] ?? null;
-                                       @endphp
+                              @php
+                                 $cart = session('cart', []);
+                                 $cartItem = $cart[$populer->id] ?? null;
+                              @endphp
 
-                                       <div class="cart-actions-1">
-                                          @if ($cartItem)
-                                             <div class="d-flex justify-content-center align-items-center mt-2">
-                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                   data-id="{{ $populer->id }}"
-                                                   data-qty="{{ $cartItem['quantity'] - 1 }}">
-                                                   <i class="icofont-minus"></i>
-                                                </button>
-
-                                                {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
-                                                   id="qty-display-{{ $populer->id }}">
-                                                   {{ $cartItem['quantity'] }}
-                                                </span> --}}
-
-                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $populer->id }}">
-                                                   {{ $cartItem['quantity'] }}
-                                                </span>
-
-                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                   data-id="{{ $populer->id }}"
-                                                   data-qty="{{ $cartItem['quantity'] + 1 }}">
-                                                   <i class="icofont-plus"></i>
-                                                </button>
-                                             </div>
-                                          @else
-                                             <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $populer->id }}">
-                                                <i class="icofont-cart"></i> Thêm vào giỏ
-                                             </button>
-                                          @endif
-                                       </div>
+                              <div class="cart-actions-1">
+                                 @if ($cartItem)
+                                    <div class="d-flex justify-content-center align-items-center mt-2">
+                                          <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                             data-id="{{ $populer->id }}"
+                                             data-qty="{{ $cartItem['quantity'] - 1 }}">
+                                             <i class="icofont-minus"></i>
+                                          </button>
+                                          <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $populer->id }}">
+                                             {{ $cartItem['quantity'] }}
+                                          </span>
+                                          <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                             data-id="{{ $populer->id }}"
+                                             data-qty="{{ $cartItem['quantity'] + 1 }}">
+                                             <i class="icofont-plus"></i>
+                                          </button>
                                     </div>
+                                 @else
+                                    <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $populer->id }}">
+                                          <i class="icofont-cart"></i> Thêm vào giỏ
+                                    </button>
+                                 @endif
                               </div>
-                           @endforeach
                         </div>
                      </div>
-
+                  @endforeach
+               </div>
+            </div>
                      {{-- Best Sellers --}}
-                        @php
-                        $bestsellers = App\Models\ProductNew::with('productTemplate')
-                                    ->where('qty', '>', 0)
-                                    ->where('status', 1)
-                                    ->where('client_id', $client->id)
-                                    ->where('best_seller', 1)
-                                    ->orderBy('id', 'desc')
-                                    ->get();
-                        @endphp
-
                      <div id="menu" class="bg-white rounded shadow-sm p-3 mb-4 explore-outlets">
                         <h6 class="mb-3">Bán Chạy Nhất </h6>
-                        <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel mb-3">
-                           @foreach ($bestsellers as $populer)
-                              <div class="item">
-                                    <div class="mall-category-item">
-                                       <a href="{{ route('product.detail', $populer->id) }}">
-                                          <img class="img-fluid" src="{{ asset($populer->productTemplate->image ?? 'upload/no_image.jpg') }}" alt="">
-                                          <h6>{{ $populer->productTemplate->name ?? $populer->name }}</h6>
-                                          <small class="text-muted d-block mb-1">
-                                             <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $populer->sold }}
-                                          </small>
-
-                                          @if ($populer->discount_price == NULL)
-                                                {{ number_format($populer->price, 0, ',', '.') }}
-                                          @else
-                                                <del>{{ number_format($populer->price, 0, ',', '.') }}</del>
-                                                {{ number_format($populer->discount_price, 0, ',', '.') }}
+                        <div class="owl-carousel owl-theme owl-carousel-five offers-interested-carousel">
+                        @foreach ($processedBestsellers as $product)
+                           <div class="item">
+                              <div class="mall-category-item">
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                       {{-- Thêm div bao quanh ảnh và đặt position: relative --}}
+                                       <div class="image-container" style="position: relative; overflow: hidden;">
+                                          <img class="img-fluid" src="{{ asset($product->productTemplate->image ?? 'https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}" alt="">
+                                          @if (
+                                                ($product->display_mode === 'unit' && isset($product->display_unit_original_price) && $product->display_unit_original_price > 0 && $product->display_unit_price < $product->display_unit_original_price) ||
+                                                ($product->display_mode === 'quantity' && isset($product->display_original_price) && $product->display_original_price > 0 && $product->final_display_price < $product->display_original_price)
+                                          )
+                                                <span class="discount-badge">Giảm giá</span> {{-- Thẻ Giảm giá sẽ nằm đè lên ảnh --}}
                                           @endif
-                                       </a>
+                                       </div>
+                                       <h6>{{ $product->productTemplate->name ?? $product->name }}</h6>
+                                       <small class="text-muted d-block mb-1">
+                                          <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $product->sold }}
+                                       </small>
 
-                                       
-                                       @php
-                                          $cart = session('cart', []);
-                                          $cartItem = $cart[$populer->id] ?? null;
-                                       @endphp
+                                       @if ($product->display_mode === 'unit')
+                                          {{-- Chế độ UNIT: Hiển thị thông tin chính của unit HSD gần nhất --}}
+                                          @if (isset($product->display_unit_original_price) && $product->display_unit_original_price > 0)
+                                                <p class="mb-0">
+                                                   @if ($product->display_unit_price < $product->display_unit_original_price)
+                                                      <del>{{ number_format($product->display_unit_original_price, 0, ',', '.') }} VNĐ</del>
+                                                      <span class="text-success">{{ number_format($product->display_unit_price, 0, ',', '.') }} VNĐ</span>
+                                                      {{-- <span class="badge badge-success">Giảm giá</span> --}} {{-- Đã di chuyển lên trên ảnh --}}
+                                                   @else
+                                                      <span>{{ number_format($product->display_unit_price, 0, ',', '.') }} VNĐ</span>
+                                                   @endif
+                                                </p>
+                                                <small class="text-muted">
+                                                   {{ $product->productUnits->first()->weight }} KG/{{ $product->productTemplate->unit ?? 'Đơn vị' }} - HSD: {{ \Carbon\Carbon::parse($product->productUnits->first()->expiry_date)->format('d/m/Y') }}
+                                                </small>
+                                          @else
+                                                <span class="text-danger">Hết hàng</span>
+                                          @endif
+                                       @elseif ($product->display_mode === 'quantity')
+                                          {{-- Chế độ QUANTITY: Hiển thị tổng số lượng và giá đã giảm (từ unit HSD gần nhất) --}}
+                                          <p class="mb-0">
+                                                <span class="text-primary font-weight-bold">
+                                                   Còn: {{ $product->total_available_quantity }} {{ $product->productTemplate->unit ?? 'sản phẩm' }}
+                                                </span>
+                                          </p>
+                                          <p class="mb-0">
+                                                @if (isset($product->display_original_price) && $product->display_original_price > 0)
+                                                   @if ($product->final_display_price < $product->display_original_price)
+                                                      <del>{{ number_format($product->display_original_price, 0, ',', '.') }} VNĐ</del>
+                                                      <span class="text-success">{{ number_format($product->final_display_price, 0, ',', '.') }} VNĐ</span>
+                                                      {{-- <span class="badge badge-success">Giảm giá</span> --}} {{-- Đã di chuyển lên trên ảnh --}}
+                                                   @else
+                                                      <span>{{ number_format($product->final_display_price, 0, ',', '.') }} VNĐ</span>
+                                                   @endif
+                                                @else
+                                                   <span class="text-danger">Hết hàng</span>
+                                                @endif
+                                          </p>
+                                       @endif
+                                    </a>
 
-                                       <div class="cart-actions-1">
-                                          @if ($cartItem)
-                                             <div class="d-flex justify-content-center align-items-center mt-2">
+                                    {{-- Phần thêm/bớt giỏ hàng (giữ nguyên) --}}
+                                    @php
+                                       $cart = session('cart', []);
+                                       $cartItem = $cart[$product->id] ?? null;
+                                    @endphp
+
+                                    <div class="cart-actions-1">
+                                       @if ($cartItem)
+                                          <div class="d-flex justify-content-center align-items-center mt-2">
                                                 <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                   data-id="{{ $populer->id }}"
+                                                   data-id="{{ $product->id }}"
                                                    data-qty="{{ $cartItem['quantity'] - 1 }}">
                                                    <i class="icofont-minus"></i>
                                                 </button>
-
-                                                {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
-                                                   id="qty-display-{{ $populer->id }}">
-                                                   {{ $cartItem['quantity'] }}
-                                                </span> --}}
-
-                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $populer->id }}">
+                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $product->id }}">
                                                    {{ $cartItem['quantity'] }}
                                                 </span>
-
                                                 <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                   data-id="{{ $populer->id }}"
+                                                   data-id="{{ $product->id }}"
                                                    data-qty="{{ $cartItem['quantity'] + 1 }}">
                                                    <i class="icofont-plus"></i>
                                                 </button>
-                                             </div>
-                                          @else
-                                             <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $populer->id }}">
+                                          </div>
+                                       @else
+                                          <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $product->id }}">
                                                 <i class="icofont-cart"></i> Thêm vào giỏ
-                                             </button>
-                                          @endif
-                                       </div>
+                                          </button>
+                                       @endif
                                     </div>
                               </div>
-                           @endforeach
+                           </div>
+                        @endforeach
                         </div>
                      </div>
-                     
-                     {{-- <div class="row">
-                        <h5 class="mb-4 mt-3 col-md-12">Bán Chạy Nhất</h5>
-                        @foreach ($bestsellers as $bestseller)
-                        <div class="col-md-4 col-sm-6 mb-4">
-                           <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
-                              <div class="list-card-image">
-                                 <div class="star position-absolute"><span class="badge badge-success"><i class="icofont-star"></i> 3.1 (300+)</span></div>
-                                 <div class="favourite-heart text-danger position-absolute"><a href="#"><i class="icofont-heart"></i></a></div>
-                                 <div class="member-plan position-absolute"><span class="badge badge-dark">Được Quảng Bá</span></div>
-                                 <a href="{{ route('product.detail', $bestseller->id) }}">
-                                    <img src="{{ asset($bestseller->productTemplate->image ?? $bestseller->image) }}" class="img-fluid item-img" alt="">
-                                 </a>
-                              </div>
-                              <div class="p-3 position-relative">
-                                 <div class="list-card-body">
-                                    <h6 class="mb-1">
-                                       <a href="#" class="text-black">
-                                          {{ $bestseller->productTemplate->name ?? $bestseller->name }}
-                                       </a>
-                                    </h6>
-                                    <p class="text-gray mb-2">
-                                       {{ $bestseller->productTemplate->category->category_name ?? '-' }}
-                                    </p>
-                                    <p class="text-gray time mb-0">
-                                       @if ($bestseller->discount_price == NULL)
-                                          <a class="btn btn-link btn-sm text-black" href="#">
-                                          {{ number_format($bestseller->price, 0, ',', '.') }}
-                                          </a>  
-                                       @else
-                                          <del>{{ number_format($bestseller->price, 0, ',', '.') }}</del>
-                                          <a class="btn btn-link btn-sm text-black" href="#">
-                                          {{ number_format($bestseller->discount_price, 0, ',', '.') }}
-                                          </a>  
-                                       @endif
-                                       
-                                       @php
-                                          $cart = session('cart', []);
-                                          $cartItem = $cart[$bestseller->id] ?? null;
-                                       @endphp
-
-                                       <div class="cart-actions-2">
-                                          @if ($cartItem)
-                                             <div class="d-flex justify-content-center align-items-center mt-2">
-                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                   data-id="{{ $bestseller->id }}"
-                                                   data-qty="{{ $cartItem['quantity'] - 1 }}">
-                                                   <i class="icofont-minus"></i>
-                                                </button>
-                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $bestseller->id }}">
-                                                   {{ $cartItem['quantity'] }}
-                                                </span>
-
-                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                   data-id="{{ $bestseller->id }}"
-                                                   data-qty="{{ $cartItem['quantity'] + 1 }}">
-                                                   <i class="icofont-plus"></i>
-                                                </button>
-                                             </div>
-                                          @else
-                                             <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart mt-2" data-id="{{ $bestseller->id }}">
-                                                <i class="icofont-cart"></i> Thêm vào giỏ
-                                             </button>
-                                          @endif
-                                       </div>
-                                    </p>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                        @endforeach
-                     </div> --}}
                   </div>
 
 {{-- pills-gallery --}}
@@ -480,7 +498,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
          
       <div class="reviews-members pt-4 pb-4">
          <div class="media">
-            <a href="#"><img alt="Generic placeholder image" src="{{ (!empty($review->user->photo)) ? url('upload/user_images/'.$review->user->photo) : url('upload/no_image.jpg') }}" class="mr-3 rounded-pill"></a>
+            <a href="#"><img alt="Generic placeholder image" src="{{ (!empty($review->user->photo)) ? url($review->user->photo) : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}" class="mr-3 rounded-pill"></a>
             <div class="media-body">
                <div class="reviews-members-header">
                   <span class="star-rating float-right">
@@ -637,7 +655,7 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                                     <div class="row align-items-center">
                                         {{-- Hình ảnh coupon --}}
                                         <div class="col-md-5 text-center mb-3 mb-md-0">
-                                            <img src="{{ asset($coupon->image_path ?? 'frontend/img/default-coupon.png') }}" class="img-fluid rounded shadow-sm" alt="Coupon Image">
+                                            <img src="{{ asset($coupon->image_path ?? 'https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}" class="img-fluid rounded shadow-sm" alt="Coupon Image">
                                         </div>
 
                                         {{-- Thông tin chi tiết --}}
@@ -694,24 +712,6 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
 {{-- /////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
 <div class="container" id="product-search">
-   <div class="row d-none-m">
-         <div class="col-md-12">
-            <div class="dropdown float-right">
-               <a class="btn btn-outline-info dropdown-toggle btn-sm border-white-btn" href="#" role="button"
-                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     Sắp xếp theo: <span class="text-theme">Khoảng cách</span> &nbsp;&nbsp;
-               </a>
-               <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
-                     <a class="dropdown-item" href="#">Khoảng cách</a>
-                     <a class="dropdown-item" href="#">Số Lượng Ưu Đãi</a>
-                     <a class="dropdown-item" href="#">Đánh Giá</a>
-               </div>
-            </div>
-            <h4 class="font-weight-bold mt-0 mb-3">ƯU ĐÃI
-            </h4>
-         </div>
-   </div>
-
    <div class="row">
          <!-- Sidebar -->
          <div class="col-md-3">
@@ -777,106 +777,167 @@ $coupons = App\Models\Coupon::where('client_id', $client->id)
                </div>
             </div>
          </div>
-
-         <!-- Product Listing -->
-         <div class="col-md-9">
-            <div class="row" id="product-list">
-               @foreach ($products_all as $product)
-                     <div class="col-md-3 col-sm-6 mb-4 pb-2">
-                        <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm d-flex flex-column">
-                           <div class="list-card-image">
-                                 <div class="star position-absolute">
-                                    @if ($product->best_seller == 1)
-                                       <span class="badge badge-success"><i class="icofont-star"></i></span>
-                                    @endif
-                                 </div>
-                                 <div class="favourite-heart text-danger position-absolute">
-                                    @if ($product->most_popular == 1)
-                                       <a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a>
-                                    @endif
-                                 </div>
-                                 <a href="{{ route('product.detail', $product->id) }}">
-                                    <img src="{{ asset($product->productTemplate->image) }}"
-                                          class="img-fluid item-img">
-                                 </a>
-                           </div>
-
-                           <div class="p-3 d-flex flex-column h-100">
-                                 <div class="list-card-body mb-2">
-                                    <h6 class="mb-2 font-weight-bold">
-                                       <a href="{{ route('product.detail', $product->id) }}" class="text-dark">
-                                             {{ $product->productTemplate->name }}
-                                       </a>
-                                    </h6>
-                                    <small class="text-muted d-block mb-1">
-                                       <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $product->sold }}
-                                    </small>
-                                    <p class="text-success mb-2 d-flex justify-content-between align-items-center fs-6">
-                                       <span class="bg-light rounded px-2 py-1 font-weight-bold">
-                                          {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ
-                                       </span>
-
-                                       @php
-                                          $discount = $product->price - $product->discount_price;
-                                          $percent = round(($discount / $product->price) * 100);
-                                       @endphp
-
-                                       <span class="badge badge-light text-danger font-weight-bold px-2">
-                                          -{{ $percent }}%
-                                       </span>
-                                    </p>
-                                 </div>
-                                 @php
-                                    $cart = session('cart', []);
-                                    $cartItem = $cart[$product->id] ?? null;
-                                 @endphp
-
-                                 <div class="cart-actions mt-auto">
-                                    @if ($cartItem)
-                                       <div class="d-flex justify-content-center align-items-center">
-                                             <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                data-id="{{ $product->id }}"
-                                                data-qty="{{ $cartItem['quantity'] - 1 }}">
-                                                <i class="icofont-minus"></i>
-                                             </button>
-
-                                             {{-- <span class="btn btn-sm btn-light mx-2 font-weight-bold"
-                                                id="qty-display-{{ $product->id }}">
-                                                {{ $cartItem['quantity'] }}
-                                             </span> --}}
-                                             
-                                             <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $product->id }}">
-                                                {{ $cartItem['quantity'] }}
-                                             </span>
-
-                                             <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
-                                                data-id="{{ $product->id }}"
-                                                data-qty="{{ $cartItem['quantity'] + 1 }}">
-                                                <i class="icofont-plus"></i>
-                                             </button>
-                                       </div>
-                                    @else
-                                       {{-- <form action="{{ route('add_to_cart', $product->id) }}" method="GET"
-                                             class="w-100">
-                                             @csrf
-                                             <button type="submit" class="btn btn-primary btn-sm w-100">
-                                                <i class="icofont-cart"></i> Thêm vào giỏ hàng
-                                             </button>
-                                       </form> --}}
-                                       <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart" data-id="{{ $product->id }}">
-                                          <i class="icofont-cart"></i> Thêm vào giỏ hàng
-                                       </button>
-
-                                    @endif
-                                 </div>
-                           </div>
+<div class="col-md-9">
+    <div class="row" id="product-list">
+        @foreach ($processedProductsAll as $product)
+            <div class="col-md-3 col-sm-6 mb-4 pb-2">
+                <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm d-flex flex-column">
+                    <div class="list-card-image">
+                        <div class="star position-absolute">
+                            @if ($product->best_seller == 1)
+                                <span class="badge badge-success"><i class="icofont-star"></i></span>
+                            @endif
                         </div>
-                     </div>
-               @endforeach
-            </div> <!-- End of product-list -->
-         </div> <!-- End of col-md-9 -->
+                        <div class="favourite-heart text-danger position-absolute">
+                            @if ($product->most_popular == 1)
+                                <a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a>
+                            @endif
+                        </div>
+                        <a href="{{ route('product.detail', $product->id) }}">
+                            {{-- Đảm bảo productTemplate->image tồn tại trước khi dùng --}}
+                            <img src="{{ asset($product->productTemplate->image ?? 'https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}"
+                                class="img-fluid item-img">
+                        </a>
+                    </div>
+
+                    <div class="p-3 d-flex flex-column h-100">
+                        <div class="list-card-body mb-2">
+                            <h6 class="mb-2 font-weight-bold">
+                                <a href="{{ route('product.detail', $product->id) }}" class="text-dark">
+                                    {{ $product->productTemplate->name ?? $product->name }}
+                                </a>
+                            </h6>
+                            <small class="text-muted d-block mb-1">
+                                <i class="icofont-sale-discount text-danger"></i> Đã bán: {{ $product->sold }}
+                            </small>
+                            
+
+                            @if ($product->display_mode === 'unit')
+                              <small class="text-muted">
+                                 {{ $product->weight }} KG/{{ $product->productTemplate->unit ?? 'Đơn vị' }} - HSD: {{ \Carbon\Carbon::parse($product->expiry_date)->format('d/m/Y') }}
+                              </small>
+                                @if (isset($product->display_unit_original_price) && $product->display_unit_original_price > 0)
+                                    <p class="text-success mb-2 d-flex justify-content-between align-items-center fs-6">
+                                        @if ($product->display_unit_price < $product->display_unit_original_price)
+                                            <del class="text-muted mr-1">{{ number_format($product->display_unit_original_price, 0, ',', '.') }} VNĐ</del>
+                                            <span class="bg-light rounded px-2 py-1 font-weight-bold">
+                                                {{ number_format($product->display_unit_price, 0, ',', '.') }} VNĐ
+                                            </span>
+                                            {{-- Tính phần trăm giảm giá cho unit mode nếu muốn --}}
+                                            @php
+                                                $discount = $product->display_unit_original_price - $product->display_unit_price;
+                                                $percent = ($product->display_unit_original_price > 0) ? round(($discount / $product->display_unit_original_price) * 100) : 0;
+                                            @endphp
+                                            @if ($percent > 0)
+                                                <span class="badge badge-light text-danger font-weight-bold px-2">
+                                                    -{{ $percent }}%
+                                                </span>
+                                            @endif
+                                        @else
+                                            <span class="bg-light rounded px-2 py-1 font-weight-bold">
+                                                {{ number_format($product->display_unit_price, 0, ',', '.') }} VNĐ
+                                            </span>
+                                        @endif
+                                    </p>
+                                @else
+                                     <p class="text-danger mb-2">Hết hàng</p>
+                                @endif
+                            @elseif ($product->display_mode === 'quantity')
+                                {{-- Chế độ QUANTITY: Hiển thị tổng số lượng và giá đã giảm (từ unit HSD gần nhất) --}}
+                                <p class="mb-0 text-primary font-weight-bold">
+                                    Còn: {{ $product->total_available_quantity }} {{ $product->productTemplate->unit ?? 'sản phẩm' }}
+                                </p>
+                                @if (isset($product->display_original_price) && $product->display_original_price > 0)
+                                    <p class="text-success mb-2 d-flex justify-content-between align-items-center fs-6">
+                                        @if ($product->final_display_price < $product->display_original_price)
+                                            <del class="text-muted mr-1">{{ number_format($product->display_original_price, 0, ',', '.') }} VNĐ</del>
+                                            <span class="bg-light rounded px-2 py-1 font-weight-bold">
+                                                {{ number_format($product->final_display_price, 0, ',', '.') }} VNĐ
+                                            </span>
+                                            @php
+                                                $discount = $product->display_original_price - $product->final_display_price;
+                                                $percent = ($product->display_original_price > 0) ? round(($discount / $product->display_original_price) * 100) : 0;
+                                            @endphp
+                                            @if ($percent > 0)
+                                                <span class="badge badge-light text-danger font-weight-bold px-2">
+                                                    -{{ $percent }}%
+                                                </span>
+                                            @endif
+                                        @else
+                                            <span class="bg-light rounded px-2 py-1 font-weight-bold">
+                                                {{ number_format($product->final_display_price, 0, ',', '.') }} VNĐ
+                                            </span>
+                                        @endif
+                                    </p>
+                                @else
+                                    <p class="text-danger mb-2">Hết hàng</p>
+                                @endif
+                            @endif
+                            {{-- KẾT THÚC LOGIC HIỂN THỊ GIÁ MỚI --}}
+
+                        </div> {{-- end list-card-body --}}
+
+                        @php
+                            $cart = session('cart', []);
+                            $cartItem = $cart[$product->id] ?? null;
+                        @endphp
+
+                        <div class="cart-actions mt-auto">
+                            @if ($cartItem)
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                        data-id="{{ $product->id }}"
+                                        data-qty="{{ $cartItem['quantity'] - 1 }}">
+                                        <i class="icofont-minus"></i>
+                                    </button>
+                                    <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $product->id }}">
+                                        {{ $cartItem['quantity'] }}
+                                    </span>
+                                    <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                        data-id="{{ $product->id }}"
+                                        data-qty="{{ $cartItem['quantity'] + 1 }}">
+                                        <i class="icofont-plus"></i>
+                                    </button>
+                                </div>
+                            @else
+                                <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart" data-id="{{ $product->id }}">
+                                    <i class="icofont-cart"></i> Thêm vào giỏ hàng
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
    </div> <!-- End of row -->
 </div> <!-- End of container -->
+
+<div class="modal fade" id="productSelectionModal" tabindex="-1" role="dialog" aria-labelledby="productSelectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productSelectionModalLabel">Chọn chi tiết sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="product-selection-modal-content">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Đang tải...</span>
+                        </div>
+                        <p class="mt-2">Đang tải thông tin sản phẩm...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" id="confirmAddToCartBtn" disabled>Thêm vào giỏ hàng</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </section>
 

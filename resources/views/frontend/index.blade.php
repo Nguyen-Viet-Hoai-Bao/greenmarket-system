@@ -69,7 +69,7 @@
             @endif
 
             <a href="{{ route('market.details', $client->id) }}">
-            <img src="{{ asset('upload/client_images/' . $client->photo) }}" class="img-fluid item-img" style="width: 300px; hight:200px">
+            <img src="{{ asset($client->photo) }}" class="img-fluid item-img" style="width: 300px; hight:200px">
             </a>
          </div>
          <div class="p-3 position-relative">

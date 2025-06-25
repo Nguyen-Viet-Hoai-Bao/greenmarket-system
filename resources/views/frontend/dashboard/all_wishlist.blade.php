@@ -21,7 +21,7 @@
   <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm">
       <div class="list-card-image">
         <a href="{{ route('market.details', $wish->client_id) }}">
-        <img src="{{ asset('upload/client_images/' . $wish['client']['photo'] ) }}" class="img-fluid item-img" style="width: 300px; hight:300px">
+        <img src="{{ asset($wish['client']['photo'] ) }}" class="img-fluid item-img" style="width: 300px; hight:300px">
         </a>
       </div>
       <div class="p-3 position-relative">

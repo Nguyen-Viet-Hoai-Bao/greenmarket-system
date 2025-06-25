@@ -10,8 +10,8 @@
            <div class="osahan-user-media">
               <img class="mb-3 rounded-pill shadow-sm mt-1" 
                     src="{{ (!empty($profileData->photo)) 
-                    ? url('upload/user_images/'.$profileData->photo)
-                    : url('upload/no_image.jpg')}}" 
+                    ? url($profileData->photo)
+                    : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}" 
                     alt="gurdeep singh osahan">
               <div class="osahan-user-media-body">
                  <h6 class="mb-2">{{ $profileData->name }}</h6>
