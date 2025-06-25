@@ -17,8 +17,8 @@
 
                     <div class="col-md-4 text-center mb-3">
                         <img src="{{ !empty($client->photo) 
-                                        ? url('upload/client_images/' . $client->photo) 
-                                        : url('upload/no_image.jpg') }}"
+                                        ? url($client->photo) 
+                                        : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}"
                              style="width: 200px; height: auto; border-radius: 8px;">
                     </div>
 

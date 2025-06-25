@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Cloudinary\Api\Upload\UploadApi;
 
 class ClientController extends Controller
 {
@@ -244,22 +245,40 @@ class ClientController extends Controller
         
         $oldPhotoPath = $data->photo;
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('upload/client_images'), $filename);
-            $data->photo = $filename;
+            $uploadApi = new UploadApi();
 
-            if ($oldPhotoPath && $oldPhotoPath !== $filename) {
-                $this->deleteOldImage($oldPhotoPath);
+            try {
+                $uploaded = $uploadApi->upload($file->getRealPath(), [
+                    'folder' => 'client_images'
+                ]);
+                $secureUrl = $uploaded['secure_url'];
+                $data->photo = $secureUrl;
+            } catch (\Exception $e) {
+                return redirect()->back()->with([
+                    'message' => 'Lỗi upload ảnh đại diện: ' . $e->getMessage(),
+                    'alert-type' => 'error'
+                ]);
             }
         }
-        
-        if($request->hasFile('cover_photo')){
+
+        if ($request->hasFile('cover_photo')) {
             $file1 = $request->file('cover_photo');
-            $filename1 = time().'.'.$file1->getClientOriginalExtension();
-            $file1->move(public_path('upload/client_images'), $filename1);
-            $data->cover_photo = $filename1;
+            $uploadApi = new UploadApi();
+
+            try {
+                $uploaded1 = $uploadApi->upload($file1->getRealPath(), [
+                    'folder' => 'client_images'
+                ]);
+                $secureUrl1 = $uploaded1['secure_url'];
+                $data->cover_photo = $secureUrl1;
+            } catch (\Exception $e) {
+                return redirect()->back()->with([
+                    'message' => 'Lỗi upload ảnh bìa: ' . $e->getMessage(),
+                    'alert-type' => 'error'
+                ]);
+            }
         }
 
         $data->save();
@@ -274,7 +293,6 @@ class ClientController extends Controller
     private function deleteOldImage(string $oldPhotoPath) : void {
         $fullPath = public_path('upload/client_images/'.$oldPhotoPath);
         if (file_exists($fullPath)) {
-            unlink($fullPath);
         }
     }
     //End Private Method

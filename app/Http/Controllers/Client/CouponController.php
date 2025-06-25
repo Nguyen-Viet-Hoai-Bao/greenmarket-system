@@ -12,6 +12,7 @@ use Haruncpi\LaravelIdGenerator\IdGenerator;
 
 use App\Models\Coupon;
 use App\Models\AdminWallet;
+use Cloudinary\Api\Upload\UploadApi;
 
 class CouponController extends Controller
 {
@@ -122,11 +123,13 @@ class CouponController extends Controller
         $save_url = null;
         if ($request->file('image')) {
             $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/coupon_images/' . $name_gen));
-            $save_url = 'upload/coupon_images/' . $name_gen;
+
+            // Upload trực tiếp lên Cloudinary vào thư mục coupon_images
+            $uploaded = (new UploadApi())->upload($image->getRealPath(), [
+                'folder' => 'coupon_images'
+            ]);
+
+            $save_url = $uploaded['secure_url']; // URL lưu vào DB
         }
 
         Coupon::create([
@@ -179,11 +182,12 @@ class CouponController extends Controller
         $save_url = $coupon->image_path;
         if ($request->file('image')) {
             $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/coupon_images/' . $name_gen));
-            $save_url = 'upload/coupon_images/' . $name_gen;
+
+            $uploadApi = new UploadApi();
+            $response = $uploadApi->upload($image->getRealPath(), [
+                'folder' => 'coupon_images'
+            ]);
+            $save_url = $response['secure_url'];
         }
 
         $coupon->update([

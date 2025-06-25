@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 use App\Models\Gallery;
+use Cloudinary\Api\Upload\UploadApi; 
 
 class GalleryController extends Controller
 {
@@ -29,28 +30,24 @@ class GalleryController extends Controller
 
     public function StoreGallery(Request $request) {
         $images = $request->file('gallery_img');
+        $uploadApi = new UploadApi(); // ✅ Dùng SDK gốc
 
         foreach ($images as $gimg) {
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$gimg->getClientOriginalExtension();
-            $img = $manage->read($gimg);
-            $img->resize(800, 800)->save(public_path('upload/gallery_images/'
-                .$name_gen));
-            $save_url = 'upload/gallery_images/'.$name_gen;
+            $uploaded = $uploadApi->upload($gimg->getRealPath(), [
+                'folder' => 'gallery_images'
+            ]);
+            $secureUrl = $uploaded['secure_url']; // ← dùng array, không phải getSecurePath()
 
-            Gallery::insert([
+            Gallery::create([
                 'client_id' => Auth::guard('client')->id(),
-                'gallery_img' => $save_url,
+                'gallery_img' => $secureUrl,
             ]);
         }
-        
-        $notification = array(
+
+        return redirect()->route('all.gallery')->with([
             'message' => 'Insert Gallery Successfully',
             'alert-type' => 'success'
-        );
-
-        return redirect()->route('all.gallery')->with($notification);
+        ]);
     }
     // End Method
 
@@ -61,58 +58,60 @@ class GalleryController extends Controller
     // End Method
     
     public function UpdateGallery(Request $request) {
-        
         $gallery_id = $request->id;
+        $gallery = Gallery::find($gallery_id);
+        $uploadApi = new UploadApi();
 
-        if($request->file('gallery_img')){
+        if ($request->file('gallery_img')) {
             $image = $request->file('gallery_img');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(800, 800)->save(public_path('upload/gallery_images/'
-                .$name_gen));
-            $save_url = 'upload/gallery_images/'.$name_gen;
 
-            $gallery = Gallery::find($gallery_id);
-            if ($gallery->gallery_img) {
-                $img = $gallery->gallery_img;
-                unlink($img);
+            $uploaded = $uploadApi->upload($image->getRealPath(), [
+                'folder' => 'gallery_images'
+            ]);
+            $secureUrl = $uploaded['secure_url'];
+
+            // Xoá ảnh cũ nếu cần
+            if ($gallery->gallery_img && str_contains($gallery->gallery_img, 'res.cloudinary.com')) {
+                $publicId = basename(parse_url($gallery->gallery_img, PHP_URL_PATH));
+                $publicId = 'gallery_images/' . pathinfo($publicId, PATHINFO_FILENAME);
+                $uploadApi->destroy($publicId); // ✅ dùng SDK trực tiếp
             }
 
             $gallery->update([
-                'gallery_img' => $save_url
+                'gallery_img' => $secureUrl
             ]);
 
-            $notification = array(
+            return redirect()->route('all.gallery')->with([
                 'message' => 'Update Gallery Successfully',
                 'alert-type' => 'success'
-            );
-    
-            return redirect()->route('all.gallery')->with($notification);
-        } else {
-            $notification = array(
-                'message' => 'No Image Selected for Update',
-                'alert-type' => 'warning'
-            );
-    
-            return redirect()->route('all.gallery')->with($notification);
+            ]);
         }
+
+        return redirect()->route('all.gallery')->with([
+            'message' => 'No Image Selected for Update',
+            'alert-type' => 'warning'
+        ]);
     }
+
     // End Method
 
     public function DeleteGallery($id) {
         $item = Gallery::find($id);
-        $img = $item->gallery_img;
-        unlink($img);
+        $uploadApi = new UploadApi();
 
-        Gallery::find($id)->delete();
-        
-        $notification = array(
+        if ($item && $item->gallery_img && str_contains($item->gallery_img, 'res.cloudinary.com')) {
+            $publicId = basename(parse_url($item->gallery_img, PHP_URL_PATH));
+            $publicId = 'gallery_images/' . pathinfo($publicId, PATHINFO_FILENAME);
+            $uploadApi->destroy($publicId); // ✅ xoá trực tiếp
+        }
+
+        $item->delete();
+
+        return redirect()->back()->with([
             'message' => 'Delete Gallery Successfully',
             'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
+        ]);
     }
+
     // End Method
 }

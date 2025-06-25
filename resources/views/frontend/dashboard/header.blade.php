@@ -128,7 +128,7 @@
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
                             <img alt="Avatar người dùng"
-                                src="{{ $profileData->photo ? url('upload/user_images/'.$profileData->photo) : url('upload/no_image.jpg') }}"
+                                src="{{ $profileData->photo ? url($profileData->photo) : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}"
                                 class="nav-osahan-pic rounded-pill me-2"
                                 style="width:32px; height:32px; object-fit:cover;">
                             
@@ -455,7 +455,7 @@
             }
         });
     }
-    setInterval(fetchNotifications, 5000);
+    // setInterval(fetchNotifications, 5000);
     fetchNotifications();
 </script>
 

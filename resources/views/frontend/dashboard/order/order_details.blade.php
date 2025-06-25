@@ -45,6 +45,7 @@
             @php
                 // Định nghĩa trạng thái, icon, màu sắc tương ứng (FontAwesome 5)
                 $statuses = [
+                    'pending' => ['label' => 'Đang chờ', 'icon' => 'fas fa-hourglass-half', 'color' => 'text-warning'],
                     'confirm' => ['label' => 'Đã xác nhận', 'icon' => 'fas fa-check-circle', 'color' => 'text-primary'],
                     'processing' => ['label' => 'Đang xử lý', 'icon' => 'fas fa-sync-alt', 'color' => 'text-warning'],
                     'delivered' => ['label' => 'Đã giao hàng', 'icon' => 'fas fa-truck', 'color' => 'text-success'],
@@ -52,7 +53,7 @@
                     'cancelled' => ['label' => 'Hủy thành công', 'icon' => 'fas fa-times-circle', 'color' => 'text-danger'],
                 ];
 
-                $steps = ['confirm', 'processing', 'delivered'];
+                $steps = ['pending', 'confirm', 'processing', 'delivered'];
                 $isCancelled = in_array($order->status, ['cancel_pending', 'cancelled']);
                 $currentIndex = array_search($order->status, $steps);
             @endphp
@@ -124,9 +125,20 @@
                                             <th width="50%">Email: </th>
                                             <td>{{ $order->email }}</td> 
                                         </tr>
+                                        @php
+                                            $ward = \App\Models\Ward::with('district.city')->find($order->ward_id);
+                                        @endphp
+
                                         <tr> 
                                             <th width="50%">Địa chỉ: </th>
-                                            <td>{{ $order->address }}</td> 
+                                            <td>
+                                                {{ $order->address }}<br>
+                                                @if ($ward && $ward->district && $ward->district->city)
+                                                    {{ $ward->ward_name }}, {{ $ward->district->district_name }}, {{ $ward->district->city->city_name }}
+                                                @else
+                                                    Địa chỉ không xác định
+                                                @endif
+                                            </td> 
                                         </tr>
                                         <tr> 
                                             <th width="50%">Ngày đặt hàng: </th>
@@ -210,18 +222,6 @@
               
                      <tbody>
                          <tr> 
-                             <th width="50%"> Tên khách hàng: </th>
-                             <td>{{ $order->user->name }}</td> 
-                         </tr> 
-                         <tr> 
-                             <th width="50%"> Số điện thoại: </th>
-                             <td>{{ $order->user->phone }}</td> 
-                         </tr>
-                         <tr> 
-                             <th width="50%"> Email: </th>
-                             <td>{{ $order->user->email }}</td> 
-                         </tr>
-                         <tr> 
                              <th width="50%">Hình thức thanh toán: </th>
                              <td>{{ $order->payment_method }}</td> 
                          </tr>
@@ -283,6 +283,8 @@
                                         <th>Cửa hàng</th>
                                         <th>Mã sản phẩm</th>
                                         <th>Số lượng</th>
+                                        <th>Trọng lượng</th>
+                                        <th>Hạn sử dụng</th>
                                         <th>Giá</th>
                                     </tr>
                                 </thead>
@@ -303,6 +305,27 @@
                                         </td>
                                         <td>
                                             {{ $item->qty }}
+                                        </td>
+                                        <td>
+                                            @if ($item->product->productTemplate->stock_mode == 'quantity')
+                                                {{ $item->product->productTemplate->size }} {{ $item->product->productTemplate->unit }}
+                                            @elseif ($item->product->productTemplate->stock_mode == 'unit')
+                                                @if ($item->productUnit->weight) {{-- product->weight ở đây là từ product_units, nên cần đảm bảo mối quan hệ đúng --}}
+                                                    {{ $item->productUnit->weight }} kg/{{ $item->product->productTemplate->unit }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            @else
+                                                N/A 
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{-- Hiển thị hạn sử dụng --}}
+                                            @if ($item->productUnit->expiry_date)
+                                            {{ \Carbon\Carbon::parse($item->productUnit->expiry_date)->format('d/m/Y') }}
+                                            @else
+                                            N/A
+                                            @endif
                                         </td>
                                         <td>
                                             {{ number_format($item->price, 0, ',', '.') }}

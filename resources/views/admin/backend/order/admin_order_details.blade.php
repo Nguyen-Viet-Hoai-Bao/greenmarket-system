@@ -44,9 +44,20 @@
                                     <th width="50%">Email:</th>
                                     <td>{{ $order->email }}</td>
                                 </tr>
-                                <tr>
-                                    <th width="50%">Địa chỉ giao hàng:</th>
-                                    <td>{{ $order->address }}</td>
+                                @php
+                                    $ward = \App\Models\Ward::with('district.city')->find($order->ward_id);
+                                @endphp
+
+                                <tr> 
+                                    <th width="50%">Địa chỉ giao hàng: </th>
+                                    <td>
+                                        {{ $order->address }}<br>
+                                        @if ($ward && $ward->district && $ward->district->city)
+                                            {{ $ward->ward_name }}, {{ $ward->district->district_name }}, {{ $ward->district->city->city_name }}
+                                        @else
+                                            Địa chỉ không xác định
+                                        @endif
+                                    </td> 
                                 </tr>
                                 <tr>
                                     <th width="50%">Ngày đặt hàng:</th>
@@ -77,24 +88,8 @@
                         <table class="table table-bordered border-primary mb-0">
                             <tbody>
                                 <tr>
-                                    <th width="50%">Tên khách hàng:</th>
-                                    <td>{{ $order->user->name }}</td>
-                                </tr>
-                                <tr>
-                                    <th width="50%">Số điện thoại:</th>
-                                    <td>{{ $order->user->phone }}</td>
-                                </tr>
-                                <tr>
-                                    <th width="50%">Email:</th>
-                                    <td>{{ $order->user->email }}</td>
-                                </tr>
-                                <tr>
                                     <th width="50%">Phương thức thanh toán:</th>
                                     <td>{{ $order->payment_method }}</td>
-                                </tr>
-                                <tr>
-                                    <th width="50%">Mã giao dịch:</th>
-                                    <td>{{ $order->transaction_id }}</td>
                                 </tr>
                                 <tr>
                                     <th width="50%">Mã hóa đơn:</th>
@@ -179,6 +174,8 @@
                                         <th>Cửa hàng</th>
                                         <th>Mã sản phẩm</th>
                                         <th>Số lượng</th>
+                                        <th>Trọng lượng</th>
+                                        <th>Hạn sử dụng</th>
                                         <th>Giá</th>
                                     </tr>
                                 </thead>
@@ -199,6 +196,27 @@
                                         </td>
                                         <td>
                                             {{ $item->qty }}
+                                        </td>
+                                        <td>
+                                            @if ($item->product->productTemplate->stock_mode == 'quantity')
+                                                {{ $item->product->productTemplate->size }} {{ $item->product->productTemplate->unit }}
+                                            @elseif ($item->product->productTemplate->stock_mode == 'unit')
+                                                @if ($item->productUnit->weight) {{-- product->weight ở đây là từ product_units, nên cần đảm bảo mối quan hệ đúng --}}
+                                                    {{ $item->productUnit->weight }} kg/{{ $item->product->productTemplate->unit }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            @else
+                                                N/A 
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{-- Hiển thị hạn sử dụng --}}
+                                            @if ($item->productUnit->expiry_date)
+                                            {{ \Carbon\Carbon::parse($item->productUnit->expiry_date)->format('d/m/Y') }}
+                                            @else
+                                            N/A
+                                            @endif
                                         </td>
                                         <td>
                                             {{ number_format($item->price, 0, ',', '.') }}

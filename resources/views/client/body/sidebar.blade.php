@@ -29,7 +29,7 @@
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
                             <li>
-                                <a href="{{ route('all.product') }}">
+                                <a href="{{ route('product.stock') }}">
                                     <span data-key="t-calendar">Tất cả sản phẩm</span>
                                 </a>
                             </li>
@@ -41,8 +41,8 @@
                             </li>
                             
                             <li>
-                                <a href="{{ route('add.product.multi') }}">
-                                    <span data-key="t-chat">Thêm hàng loạt</span>
+                                <a href="{{ route('product.discounts.all') }}">
+                                    <span data-key="t-chat">Giảm giá sản phẩm</span>
                                 </a>
                             </li>
                         </ul>
@@ -54,6 +54,11 @@
                             <span data-key="t-apps">Quản lý đơn hàng</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
+                            <li>
+                                <a href="{{ route('pending.order') }}">
+                                    <span data-key="t-chat">Đơn hàng đang chờ</span>
+                                </a>
+                            </li>
                             <li>
                                 <a href="{{ route('confirm.order') }}">
                                     <span data-key="t-chat">Đơn hàng đã xác nhận</span>

@@ -44,9 +44,20 @@
                                     <th width="50%">Email:</th>
                                     <td>{{ $order->email }}</td>
                                 </tr>
-                                <tr>
-                                    <th width="50%">Địa chỉ giao hàng:</th>
-                                    <td>{{ $order->address }}</td>
+                                @php
+                                    $ward = \App\Models\Ward::with('district.city')->find($order->ward_id);
+                                @endphp
+
+                                <tr> 
+                                    <th width="50%">Địa chỉ giao hàng: </th>
+                                    <td>
+                                        {{ $order->address }}<br>
+                                        @if ($ward && $ward->district && $ward->district->city)
+                                            {{ $ward->ward_name }}, {{ $ward->district->district_name }}, {{ $ward->district->city->city_name }}
+                                        @else
+                                            Địa chỉ không xác định
+                                        @endif
+                                    </td> 
                                 </tr>
                                 <tr>
                                     <th width="50%">Ngày đặt hàng:</th>
@@ -77,24 +88,8 @@
                         <table class="table table-bordered border-primary mb-0">
                             <tbody>
                                 <tr>
-                                    <th width="50%">Tên khách hàng:</th>
-                                    <td>{{ $order->user->name }}</td>
-                                </tr>
-                                <tr>
-                                    <th width="50%">Số điện thoại:</th>
-                                    <td>{{ $order->user->phone }}</td>
-                                </tr>
-                                <tr>
-                                    <th width="50%">Email:</th>
-                                    <td>{{ $order->user->email }}</td>
-                                </tr>
-                                <tr>
                                     <th width="50%">Phương thức thanh toán:</th>
                                     <td>{{ $order->payment_method }}</td>
-                                </tr>
-                                <tr>
-                                    <th width="50%">Mã giao dịch:</th>
-                                    <td>{{ $order->transaction_id }}</td>
                                 </tr>
                                 <tr>
                                     <th width="50%">Mã hóa đơn:</th>
@@ -180,7 +175,7 @@
 
 
 
-             <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-1">
+            <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-1">
                 <div class="col">
                     <div class="card p-3">
                         <div class="table-responsive">
@@ -191,6 +186,8 @@
                                         <th>Tên sản phẩm</th>
                                         <th>Cửa hàng</th>
                                         <th>Mã sản phẩm</th>
+                                        <th>Trọng lượng</th>
+                                        <th>Hạn sử dụng</th>
                                         <th>Số lượng</th>
                                         <th>Giá</th>
                                     </tr>
@@ -199,7 +196,8 @@
                                     @foreach ($orderItem as $item)
                                     <tr>
                                         <td>
-                                            <img src="{{ asset($item->product->productTemplate->image) }}" style="width:50px; height:50px" alt="Product Image">
+                                            <img src="{{ asset($item->product->productTemplate->image) }}"
+                                                style="width:50px; height:50px" alt="Product Image">
                                         </td>
                                         <td>
                                             {{ $item->product->productTemplate->name }}
@@ -209,6 +207,27 @@
                                         </td>
                                         <td>
                                             {{ $item->product->productTemplate->code }}
+                                        </td>
+                                        <td>
+                                            @if ($item->product->productTemplate->stock_mode == 'quantity')
+                                                {{ $item->product->productTemplate->size }} {{ $item->product->productTemplate->unit }}
+                                            @elseif ($item->product->productTemplate->stock_mode == 'unit')
+                                                @if ($item->productUnit->weight) {{-- product->weight ở đây là từ product_units, nên cần đảm bảo mối quan hệ đúng --}}
+                                                    {{ $item->productUnit->weight }} kg/{{ $item->product->productTemplate->unit }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            @else
+                                                N/A 
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{-- Hiển thị hạn sử dụng --}}
+                                            @if ($item->productUnit->expiry_date)
+                                            {{ \Carbon\Carbon::parse($item->productUnit->expiry_date)->format('d/m/Y') }}
+                                            @else
+                                            N/A
+                                            @endif
                                         </td>
                                         <td>
                                             {{ $item->qty }}
@@ -221,7 +240,7 @@
                                             </small>
                                         </td>
                                     </tr>
-                                    @endforeach 
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -232,41 +251,43 @@
                         </div>
 
                         @if (in_array($order->status, ['cancel_pending']))
-                            <div class="mt-3">
-                                <h5>Lý do huỷ đơn:</h5>
-                                <p class="border p-3 bg-light">{{ $order->cancel_reason ?? 'Không có lý do huỷ.' }}</p>
+                        <div class="mt-3">
+                            <h5>Lý do huỷ đơn:</h5>
+                            <p class="border p-3 bg-light">{{ $order->cancel_reason ?? 'Không có lý do huỷ.' }}</p>
 
-                                <div class="text-end">
-                                    <form action="{{ route('client.order.cancel.pending', $order->id) }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="cancel_reason" value="{{ $order->cancel_reason }}">
-                                        <button type="submit" class="btn btn-danger">
-                                            Xác nhận huỷ đơn
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        @endif
-                        
-                        @if (in_array($order->status, ['pending', 'confirm']))
-                            <div class="d-flex justify-content-end mt-3">
-                                <button type="button" class="btn btn-danger" id="showCancelForm">
-                                    <i class="bi bi-x-circle"></i> Huỷ đơn
-                                </button>
-                            </div>
-
-                            <form id="cancelForm" action="{{ route('client.order.cancel', $order->id) }}" method="POST" style="display: none;" class="mt-3">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="cancel_reason">Lý do huỷ đơn <span class="text-danger">*</span></label>
-                                    <textarea name="cancel_reason" id="cancel_reason" class="form-control" rows="3" required placeholder="Nhập lý do huỷ đơn..."></textarea>
-                                </div>
-                                <div class="text-end mt-2">
+                            <div class="text-end">
+                                <form action="{{ route('client.order.cancel.pending', $order->id) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="cancel_reason" value="{{ $order->cancel_reason }}">
                                     <button type="submit" class="btn btn-danger">
                                         Xác nhận huỷ đơn
                                     </button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if (in_array($order->status, ['pending']))
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-danger" id="showCancelForm">
+                                <i class="bi bi-x-circle"></i> Huỷ đơn
+                            </button>
+                        </div>
+
+                        <form id="cancelForm" action="{{ route('client.order.cancel', $order->id) }}" method="POST"
+                            style="display: none;" class="mt-3">
+                            @csrf
+                            <div class="form-group">
+                                <label for="cancel_reason">Lý do huỷ đơn <span class="text-danger">*</span></label>
+                                <textarea name="cancel_reason" id="cancel_reason" class="form-control" rows="3" required
+                                    placeholder="Nhập lý do huỷ đơn..."></textarea>
+                            </div>
+                            <div class="text-end mt-2">
+                                <button type="submit" class="btn btn-danger">
+                                    Xác nhận huỷ đơn
+                                </button>
+                            </div>
+                        </form>
                         @endif
                     </div>
                 </div>

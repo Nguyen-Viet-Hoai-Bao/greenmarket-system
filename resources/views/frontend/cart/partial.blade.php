@@ -44,7 +44,17 @@
                         <img src="{{ asset($details['image']) }}" alt="" width="25px">
                     </div>
                     <div class="media-body">
-                        <p class="mt-1 mb-0 text-black">{{ $details['name'] }}</p>
+                        {{-- Liên kết mở Modal chi tiết sản phẩm --}}
+                        <p class="mt-1 mb-0 text-black">
+                            <a href="#" class="product-name-link" data-product-id="{{ $details['id'] }}" style="text-decoration: none; color: inherit; cursor: pointer;">
+                                {{ $details['name'] }}
+                            </a>
+                        </p>
+                        @if (($details['display_mode'] ?? null) === 'unit')
+                            <small class="text-muted">
+                                {{ $details['weight'] ?? 'N/A' }} KG - {{ isset($details['expiry_date']) ? \Carbon\Carbon::parse($details['expiry_date'])->format('d/m/Y') : 'N/A' }}
+                            </small>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -119,3 +129,106 @@
 <a href="{{ route('checkout') }}" class="btn btn-success btn-block btn-lg">
     Thanh toán <i class="icofont-long-arrow-right"></i>
 </a>
+
+{{-- Modal Chi tiết sản phẩm (Đặt ở cuối file blade này hoặc trong layout chính) --}}
+<div class="modal fade" id="productDetailsModal" tabindex="-1" role="dialog" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDetailsModalLabel">Chi tiết sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="product-modal-content">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="sr-only">Đang tải...</span>
+                        </div>
+                        <p>Đang tải thông tin sản phẩm...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.product-name-link').on('click', function(e) {
+            e.preventDefault(); // Chặn hành vi mặc định của thẻ <a> (không điều hướng)
+
+            var productId = $(this).data('product-id'); // Lấy ID sản phẩm từ thuộc tính data-product-id
+            var modalContent = $('#product-modal-content');
+
+            // Hiển thị trạng thái tải ban đầu trong modal
+            modalContent.html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Đang tải...</span>
+                    </div>
+                    <p class="mt-2">Đang tải thông tin sản phẩm...</p>
+                </div>
+            `);
+
+            // Mở modal
+            $('#productDetailsModal').modal('show');
+
+            // Gửi yêu cầu AJAX đến server để lấy thông tin sản phẩm
+            $.ajax({
+                url: '/api/product-details/' + productId, // Sử dụng route API bạn đã định nghĩa
+                method: 'GET',
+                success: function(data) {
+                    // Xây dựng nội dung HTML để hiển thị trong modal
+                    var htmlContent = `
+                        <div class="text-center mb-3">
+                            <img src="${data.image ? data.image : 'https://via.placeholder.com/150?text=No+Image'}" alt="${data.name}" class="img-fluid rounded" style="max-width: 180px;">
+                        </div>
+                        <h5 class="font-weight-bold">${data.name}</h5>
+                        <p><strong>Giá:</strong> <span class="text-danger">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.price)}</span></p>
+                    `;
+                    
+                    if (data.display_mode === 'unit') {
+                        htmlContent += `<p><strong>Khối lượng:</strong> <span style="color: red; font-weight: bold;">${data.selected_unit.weight ?? 'N/A'} KG</span></p>`;
+                        htmlContent += `<p><strong>Ngày hết hạn:</strong> <span style="color: red; font-weight: bold;">${data.selected_unit.expiry_date ? data.selected_unit.expiry_date : 'N/A'}</span></p>`;
+                    } 
+
+                    if (data.display_mode != 'unit') {
+                        htmlContent += `<p><strong>Ngày hết hạn:</strong> <span style="color: red; font-weight: bold;">${data.selected_unit.expiry_date ? data.selected_unit.expiry_date : 'N/A'}</span></p>`;
+                    } 
+
+                    if (data.description) {
+                        htmlContent += `<p><strong>Mô tả:</strong> ${data.description}</p>`;
+                    }
+                    
+                    if (data.product_info) {
+                        htmlContent += `<p><strong>Thông tin sản phẩm:</strong> ${data.product_info}</p>`;
+                    }
+                    if (data.note) {
+                        htmlContent += `<p><strong>Lưu ý:</strong> ${data.note}</p>`;
+                    }
+                    if (data.origin) {
+                        htmlContent += `<p><strong>Xuất xứ:</strong> ${data.origin}</p>`;
+                    }
+                    if (data.preservation) {
+                        htmlContent += `<p><strong>Bảo quản:</strong> ${data.preservation}</p>`;
+                    }
+                    if (data.usage_instructions) {
+                        htmlContent += `<p><strong>Hướng dẫn sử dụng:</strong> ${data.usage_instructions}</p>`;
+                    }
+                    
+                    modalContent.html(htmlContent);
+                },
+                error: function(xhr, status, error) {
+                    // Xử lý lỗi nếu có
+                    modalContent.html('<p class="text-danger text-center">Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.</p>');
+                    console.error('AJAX Error: ', status, error, xhr.responseText);
+                }
+            });
+        });
+    });
+</script>

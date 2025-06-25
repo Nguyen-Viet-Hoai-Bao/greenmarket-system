@@ -39,8 +39,8 @@
       <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <img alt="Generic placeholder image" 
          src="{{ (!empty($profileData->photo)) 
-         ? url('upload/user_images/'.$profileData->photo)
-         : url('upload/no_image.jpg')}}"    
+         ? url($profileData->photo)
+         : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}"    
          class="nav-osahan-pic rounded-pill"> My Account
       </a>
       <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">

@@ -58,8 +58,8 @@
         <div class="mb-3">
           <img id="showImage"
               src="{{ (!empty($profileData->photo)) 
-                    ? url('upload/user_images/'.$profileData->photo)
-                    : url('upload/no_image.jpg')}}" 
+                    ? url($profileData->photo)
+                    : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}" 
                 alt="" class="rounded-circle p-1 bg-primary" width="110">
         </div>
 

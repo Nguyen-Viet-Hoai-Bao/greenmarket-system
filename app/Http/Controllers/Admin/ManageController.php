@@ -25,6 +25,8 @@ use App\Mail\ClientApprovedMailer;
 use App\Mail\ClientRejectedMailer;
 use App\Mail\ClientBlockedMailer;
 use App\Mail\ClientUnblockedMailer;
+use Cloudinary\Api\Upload\UploadApi;
+
 class ManageController extends Controller
 {
     
@@ -56,13 +58,10 @@ class ManageController extends Controller
 
         if($request->file('image')){
             $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/product_template_images/'
-                .$name_gen));
-            $save_url = 'upload/product_template_images/'.$name_gen;
+            $upload = (new UploadApi())->upload($image->getRealPath(), [
+                'folder' => 'product_template_images'
+            ]);
+            $save_url = $upload['secure_url'];
 
             ProductTemplate::create([
                 'name' => $request->name,
@@ -72,6 +71,7 @@ class ManageController extends Controller
                 'code' => $pcode,
                 'size' => $request->size,
                 'unit' => $request->unit,
+                'stock_mode' => $request->stock_mode,
                 'status' => 1,
                 'created_at' => Carbon::now(),
                 'image' => $save_url,
@@ -96,94 +96,61 @@ class ManageController extends Controller
 
     }
     // End Method
-    
     public function AdminUpdateProduct(Request $request) {
         $pro_id = $request->id;
+
         $pcode = IdGenerator::generate([
             'table' => 'products', 
             'field' => 'code',
             'length' => 5,
-            'prefix' => 'PC']);
+            'prefix' => 'PC'
+        ]);
 
-        if($request->file('image')){
+        $updateData = [
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'category_id' => $request->category_id,
+            'menu_id' => $request->menu_id,
+            'size' => $request->size,
+            'unit' => $request->unit,
+            'stock_mode' => $request->stock_mode,
+            'created_at' => Carbon::now(),
+        ];
+
+        if ($request->file('image')) {
             $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/product_template_images/'
-                .$name_gen));
-            $save_url = 'upload/product_template_images/'.$name_gen;
-
-            ProductTemplate::find($pro_id)->update([
-                'name' => $request->name,
-                'slug' => Str::slug($request->name),
-                'category_id' => $request->category_id,
-                'menu_id' => $request->menu_id,
-                'size' => $request->size,
-                'unit' => $request->unit,
-                'created_at' => Carbon::now(),
-                'image' => $save_url,
+            $upload = (new UploadApi())->upload($image->getRealPath(), [
+                'folder' => 'product_template_images'
             ]);
-
-            $notification = array(
-                'message' => 'Cập nhật sản phẩm thành công',
-                'alert-type' => 'success'
-            );
-
-            // Cập nhật hoặc tạo mới ProductDetail
-            $productDetail = ProductDetail::updateOrCreate(
-                ['product_template_id' => $pro_id], // Tìm theo product_template_id
-                [
-                    'description' => $request->description ?? 'Đang cập nhật',
-                    'product_info' => $request->product_info ?? 'Đang cập nhật',
-                    'note' => $request->note ?? 'Đang cập nhật',
-                    'origin' => $request->origin ?? 'Đang cập nhật',
-                    'preservation' => $request->preservation ?? 'Đang cập nhật',
-                    'usage_instructions' => $request->usage_instructions ?? 'Đang cập nhật',
-                ]
-            );
-    
-            return redirect()->route('admin.all.product')->with($notification);
-        } else {
-            ProductTemplate::find($pro_id)->update([
-                'name' => $request->name,
-                'slug' => Str::slug($request->name),
-                'category_id' => $request->category_id,
-                'menu_id' => $request->menu_id,
-                'size' => $request->size,
-                'unit' => $request->unit,
-                'created_at' => Carbon::now(),
-            ]);
-
-            // Cập nhật hoặc tạo mới ProductDetail
-            $productDetail = ProductDetail::updateOrCreate(
-                ['product_template_id' => $pro_id], // Tìm theo product_template_id
-                [
-                    'description' => $request->description ?? 'Đang cập nhật',
-                    'product_info' => $request->product_info ?? 'Đang cập nhật',
-                    'note' => $request->note ?? 'Đang cập nhật',
-                    'origin' => $request->origin ?? 'Đang cập nhật',
-                    'preservation' => $request->preservation ?? 'Đang cập nhật',
-                    'usage_instructions' => $request->usage_instructions ?? 'Đang cập nhật',
-                ]
-            );
-
-            $notification = array(
-                'message' => 'Cập nhật sản phẩm thành công',
-                'alert-type' => 'success'
-            );
-    
-            return redirect()->route('admin.all.product')->with($notification);
+            $updateData['image'] = $upload['secure_url'];
         }
+
+        ProductTemplate::find($pro_id)->update($updateData);
+
+        // Cập nhật hoặc tạo ProductDetail
+        ProductDetail::updateOrCreate(
+            ['product_template_id' => $pro_id],
+            [
+                'description' => $request->description ?? 'Đang cập nhật',
+                'product_info' => $request->product_info ?? 'Đang cập nhật',
+                'note' => $request->note ?? 'Đang cập nhật',
+                'origin' => $request->origin ?? 'Đang cập nhật',
+                'preservation' => $request->preservation ?? 'Đang cập nhật',
+                'usage_instructions' => $request->usage_instructions ?? 'Đang cập nhật',
+            ]
+        );
+
+        $notification = [
+            'message' => 'Cập nhật sản phẩm thành công',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->route('admin.all.product')->with($notification);
     }
     // End Method
 
     public function AdminDeleteProduct($id) {
         $item = ProductTemplate::find($id);
-        $img = $item->image;
-        unlink($img);
-
         ProductTemplate::find($id)->delete();
         
         $notification = array(
@@ -271,21 +238,20 @@ class ManageController extends Controller
     // End Method
     
     public function BannerStore(Request $request) {
-        if($request->file('image')){
+        if ($request->file('image')) {
             $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(400, 400)->save(public_path('upload/banner_images/'
-                .$name_gen));
-            $save_url = 'upload/banner_images/'.$name_gen;
 
+            // Upload lên Cloudinary
+            $uploaded = (new UploadApi())->upload($image->getRealPath(), [
+                'folder' => 'banner_images'
+            ]);
+            $cloudUrl = $uploaded['secure_url'];
+
+            // Lưu thông tin vào DB
             Banner::create([
                 'url' => $request->url,
-                'image' => $save_url,
+                'image' => $cloudUrl,
             ]);
-
         }
         
         $notification = array(
@@ -309,47 +275,37 @@ class ManageController extends Controller
 
     public function BannerUpdate(Request $request) {
         $banner_id = $request->banner_id;
+        $banner = Banner::findOrFail($banner_id);
 
-        if($request->file('image')){
+        if ($request->file('image')) {
             $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(400, 400)->save(public_path('upload/banner_images/'
-                .$name_gen));
-            $save_url = 'upload/banner_images/'.$name_gen;
 
-            Banner::find($banner_id)->update([
-                'url' => $request->url,
-                'image' => $save_url,
+            $uploaded = (new UploadApi())->upload($image->getRealPath(), [
+                'folder' => 'banner_images'
             ]);
+            $secureUrl = $uploaded['secure_url'];
 
-            $notification = array(
-                'message' => 'Banner Insert Successfully',
-                'alert-type' => 'success'
-            );
-    
-            return redirect()->route('all.banner')->with($notification);
+            $banner->update([
+                'url' => $request->url,
+                'image' => $secureUrl,
+            ]);
         } else {
-            Banner::find($banner_id)->update([
+            $banner->update([
                 'url' => $request->url,
             ]);
-            $notification = array(
-                'message' => 'Banner Insert Successfully',
-                'alert-type' => 'success'
-            );
-            return redirect()->route('all.banner')->with($notification);
         }
-        
+
+        $notification = [
+            'message' => 'Banner Update Successfully',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->route('all.banner')->with($notification);
     }
     // End Method
     
     public function DeleteBanner($id) {
         $item = Banner::find($id);
-        $img = $item->image;
-        unlink($img);
-
         Banner::find($id)->delete();
         
         $notification = array(

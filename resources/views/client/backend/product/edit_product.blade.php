@@ -57,7 +57,7 @@
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
                                 <img id="showImage" 
-                                     src="{{ $productTemplateEdit ? asset($productTemplateEdit->image) : url('upload/no_image.jpg') }}" 
+                                     src="{{ $productTemplateEdit ? asset($productTemplateEdit->image) : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}" 
                                      alt="" class="rounded p-1 bg-primary" width="110">
                             </div>
                         </div>

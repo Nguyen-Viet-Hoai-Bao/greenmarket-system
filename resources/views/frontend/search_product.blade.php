@@ -99,86 +99,92 @@
                 </div>
             @endif
                 @foreach ($products_search as $product)
-                        <div class="col-md-3 col-sm-6 mb-4 pb-2">
+                    <div class="col-md-3 col-sm-6 mb-4 pb-2">
                         <div class="list-card bg-white h-100 rounded overflow-hidden position-relative shadow-sm d-flex flex-column">
                             <div class="list-card-image">
-                                    <div class="star position-absolute">
+                                <div class="star position-absolute">
                                     @if ($product->best_seller == 1)
                                         <span class="badge badge-success"><i class="icofont-star"></i></span>
                                     @endif
-                                    </div>
-                                    <div class="favourite-heart text-danger position-absolute">
+                                </div>
+                                <div class="favourite-heart text-danger position-absolute">
                                     @if ($product->most_popular == 1)
                                         <a href="{{ route('product.detail', $product->id) }}"><i class="icofont-heart"></i></a>
                                     @endif
-                                    </div>
-                                    <a href="{{ route('product.detail', $product->id) }}">
-                                    <img src="{{ asset($product->productTemplate->image) }}"
-                                            class="img-fluid item-img">
-                                    </a>
+                                </div>
+                                <a href="{{ route('product.detail', $product->id) }}">
+                                    <img src="{{ asset($product->productTemplate->image) }}" class="img-fluid item-img">
+                                </a>
                             </div>
 
                             <div class="p-3 d-flex flex-column h-100">
-                                    <div class="list-card-body mb-2">
+                                <div class="list-card-body mb-2">
                                     <h6 class="mb-2 font-weight-bold">
                                         <a href="{{ route('product.detail', $product->id) }}" class="text-dark">
-                                                {{ $product->productTemplate->name }}
+                                            {{ $product->productTemplate->name }}
                                         </a>
                                     </h6>
                                     <p class="text-danger mb-2 d-flex justify-content-between align-items-center small">
                                         <span class="bg-light rounded px-2 py-1">
-                                                {{ number_format($product->discount_price, 0, ',', '.') }} VNĐ
+                                            {{ number_format($product->final_display_price, 0, ',', '.') }} VNĐ
+                                            @if ($product->final_display_price < $product->display_original_price)
+                                                <small class="text-muted text-decoration-line-through">
+                                                    {{ number_format($product->display_original_price, 0, ',', '.') }} VNĐ
+                                                </small>
+                                            @endif
                                         </span>
                                         <span class="text-muted font-weight-bold">
-                                                <i class="icofont-wall-clock"></i> 20–25 m
+                                            <i class="icofont-wall-clock"></i> 20–25 m
                                         </span>
                                     </p>
-                                    </div>
+                                </div>
 
+                                @if ($product->final_display_price < $product->display_original_price)
                                     @php
-                                    $discount = $product->price - $product->discount_price;
-                                    $percent = round(($discount / $product->price) * 100);
+                                        $discount = $product->display_original_price - $product->final_display_price;
+                                        $percent = ($product->display_original_price > 0) ? round(($discount / $product->display_original_price) * 100) : 0;
                                     @endphp
-
                                     <div class="list-card-badge mb-2 text-center">
-                                    <span class="badge badge-success">GIẢM GIÁ</span>
-                                    <small class="text-success ml-1 font-weight-bold">{{ $percent }}% OFF</small>
+                                        <span class="badge badge-success">GIẢM GIÁ</span>
+                                        <small class="text-success ml-1 font-weight-bold">{{ $percent }}% OFF</small>
                                     </div>
+                                @endif
 
-                                    @php
+                                @php
                                     $cart = session('cart', []);
-                                    $cartItem = $cart[$product->id] ?? null;
-                                    @endphp
+                                    // Xác định itemKey dựa trên display_mode của sản phẩm
+                                    $itemKey = ($product->display_mode === 'unit' && $product->selected_unit) 
+                                                ? $product->id . '_' . $product->selected_unit->id 
+                                                : $product->id;
+                                    $cartItem = $cart[$itemKey] ?? null;
+                                @endphp
 
-                                    <div class="cart-actions mt-auto">
+                                <div class="cart-actions mt-auto">
                                     @if ($cartItem)
                                         <div class="d-flex justify-content-center align-items-center">
-                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                            <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
                                                 data-id="{{ $product->id }}"
                                                 data-qty="{{ $cartItem['quantity'] - 1 }}">
                                                 <i class="icofont-minus"></i>
-                                                </button>
-                                                
-                                                <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $product->id }}">
+                                            </button>
+                                            <span class="btn btn-sm btn-light mx-2 font-weight-bold qty-display" data-id="{{ $product->id }}">
                                                 {{ $cartItem['quantity'] }}
-                                                </span>
-
-                                                <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
+                                            </span>
+                                            <button class="btn btn-sm btn-outline-primary mx-2 btn-change-qty"
                                                 data-id="{{ $product->id }}"
                                                 data-qty="{{ $cartItem['quantity'] + 1 }}">
                                                 <i class="icofont-plus"></i>
-                                                </button>
+                                            </button>
                                         </div>
                                     @else
                                         <button type="button" class="btn btn-primary btn-sm w-100 btn-add-to-cart" data-id="{{ $product->id }}">
                                             <i class="icofont-cart"></i> Thêm vào giỏ hàng
                                         </button>
-
                                     @endif
-                                    </div>
+                                </div>
                             </div>
                         </div>
-                        </div>
+                    </div>
                 @endforeach
         </div> <!-- End of product-list -->
         </div> <!-- End of col-md-9 -->

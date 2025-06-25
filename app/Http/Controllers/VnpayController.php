@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Notification;
 use Carbon\Carbon;
 
 use App\Notifications\OrderComplete;
+use App\Notifications\OrderPlaced;
+
 use App\Models\Product;
+use App\Models\ProductUnit;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Admin;
@@ -131,9 +134,8 @@ class VnpayController extends Controller
             $totalAmount += ($car['price'] * $car['quantity']);
             
             // Lấy cost_price
-            $product = ProductNew::find($car['id']);
-            $costPrice = $product->cost_price ?? 0;
-
+            $productUnit = ProductUnit::find($car['product_unit_id']);
+            $costPrice = $productUnit->cost_price ?? 0;
             $totalCostPrice += ($costPrice * $car['quantity']);
         }
 
@@ -178,7 +180,7 @@ class VnpayController extends Controller
             'order_date' => Carbon::now()->format('d M Y'),
             'order_month' => Carbon::now()->format('M'),
             'order_year' => Carbon::now()->format('Y'),
-            'status' => 'confirm',
+            'status' => 'pending',
             'created_at' => Carbon::now(),
         ]);
 
@@ -187,6 +189,7 @@ class VnpayController extends Controller
             OrderItem::insert([
                 'order_id' => $order_id,
                 'product_id' => $cart_item['id'],
+                'product_unit_id' => $cart_item['product_unit_id'] ?? null,
                 'client_id' => $cart_item['client_id'],
                 'qty' => $cart_item['quantity'],
                 'price' => $cart_item['price'],
@@ -194,8 +197,26 @@ class VnpayController extends Controller
             ]);
 
             $clientIds[] = $cart_item['client_id'];
+            
+            $product = ProductNew::with('productTemplate')->find($cart_item['id']);
+            $productUnit = ProductUnit::find($cart_item['product_unit_id']);
+
+            if ($product && $product->productTemplate && $productUnit) {
+                $stockMode = $product->productTemplate->stock_mode;
+
+                if ($stockMode === 'quantity') {
+                    $productUnit->increment('sold');
+                    $productUnit->decrement('batch_qty');
+                } elseif ($stockMode === 'unit') {
+                    $productUnit->update([
+                        'is_sold_out' => true,
+                        'batch_qty' => max($productUnit->batch_qty - 1, 0),
+                    ]);
+                }
+            }
+
             // Giảm số lượng sản phẩm tương ứng
-            ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
+            // ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
             // Tăng số lượng đã bán
             ProductNew::where('id', $cart_item['id'])->increment('sold', $cart_item['quantity']);
         }
@@ -203,7 +224,9 @@ class VnpayController extends Controller
         // Clear session data after order is created
         session()->forget(['coupon', 'cart', 'shipping_fee']);
 
-        // Notify admin about the order
+        $user_order = Auth::guard('web')->user();
+        Notification::send($user_order, new OrderPlaced($invoice));
+
         Notification::send($user, new OrderComplete($request->name));
         $clients = Client::whereIn('id', array_unique($clientIds))->get();
         Notification::send($clients, new OrderComplete($request->name));

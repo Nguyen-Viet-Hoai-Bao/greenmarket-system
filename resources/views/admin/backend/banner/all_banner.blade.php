@@ -95,7 +95,7 @@
                 </div>
                 <div class="form-group mb-6">
                     <img id="showImage"
-                        src="{{ url('upload/no_image.jpg')}}" 
+                        src="{{ url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}" 
                             alt="" class="rounded p-1 bg-primary" width="110">
                 </div>
             </div>

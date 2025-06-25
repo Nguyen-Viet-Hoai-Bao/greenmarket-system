@@ -65,7 +65,7 @@
                         <!-- Image Preview -->
                         <div class="col-xl-4 col-md-6">
                             <div class="form-group mb-3">
-                                <img id="showImage" src="{{ url('upload/no_image.jpg') }}" alt="" class="rounded p-1 bg-primary" width="110">
+                                <img id="showImage" src="{{ url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}" alt="" class="rounded p-1 bg-primary" width="110">
                             </div>
                         </div>
 
@@ -245,7 +245,7 @@
             if (selectedTemplate.image) {
                 imagePreview.src = '{{ url('/') }}/' + selectedTemplate.image;
             } else {
-                imagePreview.src = '{{ url('upload/no_image.jpg') }}';
+                imagePreview.src = '{{ url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}';
             }
 
             // Cập nhật các label mới
@@ -253,7 +253,7 @@
             sizeLabel.textContent = selectedTemplate.size || '-';
             unitLabel.textContent = selectedTemplate.unit || '-';
         } else {
-            imagePreview.src = '{{ url('upload/no_image.jpg') }}';
+            imagePreview.src = '{{ url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}';
             categoryLabel.textContent = '-';
             sizeLabel.textContent = '-';
             unitLabel.textContent = '-';

@@ -78,6 +78,22 @@
                                 <input class="form-control" type="text" name="unit" value="" placeholder="Enter product unit">
                             </div>
                         </div>
+
+                        <div class="col-xl-6 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Chế độ tồn kho</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="stock_mode" id="stockModeQuantity" value="quantity" checked>
+                                        <label class="form-check-label" for="stockModeQuantity">Theo Số Lượng (quantity)</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="stock_mode" id="stockModeUnit" value="unit">
+                                        <label class="form-check-label" for="stockModeUnit">Theo Đơn Vị (unit)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- Additional Field 2 -->
                         <div class="col-xl-6 col-md-6">
@@ -91,7 +107,7 @@
                         <div class="col-xl-6 col-md-6">
                             <div class="form-group mb-3">
                                 <img id="showImage"
-                                    src="{{ url('upload/no_image.jpg')}}" 
+                                    src="{{ url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}" 
                                     alt="" class="rounded-circle p-1 bg-primary" width="110">
                             </div>
                         </div>

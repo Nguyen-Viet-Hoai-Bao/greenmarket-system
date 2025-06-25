@@ -11,6 +11,7 @@ use App\Models\City;
 use App\Models\Ward;
 use App\Models\ProductNew;
 use Illuminate\Support\Facades\DB;
+use Cloudinary\Api\Upload\UploadApi;
 
 class UserController extends Controller
 {
@@ -76,12 +77,19 @@ class UserController extends Controller
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('upload/user_images'), $filename);
-            $data->photo = $filename;
+            $uploadApi = new UploadApi();
 
-            if ($oldPhotoPath && $oldPhotoPath !== $filename) {
-                $this->deleteOldImage($oldPhotoPath);
+            try {
+                $uploaded = $uploadApi->upload($file->getRealPath(), [
+                    'folder' => 'user_images'
+                ]);
+                $secureUrl = $uploaded['secure_url'];
+                $data->photo = $secureUrl;
+            } catch (\Exception $e) {
+                return redirect()->back()->with([
+                    'message' => 'Lỗi upload ảnh người dùng: ' . $e->getMessage(),
+                    'alert-type' => 'error'
+                ]);
             }
         }
 
@@ -99,7 +107,6 @@ class UserController extends Controller
     private function deleteOldImage(string $oldPhotoPath) : void {
         $fullPath = public_path('upload/user_images/'.$oldPhotoPath);
         if (file_exists($fullPath)) {
-            unlink($fullPath);
         }
     }
     //End Private Method

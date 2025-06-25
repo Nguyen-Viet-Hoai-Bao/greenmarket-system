@@ -69,15 +69,32 @@
 
                         
   @php
-    $total_1 = 0; // Khởi tạo tổng số tiền
-    // Kiểm tra nếu giỏ hàng có tồn tại trong session
+    $total_1 = 0;
     if (session('cart')) {
-        // Duyệt qua từng sản phẩm trong giỏ hàng
         foreach (session('cart') as $id => $details) {
-            // Tính tổng giá trị của giỏ hàng
             $total_1 += (float) $details['price'] * (int) $details['quantity'];
         }
-        $total_1 += Session()->get('shipping_fee');
+    }
+
+    $shippingFee = Session::get('shipping_fee', 0);
+    $couponApplied = false;
+    $couponDiscountAmount = 0;
+
+    if (Session::has('coupon')) {
+        $couponData = Session::get('coupon');
+        
+        if (isset($couponData['discount_amount'])) {
+            $total_1 = (float) $couponData['discount_amount'] + $shippingFee; 
+            $couponApplied = true;
+        }
+    }
+
+    if (!$couponApplied) {
+        $total_1 += $shippingFee;
+    }
+
+    if ($total_1 < 0) {
+        $total_1 = 0;
     }
   @endphp
 
@@ -294,8 +311,8 @@
                  <img class="img-fluid mr-3 rounded-pill" 
                       alt="osahan" 
                       src="{{ (!empty($profileData->photo)) 
-                                ? url('upload/user_images/'.$profileData->photo)
-                                : url('upload/no_image.jpg')}}
+                                ? url($profileData->photo)
+                                : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png')}}
                                 ">
                  <div class="d-flex flex-column">
                     <h6 class="mb-1 text-white">

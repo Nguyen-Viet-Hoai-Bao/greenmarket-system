@@ -334,7 +334,12 @@ Route::middleware(['client', 'status'])->group(function () {
 
     Route::controller(MarketController::class)->group(function(){
         Route::get('/all/product', 'AllProduct')->name('all.product');
-        
+        Route::get('/product/stock', 'ProductStock')->name('product.stock');
+
+        Route::get('/product/unit/edit/{id}', 'EditProductUnit')->name('product.unit.edit');
+        Route::post('/product/unit/update/{id}', 'UpdateProductUnit')->name('product.unit.update');
+        Route::get('/product/unit/delete/{id}', 'DeleteProductUnit')->name('product.unit.delete');
+
         Route::get('/add/product', 'AddProduct')->name('add.product');
         Route::post('/store/product', 'StoreProduct')->name('product.store');
 
@@ -347,6 +352,15 @@ Route::middleware(['client', 'status'])->group(function () {
         Route::get('/delete/product/{id}', 'DeleteProduct')->name('delete.product');
 
         Route::get('/product/get-info/{template_id}', 'GetProductInfo')->name('product.getInfo');
+
+
+        Route::get('/product/discounts/all', 'AllProductDiscounts')->name('product.discounts.all');
+        Route::get('/product/discounts/add', 'AddProductDiscount')->name('product.discounts.add');
+        Route::post('/product/discounts/store', 'StoreProductDiscount')->name('product.discounts.store');
+        Route::get('/product/discounts/edit/{id}', 'EditProductDiscount')->name('product.discounts.edit');
+        Route::post('/product/discounts/update/{id}', 'UpdateProductDiscount')->name('product.discounts.update');
+        Route::get('/product/discounts/delete/{id}', 'DeleteProductDiscount')->name('product.discounts.delete');
+
     });
 
     
@@ -448,6 +462,9 @@ Route::controller(CartController::class)->group(function(){
     Route::get('/ajax/cart/reload', 'AjaxReloadCart')->name('ajax.cart.reload');
     Route::get('/ajax/cart/header/reload', 'AjaxReloadCartHeader')->name('ajax.cart.header.reload');
 
+    Route::get('/api/product-details-for-cart/{id}', 'getProductDetailsForCart')->name('api.product_details_for_cart');
+    Route::post('/ajax/add-to-cart-with-unit/{id}', 'AjaxAddToCartWithUnit')->name('ajax.add_to_cart_with_unit');
+
     Route::get('/checkout', 'MarketCheckout')->name('checkout');
 
 });
@@ -496,6 +513,8 @@ Route::controller(FilterController::class)->group(function(){
     Route::get('/product/detail/{id}', 'ProductDetail')->name('product.detail');
 
     Route::get('/search/products', 'SearchProducts')->name('search.products');
+
+    Route::get('/api/product-details/{id}', 'getProductDetails')->name('api.product.details');
 
 });
 

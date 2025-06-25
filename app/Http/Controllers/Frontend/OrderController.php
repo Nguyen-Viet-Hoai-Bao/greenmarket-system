@@ -21,6 +21,7 @@ use App\Models\OrderItem;
 use App\Models\Client;
 use App\Models\Admin;
 use App\Models\OrderReport;
+use App\Models\ProductUnit;
 
 use App\Models\Menu;
 use App\Models\City;
@@ -49,9 +50,8 @@ class OrderController extends Controller
             $totalAmount += ($car['price'] * $car['quantity']);
 
             // Lấy cost_price
-            $product = ProductNew::find($car['id']);
-            $costPrice = $product->cost_price ?? 0;
-
+            $productUnit = ProductUnit::find($car['product_unit_id']);
+            $costPrice = $productUnit->cost_price ?? 0;
             $totalCostPrice += ($costPrice * $car['quantity']);
         }
         // Tính phí dịch vụ 8% của tổng đơn
@@ -95,7 +95,7 @@ class OrderController extends Controller
             'order_month' => Carbon::now()->format('M'),
             'order_year' => Carbon::now()->format('Y'),
 
-            'status' => 'confirm',
+            'status' => 'pending',
             'created_at' => Carbon::now(),
         ]);
 
@@ -106,6 +106,7 @@ class OrderController extends Controller
             OrderItem::insert([
                 'order_id' => $order_id,
                 'product_id' => $cart_item['id'],
+                'product_unit_id' => $cart_item['product_unit_id'] ?? null,
                 'client_id' => $cart_item['client_id'],
                 'qty' => $cart_item['quantity'],
                 'price' => $cart_item['price'],
@@ -114,8 +115,25 @@ class OrderController extends Controller
 
             $clientIds[] = $cart_item['client_id'];
             
+            $product = ProductNew::with('productTemplate')->find($cart_item['id']);
+            $productUnit = ProductUnit::find($cart_item['product_unit_id']);
+
+            if ($product && $product->productTemplate && $productUnit) {
+                $stockMode = $product->productTemplate->stock_mode;
+
+                if ($stockMode === 'quantity') {
+                    $productUnit->increment('sold');
+                    $productUnit->decrement('batch_qty');
+                } elseif ($stockMode === 'unit') {
+                    $productUnit->update([
+                        'is_sold_out' => true,
+                        'batch_qty' => max($productUnit->batch_qty - 1, 0),
+                    ]);
+                }
+            }
+
             // Giảm số lượng sản phẩm tương ứng
-            ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
+            // ProductNew::where('id', $cart_item['id'])->decrement('qty', $cart_item['quantity']);
             // Tăng số lượng đã bán
             ProductNew::where('id', $cart_item['id'])->increment('sold', $cart_item['quantity']);
         } // end foreach

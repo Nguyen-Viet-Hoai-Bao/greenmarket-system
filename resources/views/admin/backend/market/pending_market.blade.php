@@ -63,8 +63,8 @@
                                         <td>{{ $key + 1 }}</td>
                                         <td>
                                             <img src="{{ !empty($item->photo) 
-                                                        ? url('upload/client_images/' . $item->photo) 
-                                                        : url('upload/no_image.jpg') }}"
+                                                        ? url($item->photo) 
+                                                        : url('https://res.cloudinary.com/dth3mz6s9/image/upload/v1750781920/no_img_oznhhy.png') }}"
                                                  style="width: 70px; height: 40px;">
                                         </td>
                                         <td><a href="{{ route('client.details', $item->id) }}" >{{ $item->name }}</a></td>

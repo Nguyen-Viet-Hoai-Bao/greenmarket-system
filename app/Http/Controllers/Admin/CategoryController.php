@@ -12,6 +12,7 @@ use App\Models\Menu;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\GD\Driver;
 use Illuminate\Support\Str;
+use Cloudinary\Api\Upload\UploadApi;
 
 class CategoryController extends Controller
 {
@@ -34,34 +35,26 @@ class CategoryController extends Controller
             'menu_id' => 'required|exists:menus,id',
             'image' => 'nullable|image'
         ]);
-        if($request->file('image')){
-            $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/category_images/'
-                .$name_gen));
-            $save_url = 'upload/category_images/'.$name_gen;
 
-            Category::create([
-                'category_name' => $request->category_name,
-                'menu_id' => $request->menu_id,
-                'image' => $save_url,
+        $data = [
+            'category_name' => $request->category_name,
+            'menu_id' => $request->menu_id,
+        ];
+
+        if ($request->file('image')) {
+            $file = $request->file('image');
+            $upload = (new UploadApi())->upload($file->getRealPath(), [
+                'folder' => 'category_images'
             ]);
-        } else {
-            Category::create([
-                'category_name' => $request->category_name,
-                'menu_id' => $request->menu_id,
-            ]);
+            $data['image'] = $upload['secure_url'];
         }
-        
-        $notification = array(
+
+        Category::create($data);
+
+        return redirect()->route('all.category')->with([
             'message' => 'Create Category Successfully',
             'alert-type' => 'success'
-        );
-
-        return redirect()->route('all.category')->with($notification);
+        ]);
     }
     // End Method
 
@@ -76,54 +69,35 @@ class CategoryController extends Controller
     public function UpdateCategory(Request $request) {
         $cat_id = $request->id;
 
-        if($request->file('image')){
-            $image = $request->file('image');
-            $manage = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()).'.'
-                        .$image->getClientOriginalExtension();
-            $img = $manage->read($image);
-            $img->resize(300, 300)->save(public_path('upload/category_images/'
-                .$name_gen));
-            $save_url = 'upload/category_images/'.$name_gen;
+        $data = [
+            'category_name' => $request->category_name,
+            'menu_id' => $request->menu_id,
+        ];
 
-            Category::find($cat_id)->update([
-                'category_name' => $request->category_name,
-                'menu_id' => $request->menu_id,
-                'image' => $save_url,
+        if ($request->file('image')) {
+            $file = $request->file('image');
+            $upload = (new UploadApi())->upload($file->getRealPath(), [
+                'folder' => 'category_images'
             ]);
-
-            $notification = array(
-                'message' => 'Update Category Successfully',
-                'alert-type' => 'success'
-            );
-        } else {
-            Category::find($cat_id)->update([
-                'category_name' => $request->category_name,
-                'menu_id' => $request->menu_id,
-            ]);
-            $notification = array(
-                'message' => 'Update Category Successfully',
-                'alert-type' => 'success'
-            );
+            $data['image'] = $upload['secure_url'];
         }
-        
 
-        return redirect()->route('all.category')->with($notification);
+        Category::find($cat_id)->update($data);
+
+        return redirect()->route('all.category')->with([
+            'message' => 'Update Category Successfully',
+            'alert-type' => 'success'
+        ]);
     }
     // End Method
 
     public function DeleteCategory($id) {
-        $item = Category::find($id);
-        $img = $item->image;
-        unlink($img);
-
         Category::find($id)->delete();
-        
-        $notification = array(
+
+        return redirect()->back()->with([
             'message' => 'Delete Category Successfully',
             'alert-type' => 'success'
-        );
-        return redirect()->back()->with($notification);
+        ]);
     }
     // End Method
 
