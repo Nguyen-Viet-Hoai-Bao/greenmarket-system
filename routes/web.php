@@ -537,6 +537,7 @@ Route::controller(InfoController::class)->group(function(){
 
     Route::get('/personal-data-policy', 'PersonalDataPolicy')->name('personal.data.policy');
     Route::get('/shipping-policy', 'ShippingPolicy')->name('shipping.policy');
+    Route::get('/order-conditions', 'OrderConditions')->name('order.conditions');
 
 });
 
